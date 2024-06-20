@@ -1,0 +1,34 @@
+CREATE_MOVIES_TABLE="""
+CREATE TABLE IF NOT EXISTS movies (
+    movie_id TEXT PRIMARY KEY,
+    name TEXT,
+    duration TEXT,
+    synopsis TEXT
+);
+"""
+
+INSERT_MOVIE = """
+INSERT INTO movies (movie_id, name, duration, synopsis) 
+VALUES (?, ?, ?, ?);
+"""
+
+SELECT_ALL_MOVIES = """
+SELECT * FROM movies;
+"""
+
+SELECT_MOVIE_BY_ID = """
+SELECT movie_id, name, duration, synopsis 
+FROM movies 
+WHERE movie_id = ?;
+"""
+
+UPDATE_MOVIE = """
+UPDATE movies 
+SET name = ?, duration = ?, synopsis = ? 
+WHERE movie_id = ?;
+"""
+
+DELETE_MOVIE = """
+DELETE FROM movies 
+WHERE movie_id = ?;
+"""
