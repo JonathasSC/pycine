@@ -1,9 +1,12 @@
 from pydantic import BaseModel, EmailStr, field_validator
-from typing import Optional
 import re
 
 
-class PersonCreate(BaseModel):
+class PersonBase(BaseModel):
+    person_id: str
+
+
+class PersonCreate(PersonBase):
     name: str
     email: EmailStr
     password: str

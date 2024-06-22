@@ -1,10 +1,10 @@
-import click
-from src.utils.printer import Printer
-from src.schemas.person_schemas import PersonCreate
-from src.crud.persons_crud import PersonsCrud
-from src.utils.uuid import UUID
 from pydantic import ValidationError
+
+from src.utils.uuid import UUID
+from src.utils.printer import Printer
 from src.utils.exceptions import ExceptionsHandlers
+
+from src.crud.persons_crud import PersonsCrud
 
 
 class AuthView:
@@ -69,15 +69,13 @@ class AuthView:
             }
 
             try:
-                PersonCreate(**person_data)
                 self.persons_crud.insert_person(person_data)
-                self.printer.success('Registro realizado com sucesso!')
-                return True
-
             except ValidationError as e:
                 self.handlers.handle_validation_error(e)
             except Exception as e:
                 self.printer.error(f'Register error: {str(e)}')
+            else:
+                self.printer.success('Registro realizado com sucesso!')
 
     def exit(self):
         self.printer.generic('Saindo...', line=True)
