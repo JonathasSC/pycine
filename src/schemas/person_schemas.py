@@ -46,3 +46,8 @@ class PersonCreate(PersonBase):
                 'Name must contain only alphabetic characters and spaces.')
 
         return value
+
+
+class PersonLogin(BaseModel):
+    email: EmailStr
+    password: str
