@@ -4,7 +4,6 @@ from src.utils.uuid import UUID
 from src.utils.printer import Printer
 from src.utils.exceptions import ExceptionsHandlers
 from src.utils.terminal import Terminal
-from src.auth.authentication import Auth
 
 from src.crud.persons_crud import PersonsCrud
 from src.crud.clients_crud import ClientsCrud
