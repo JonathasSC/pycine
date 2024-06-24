@@ -1,5 +1,7 @@
 import sqlite3
 from src.queries.persons_queries import CREATE_PERSONS_TABLE
+from src.queries.admins_queries import CREATE_ADMINS_TABLE
+from src.queries.clients_queries import CREATE_CLIENTS_TABLE
 
 
 class Connection:
@@ -22,4 +24,6 @@ class Connection:
 
     def create_database(self):
         self.cursor.execute(CREATE_PERSONS_TABLE)
+        self.cursor.execute(CREATE_ADMINS_TABLE)
+        self.cursor.execute(CREATE_CLIENTS_TABLE)
         self.connection.commit()
