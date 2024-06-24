@@ -21,7 +21,7 @@ SELECT_PERSON_BY_ID = """
 SELECT * FROM persons WHERE person_id = ?;
 """
 
-SELECT_PERSON_BY_EMAIL = """
+SELECT_BY_EMAIL = """
 SELECT * FROM persons WHERE email = ?
 """
 
@@ -29,6 +29,9 @@ DELETE_PERSON = """
 DELETE FROM persons WHERE person_id = ?;
 """
 
+DELETE_ALL_PERSONS = """
+DELETE FROM persons;
+"""
 
 SELECT_BY_CREDENTIALS = """
 SELECT * FROM persons WHERE email = ? AND password = ?;
