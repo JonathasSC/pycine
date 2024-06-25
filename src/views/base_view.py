@@ -37,4 +37,5 @@ class BaseView:
         self.printer.error('Opção inválida, tente novamente')
 
     def exit(self):
+        self.terminal.clear()
         self.printer.generic('Saindo...', line=True)
