@@ -5,5 +5,5 @@ class ClientBase(BaseModel):
     client_id: str
 
 
-class PersonCreate(ClientBase):
+class ClientCreate(ClientBase):
     person_id: str
