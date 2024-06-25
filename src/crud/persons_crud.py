@@ -42,7 +42,7 @@ class PersonsCrud(BaseCrud):
 
     def select_by_credentials(self, data: Dict[str, str]) -> Union[tuple, None]:
         try:
-            data_dict = PersonLogin(**data)
+            data_dict: PersonLogin = PersonLogin(**data)
 
             person_email: str = data_dict.email
             person_unhashed_password: str = data_dict.password
