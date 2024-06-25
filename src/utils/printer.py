@@ -1,4 +1,6 @@
 from rich.console import Console
+from typing import List
+from tabulate import tabulate
 
 
 class Printer:
@@ -31,3 +33,16 @@ class Printer:
     def option_list(self, options: list):
         for index, item in enumerate(options):
             self.generic(f'[{index + 1}] - {item}')
+
+    def display_table(self, headers: list, table_data: list, page: int = 1, per_page: int = 10):
+        try:
+            start_idx: int = (page - 1) * per_page
+            end_idx: int = start_idx + per_page
+
+            paginated_movies = table_data[start_idx:end_idx]
+            table = tabulate(paginated_movies,
+                             headers=headers, tablefmt='grid')
+            print(table)
+
+        except Exception as e:
+            print(f'Erro ao mostrar filmes: {e}')
