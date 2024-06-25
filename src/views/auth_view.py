@@ -113,8 +113,3 @@ class AuthView(BaseView):
                 self.printer.error(f'Register error: {str(e)}')
             else:
                 self.printer.success('Registro realizado com sucesso!')
-
-
-if __name__ == "__main__":
-    flow = AuthView()
-    flow.start()
