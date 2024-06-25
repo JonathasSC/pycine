@@ -1,5 +1,6 @@
 from typing import Any, Dict, List, Optional, Union
-from src.database.conn import Connection
+from src.crud.base_crud import BaseCrud
+
 
 from src.queries.persons_queries import (
     INSERT_PERSON,
@@ -9,17 +10,13 @@ from src.queries.persons_queries import (
     SELECT_IS_CLIENT
 )
 
-from src.utils.uuid import UUID
-from src.utils.hashing import Hashing
 from src.schemas.person_schemas import PersonCreate, PersonLogin
 from pydantic import ValidationError
 
 
-class PersonsCrud:
-    def __init__(self, conn: Optional[Connection] = None) -> None:
-        self.uuid: UUID = UUID()
-        self.hash: Hashing = Hashing()
-        self.conn: Connection = conn if conn else Connection()
+class PersonsCrud(BaseCrud):
+    def __init__(self):
+        super().__init__()
 
     def insert_person(self, data: Dict[str, Any]) -> bool:
         try:
