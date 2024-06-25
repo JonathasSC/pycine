@@ -1,10 +1,11 @@
 from src.queries.admins_queries import INSERT_ADMIN, SELECT_COUNT_ADMINS
+from src.crud.base_crud import BaseCrud
 from src.database.conn import Connection
 
 
-class AdminsCrud:
-    def __init__(self, conn: Connection = Connection()):
-        self.conn = conn
+class AdminsCrud(BaseCrud):
+    def __init__(self, conn: Connection = None):
+        super().__init__(conn)
 
     def insert_admin(self, person_id: str) -> None:
         admin_id: str = self.uuid.smaller_uuid()

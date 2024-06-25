@@ -1,10 +1,11 @@
 from src.crud.base_crud import BaseCrud
 from src.queries.movies_queries import SELECT_ALL_MOVIES
+from src.database.conn import Connection
 
 
 class MoviesCrud(BaseCrud):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, conn: Connection = None):
+        super().__init__(conn)
 
     def select_all_movies(self) -> list:
         try:

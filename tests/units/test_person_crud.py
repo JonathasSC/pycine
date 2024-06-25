@@ -1,4 +1,3 @@
-import os
 import pytest
 from faker import Faker
 
@@ -25,12 +24,12 @@ class TestPersonCrud:
 
         return test_data
 
-    def test_insert_person(self, test_data):
+    def test_insert_person(self, test_data: dict):
         crud: PersonsCrud = PersonsCrud(self.conn)
         is_created = crud.insert_person(test_data)
         assert is_created is True
 
-    def test_select_by_email(self, test_data):
+    def test_select_by_email(self, test_data: dict):
         crud: PersonsCrud = PersonsCrud(self.conn)
         crud.insert_person(test_data)
 

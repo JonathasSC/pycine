@@ -1,12 +1,12 @@
 from src.utils.uuid import UUID
 from src.queries.clients_queries import INSERT_CLIENT
 from src.crud.base_crud import BaseCrud
+from src.database.conn import Connection
 
 
 class ClientsCrud(BaseCrud):
-    def __init__(self):
-        super().__init__()
-        self.uuid: UUID = UUID()
+    def __init__(self, conn: Connection = None):
+        super().__init__(conn)
 
     def insert_client(self, person_id: str):
         try:

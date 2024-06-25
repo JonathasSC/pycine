@@ -1,5 +1,6 @@
 from typing import Any, Dict, List, Optional, Union
 from src.crud.base_crud import BaseCrud
+from src.database.conn import Connection
 
 
 from src.queries.persons_queries import (
@@ -15,8 +16,8 @@ from pydantic import ValidationError
 
 
 class PersonsCrud(BaseCrud):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, conn: Connection = None):
+        super().__init__(conn)
 
     def insert_person(self, data: Dict[str, Any]) -> bool:
         try:
