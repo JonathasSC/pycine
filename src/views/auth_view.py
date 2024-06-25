@@ -7,6 +7,9 @@ from src.utils.terminal import Terminal
 
 from src.crud.persons_crud import PersonsCrud
 from src.crud.clients_crud import ClientsCrud
+from src.crud.admins_crud import AdminsCrud
+
+
 from src.views.base_view import BaseView
 from src.views.admin_view import AdminView
 from src.views.client_view import ClientView
@@ -17,8 +20,9 @@ class AuthView(BaseView):
         super().__init__()
 
         self.uuid: UUID = UUID()
-        self.client_crud: ClientsCrud = ClientsCrud()
+        self.clients_crud: ClientsCrud = ClientsCrud()
         self.persons_crud: PersonsCrud = PersonsCrud()
+        self.admins_crud: AdminsCrud = AdminsCrud()
 
         self.printer: Printer = Printer()
         self.terminal: Terminal = Terminal()
@@ -39,6 +43,7 @@ class AuthView(BaseView):
         }
 
     def start(self):
+        self.create_first_admin()
         self.printer.generic('Pycine - Your cinema in terminal', line=True)
         option: int = self.choose_an_option(self.list_options)
         self.execute_option(self.option_actions, option)
@@ -62,14 +67,13 @@ class AuthView(BaseView):
                         person_id)
 
                     if person_role == 'admin':
-                        self.printer.success('Login realizado como admin')
+                        self.printer.success('Login realizado com sucesso')
                         admin_view = AdminView()
                         admin_view.start()
                         return
                     elif person_role == 'client':
-                        self.printer.success('Login realizado como cliente')
-                        client_view = ClientView()
-                        client_view.start()
+                        self.printer.success('Login realizado com sucesso')
+                        self.client_view.start()
                         return
                     else:
                         self.printer.error('Função de usuário desconhecida')
@@ -97,13 +101,39 @@ class AuthView(BaseView):
                 person_created: tuple = self.persons_crud.select_by_email(
                     person_data['email']
                 )
-                self.client_crud.insert_client(person_created[0])
+                self.clients_crud.insert_client(person_created[0])
             except ValidationError as e:
                 self.handlers.handle_validation_error(e)
             except Exception as e:
                 self.printer.error(f'Register error: {str(e)}')
             else:
                 self.printer.success('Registro realizado com sucesso!')
+
+    def create_first_admin(self):
+        if self.admins_crud.get_count_admin() == 0:
+            self.printer.generic(text='Create a first admin', line=True)
+            while True:
+                person_data: dict = {}
+
+                person_data['name'] = input('Nome: ')
+                person_data['email'] = input('Email: ')
+                person_data['password'] = input('Senha: ')
+
+                try:
+                    self.persons_crud.insert_person(person_data)
+                    person_created: tuple = self.persons_crud.select_by_email(
+                        person_data['email']
+                    )
+                    self.admins_crud.insert_admin(person_created[0])
+                except ValidationError as e:
+                    self.handlers.handle_validation_error(e)
+                except Exception as e:
+                    self.printer.error(f'Register error: {str(e)}', line=True)
+                else:
+                    self.printer.success(
+                        'Administrador criado com sucesso!', line=True
+                    )
+                    break
 
 
 if __name__ == "__main__":
