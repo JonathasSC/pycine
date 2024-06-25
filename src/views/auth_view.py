@@ -43,7 +43,12 @@ class AuthView(BaseView):
         }
 
     def start(self):
-        self.create_first_admin()
+        if self.admins_crud.get_count_admin() == 0:
+            self.terminal.clear()
+            self.printer.generic('Create first admin', line=True)
+            self.create_admin()
+
+        self.terminal.clear()
         self.printer.generic('Pycine - Your cinema in terminal', line=True)
         option: int = self.choose_an_option(self.list_options)
         self.execute_option(self.option_actions, option)
@@ -79,7 +84,8 @@ class AuthView(BaseView):
                         self.printer.error('Função de usuário desconhecida')
                         break
                 else:
-                    self.printer.error('Credenciais erradas, tente novamente...')
+                    self.printer.error(
+                        'Credenciais erradas, tente novamente...')
                     continue
 
             except ValidationError as e:
@@ -93,11 +99,9 @@ class AuthView(BaseView):
         person_data: dict = {}
 
         while True:
-            person_data['name'] = input('Nome: ')
-            person_data['email'] = input('Email: ')
-            person_data['password'] = input('Senha: ')
-
             try:
+                person_data: dict = self.inputs.input_person()
+
                 self.persons_crud.insert_person(person_data)
                 person_created: tuple = self.persons_crud.select_by_email(
                     person_data['email']
@@ -109,32 +113,6 @@ class AuthView(BaseView):
                 self.printer.error(f'Register error: {str(e)}')
             else:
                 self.printer.success('Registro realizado com sucesso!')
-
-    def create_first_admin(self):
-        if self.admins_crud.get_count_admin() == 0:
-            self.printer.generic(text='Create a first admin', line=True)
-            while True:
-                person_data: dict = {}
-
-                person_data['name'] = input('Nome: ')
-                person_data['email'] = input('Email: ')
-                person_data['password'] = input('Senha: ')
-
-                try:
-                    self.persons_crud.insert_person(person_data)
-                    person_created: tuple = self.persons_crud.select_by_email(
-                        person_data['email']
-                    )
-                    self.admins_crud.insert_admin(person_created[0])
-                except ValidationError as e:
-                    self.handlers.handle_validation_error(e)
-                except Exception as e:
-                    self.printer.error(f'Register error: {str(e)}', line=True)
-                else:
-                    self.printer.success(
-                        'Administrador criado com sucesso!', line=True
-                    )
-                    break
 
 
 if __name__ == "__main__":

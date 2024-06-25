@@ -30,6 +30,8 @@ class ClientView(BaseView):
         print('Comprando ticket...')
 
     def view_movie_poster(self):
+        self.terminal.clear()
+        self.printer.generic(text='Filmes em cartaz', line=True)
         try:
             movies_list: list = self.movies_crud.select_all_movies()
             for movie in movies_list:

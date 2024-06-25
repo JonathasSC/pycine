@@ -1,12 +1,21 @@
+from pydantic import ValidationError
+
 from src.utils.printer import Printer
 from src.utils.exceptions import ExceptionsHandlers
 from src.utils.terminal import Terminal
+from src.utils.inputs import Inputs
+
+from src.crud.admins_crud import AdminsCrud
+from src.crud.persons_crud import PersonsCrud
 
 
 class BaseView:
     def __init__(self):
+        self.inputs: Inputs = Inputs()
         self.printer: Printer = Printer()
         self.terminal: Terminal = Terminal()
+        self.admin_crud: AdminsCrud = AdminsCrud()
+        self.person_crud: PersonsCrud = PersonsCrud()
         self.handlers: ExceptionsHandlers = ExceptionsHandlers()
 
     def start(self):
@@ -39,3 +48,20 @@ class BaseView:
     def exit(self):
         self.terminal.clear()
         self.printer.generic('Saindo...', line=True)
+
+    def create_admin(self):
+        while True:
+            try:
+                person_data: dict = self.inputs.input_person()
+                self.person_crud.insert_person(person_data)
+                person: tuple = self.person_crud.select_by_email(
+                    person_data['email'])
+
+                self.admins_crud.insert_admin(person[0])
+                self.printer.success('Admin criado com sucesso!')
+                break
+
+            except ValidationError as e:
+                self.handlers.handle_validation_error(e)
+            except Exception as e:
+                self.printer.error(f'Erro ao criar admin: {str(e)}')
