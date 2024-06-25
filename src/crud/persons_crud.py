@@ -30,7 +30,6 @@ class PersonsCrud(BaseCrud):
 
             self.conn.cursor.execute(INSERT_PERSON, data_list)
             self.conn.connection.commit()
-
             return True
 
         except ValidationError as e:
@@ -41,24 +40,33 @@ class PersonsCrud(BaseCrud):
             print(f"Error inserting person: {e}")
             return False
 
-    def select_by_credentials(self, data: Dict[str, str]) -> Union[tuple, bool, Exception]:
+    def select_by_credentials(self, data: Dict[str, str]) -> Union[tuple, None]:
         try:
-            data_dict: Dict[str, Any] = dict(PersonLogin(**data))
+            data_dict = PersonLogin(**data)
 
-            person_email: str = data_dict['email']
-            person_unhashed_password: str = data_dict['password']
+            person_email: str = data_dict.email
+            person_unhashed_password: str = data_dict.password
+
             self.conn.cursor.execute(SELECT_BY_EMAIL, [person_email])
             person: Optional[tuple] = self.conn.cursor.fetchone()
+
+            if person:
+                person_hashed_password: str = person[3]
+                is_valid_password: bool = self.hash.verify_hash(
+                    person_unhashed_password,
+                    person_hashed_password
+                )
+
+                if is_valid_password:
+                    return person
+
+            return None
 
         except ValidationError as e:
             raise e
 
         except Exception as e:
             raise e
-
-        person_hashed_password: str = person[3]
-        if person and self.hash.verify_hash(person_unhashed_password, person_hashed_password):
-            return person
 
     def select_by_email(self, email: str) -> Optional[tuple]:
         try:
@@ -77,12 +85,16 @@ class PersonsCrud(BaseCrud):
             raise e
 
     def get_person_role(self, person_id: str):
-        self.conn.cursor.execute(SELECT_IS_ADMIN, [person_id])
-        if self.conn.cursor.fetchone():
-            return 'admin'
+        try:
+            self.conn.cursor.execute(SELECT_IS_ADMIN, [person_id])
+            if self.conn.cursor.fetchone():
+                return 'admin'
 
-        self.conn.cursor.execute(SELECT_IS_CLIENT, [person_id])
-        if self.conn.cursor.fetchone():
-            return 'client'
+            self.conn.cursor.execute(SELECT_IS_CLIENT, [person_id])
+            if self.conn.cursor.fetchone():
+                return 'client'
 
-        return None
+            return None
+        except Exception as e:
+            print(f"Error getting person role: {e}")
+            return None

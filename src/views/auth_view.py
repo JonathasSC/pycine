@@ -58,8 +58,7 @@ class AuthView(BaseView):
             person_data['password'] = input('Senha: ')
 
             try:
-                person: bool = self.persons_crud.select_by_credentials(
-                    person_data)
+                person = self.persons_crud.select_by_credentials(person_data)
 
                 if person:
                     person_id: str = person[0]
@@ -70,21 +69,23 @@ class AuthView(BaseView):
                         self.printer.success('Login realizado com sucesso')
                         admin_view = AdminView()
                         admin_view.start()
-                        return
+                        break
                     elif person_role == 'client':
                         self.printer.success('Login realizado com sucesso')
-                        self.client_view.start()
-                        return
+                        client_view = ClientView()
+                        client_view.start()
+                        break
                     else:
                         self.printer.error('Função de usuário desconhecida')
-                        continue
+                        break
                 else:
-                    self.printer.error('Credenciais inválidas.')
+                    self.printer.error('Credenciais erradas, tente novamente...')
+                    continue
 
             except ValidationError as e:
                 self.handlers.handle_validation_error(e)
             except Exception as e:
-                self.printer.error(f'Credenciais erradas, tente novamente...')
+                self.printer.error(f'Erro ao fazer login: {e}')
 
     def register(self):
         self.terminal.clear()

@@ -1,6 +1,8 @@
-from src.queries.admins_queries import INSERT_ADMIN, SELECT_COUNT_ADMINS
+from src.queries.admins_queries import SELECT_COUNT_ADMINS, INSERT_ADMIN
 from src.crud.base_crud import BaseCrud
 from src.database.conn import Connection
+from src.schemas.admin_schemas import AdminCreate
+from typing import Any, Dict, List
 
 
 class AdminsCrud(BaseCrud):
@@ -8,9 +10,16 @@ class AdminsCrud(BaseCrud):
         super().__init__(conn)
 
     def insert_admin(self, person_id: str) -> None:
-        admin_id: str = self.uuid.smaller_uuid()
-        self.conn.cursor.execute(INSERT_ADMIN, [admin_id, person_id])
+        data: dict = {}
+        data['admin_id'] = self.uuid.smaller_uuid()
+        data['person_id'] = person_id
+
+        data_dict: Dict[str, Any] = dict(AdminCreate(**data))
+        data_list: List[Any] = list(data_dict.values())
+
+        self.conn.cursor.execute(INSERT_ADMIN, data_list)
         self.conn.connection.commit()
+        return True
 
     def get_count_admin(self) -> int:
         try:
