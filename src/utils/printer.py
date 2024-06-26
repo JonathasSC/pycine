@@ -21,15 +21,15 @@ class Printer:
     def line(self, size, color: str = 'white') -> None:
         self.console.print(f'[{color}]{"="*size}[/{color}]')
 
-    def error(self, text: str, line: bool = False, timer: bool = False):
+    def error(self, text: str, line: bool = True, timer: bool = True):
         color: str = 'red'
         self.generic(text, color, line, timer)
 
-    def success(self, text: str, line: bool = False, timer: bool = False):
+    def success(self, text: str, line: bool = True, timer: bool = True):
         color: str = 'green'
         self.generic(text, color, line, timer)
 
-    def warning(self, text: str, line: bool = False, timer: bool = False):
+    def warning(self, text: str, line: bool = True, timer: bool = True):
         color: str = 'yellow'
         self.generic(text, color, line, timer)
 
