@@ -29,13 +29,12 @@ class BaseView:
                 option: int = int(input('Digite uma opção: '))
 
                 if option not in range(1, len(options) + 1):
-                    self.printer.error('Opção inválida, tente novamente')
-                    continue
+                    self.invalid_option()
 
                 return option
 
             except ValueError:
-                self.printer.error('Valor inválido, tente novamente')
+                self.invalid_value()
 
     def execute_option(self, options: dict, option: int):
         action = options.get(option, self.invalid_option)
@@ -44,6 +43,10 @@ class BaseView:
     def invalid_option(self):
         self.terminal.clear()
         self.printer.error('Opção inválida, tente novamente')
+
+    def invalid_value(self):
+        self.terminal.clear()
+        self.printer.error('Valor inválido, tente novamente')
 
     def exit(self):
         self.terminal.clear()

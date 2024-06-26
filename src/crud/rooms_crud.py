@@ -5,7 +5,7 @@ from src.database.conn import Connection
 from src.schemas.room_schemas import RoomCreate
 
 
-from src.queries.rooms_queries import SELECT_ALL_ROOMS, INSERT_ROOM
+from src.queries.rooms_queries import SELECT_ALL_ROOMS, INSERT_ROOM, UPDATE_ROOM
 
 
 class RoomsCrud(BaseCrud):
@@ -28,6 +28,17 @@ class RoomsCrud(BaseCrud):
             data_list: List[Any] = list(data_dict.values())
 
             self.conn.cursor.execute(INSERT_ROOM, data_list)
+            self.conn.connection.commit()
+            return True
+
+        except Exception as e:
+            raise e
+
+    def update_room(self, data: Dict[str, Any]):
+        try:
+            data_dict: Dict[str, Any] = dict(RoomCreate(**data))
+            data_list: List[Any] = list(data_dict.values())
+            self.conn.cursor.execute(UPDATE_ROOM, data_list)
             self.conn.connection.commit()
             return True
 

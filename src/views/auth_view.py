@@ -71,19 +71,23 @@ class AuthView(BaseView):
                         person_id)
 
                     if person_role == 'admin':
+                        self.terminal.clear()
                         self.printer.success('Login realizado com sucesso')
                         admin_view = AdminView()
                         admin_view.start()
                         break
                     elif person_role == 'client':
+                        self.terminal.clear()
                         self.printer.success('Login realizado com sucesso')
                         client_view = ClientView()
                         client_view.start()
                         break
                     else:
+                        self.terminal.clear()
                         self.printer.error('Função de usuário desconhecida')
                         break
                 else:
+                    self.terminal.clear()
                     self.printer.error(
                         'Credenciais erradas, tente novamente...')
                     continue
