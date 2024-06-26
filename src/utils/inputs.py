@@ -19,3 +19,13 @@ class Inputs:
         movie_data['synopsis'] = input('Synopsis: ')
 
         return movie_data
+
+    def input_room(self):
+        movie_data: dict = {}
+
+        movie_data['name'] = input('Nome: ')
+        movie_data['rows'] = int(input('Rows: '))
+        movie_data['columns'] = int(input('Columns: '))
+        movie_data['type'] = input('Type: ')
+
+        return movie_data

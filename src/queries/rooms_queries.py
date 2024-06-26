@@ -1,15 +1,15 @@
 CREATE_ROOMS_TABLE = """
 CREATE TABLE IF NOT EXISTS rooms (
-    room_id INTEGER PRIMARY KEY,
-    name VARCHAR(10),
+    room_id TEXT PRIMARY KEY,
+    name TEXT,
     rows INTEGER,
     columns INTEGER,
-    type VARCHAR(25) CHECK (type in ('normal', 'dubbed', 'subtitled', 'vip'))
+    type TEXT CHECK (type in ('normal', 'dubbed', 'subtitled', 'vip'))
 );
 """
 
 INSERT_ROOM = """
-INSERT INTO rooms (name, type, front_seats, middle_seats, back_seats)
+INSERT INTO rooms (room_id, name, rows, columns, type)
 VALUES (?, ?, ?, ?, ?);
 """
 
@@ -19,6 +19,10 @@ SELECT * FROM rooms WHERE room_id = ?;
 
 SELECT_ROOM_BY_TYPE = """
 SELECT * FROM rooms WHERE type = ?;
+"""
+
+SELECT_ALL_ROOMS = """
+SELECT * FROM rooms;
 """
 
 UPDATE_ROOM = """

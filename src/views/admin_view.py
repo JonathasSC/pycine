@@ -1,11 +1,10 @@
-from pydantic import ValidationError
-
 from src.views.base_view import BaseView
 from src.crud.movies_crud import MoviesCrud
 from src.crud.admins_crud import AdminsCrud
 from src.crud.persons_crud import PersonsCrud
 
-from tabulate import tabulate
+from src.views.movie_view import MovieView
+from src.views.room_view import RoomView
 
 
 class AdminView(BaseView):
@@ -16,17 +15,20 @@ class AdminView(BaseView):
         self.admins_crud: AdminsCrud = AdminsCrud()
         self.person_crud: PersonsCrud = PersonsCrud()
 
+        self.movie_view: MovieView = MovieView()
+        self.room_view: RoomView = RoomView()
+
         self.list_options: list = [
             'Adicionar novo admin',
-            'Adicionar novo filme',
-            'Visualizar filmes',
+            'Gerenciar filmes',
+            'Gerenciar salas',
             'Sair'
         ]
 
         self.option_actions = {
             1: self.create_new_admin,
-            2: self.create_new_movie,
-            3: self.view_movies,
+            2: self.movie_view.start,
+            3: self.room_view.start,
             4: self.exit
         }
 
@@ -46,21 +48,3 @@ class AdminView(BaseView):
             self.create_admin()
         except Exception as e:
             self.printer.error(e)
-
-    def create_new_movie(self):
-        try:
-            self.terminal.clear()
-            self.printer.generic('Enter new movie fields', line=True)
-            movie_data: dict = self.inputs.input_movie()
-            self.movies_crud.insert_movie(movie_data)
-        except Exception as e:
-            self.printer.error(e)
-
-    def view_movies(self):
-        try:
-            self.terminal.clear()
-            header = ['ID', 'NAME', 'DURATION', 'SYNOPSIS']
-            movies_list: list = self.movies_crud.select_all_movies()
-            self.printer.display_table(header, movies_list)
-        except Exception as e:
-            print(f'Erro ao mostrar filmes {e}')

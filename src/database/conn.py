@@ -3,6 +3,7 @@ from src.queries.persons_queries import CREATE_PERSONS_TABLE
 from src.queries.clients_queries import CREATE_CLIENTS_TABLE
 from src.queries.admins_queries import CREATE_ADMINS_TABLE
 from src.queries.movies_queries import CREATE_MOVIES_TABLE
+from src.queries.rooms_queries import CREATE_ROOMS_TABLE
 
 
 class Connection:
@@ -28,4 +29,5 @@ class Connection:
         self.cursor.execute(CREATE_CLIENTS_TABLE)
         self.cursor.execute(CREATE_ADMINS_TABLE)
         self.cursor.execute(CREATE_MOVIES_TABLE)
+        self.cursor.execute(CREATE_ROOMS_TABLE)
         self.connection.commit()
