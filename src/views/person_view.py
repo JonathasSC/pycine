@@ -27,24 +27,55 @@ class PersonView(BaseView):
             self.printer.error(e)
 
     def manage_admin(self):
-        while True:
-            def add_admin():
+        def get_all_admins(admin_crud=self.admin_crud):
+            while True:
                 try:
                     self.terminal.clear()
-                    self.printer.generic(
-                        'Coloque as credenciais do novo admin', line=True)
-                    self.create_admin()
+                    header = [
+                        'PERSON ID',
+                        'ADMIN ID',
+                        'NAME',
+                        'EMAIL',
+                        'PASSWORD'
+                    ]
+                    admin_list: list = admin_crud.select_all_admins()
+                    self.printer.display_table(header, admin_list)
+
+                    input('Voltar? [press enter]')
+                    break
+
                 except Exception as e:
-                    self.printer.error(e)
+                    self.terminal.clear()
+                    self.printer.error(f'Erro ao mostrar admins {e}')
+                    break
+
+            self.start()
+
+        def del_admin(admin_crud=self.admin_crud):
+            while True:
+                try:
+                    person_id: str = input('Person ID: ')
+                    admin_crud.delete_admin(person_id)
+                    self.printer.success('Admin deletado com sucesso!')
+                    break
+                except Exception as e:
+                    self.printer.error(f'Erro ao criar sala: {e}')
+                    break
+
+            self.start()
+
+        while True:
 
             manage_options: list = [
-                'Adicionar admin',
+                'Listar admins',
+                'Deletar admin',
                 'Sair'
             ]
 
             manage_actions = {
-                1: add_admin,
-                2: self.exit,
+                1: get_all_admins,
+                2: del_admin,
+                3: self.exit,
             }
 
             try:

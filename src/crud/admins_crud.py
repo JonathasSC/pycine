@@ -1,4 +1,9 @@
-from src.queries.admins_queries import SELECT_COUNT_ADMINS, INSERT_ADMIN
+from src.queries.admins_queries import (
+    INSERT_ADMIN,
+    DELETE_ADMIN,
+    SELECT_COUNT_ADMINS,
+    SELECT_ADMIN_IN_PERSON,
+)
 from src.crud.base_crud import BaseCrud
 from src.database.conn import Connection
 from src.schemas.admin_schemas import AdminCreate
@@ -10,16 +15,37 @@ class AdminsCrud(BaseCrud):
         super().__init__(conn)
 
     def insert_admin(self, person_id: str) -> None:
-        data: dict = {}
-        data['admin_id'] = self.uuid.smaller_uuid()
-        data['person_id'] = person_id
+        try:
+            data: dict = {}
+            data['admin_id'] = self.uuid.smaller_uuid()
+            data['person_id'] = person_id
 
-        data_dict: Dict[str, Any] = dict(AdminCreate(**data))
-        data_list: List[Any] = list(data_dict.values())
+            data_dict: Dict[str, Any] = dict(AdminCreate(**data))
+            data_list: List[Any] = list(data_dict.values())
 
-        self.conn.cursor.execute(INSERT_ADMIN, data_list)
-        self.conn.connection.commit()
-        return True
+            self.conn.cursor.execute(INSERT_ADMIN, data_list)
+            self.conn.connection.commit()
+            return True
+
+        except Exception as e:
+            raise e
+
+    def delete_admin(self, admin_id: str) -> bool:
+        try:
+            self.conn.cursor.execute(DELETE_ADMIN, [admin_id])
+            self.conn.connection.commit()
+            return True
+        except Exception as e:
+            raise e
+
+    def select_all_admins(self) -> list:
+        try:
+            self.conn.cursor.execute(SELECT_ADMIN_IN_PERSON)
+            admin_list: list = self.conn.cursor.fetchall()
+            return admin_list
+
+        except Exception as e:
+            raise e
 
     def get_count_admin(self) -> int:
         try:

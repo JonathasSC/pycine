@@ -14,6 +14,10 @@ SELECT_ADMIN_BY_ID = """
 SELECT * FROM admins WHERE admin_id = ?;
 """
 
+SELECT_ALL_ADMINS = """
+SELECT * FROM admins;
+"""
+
 SELECT_ADMIN_BY_PERSON_ID = """
 SELECT * FROM admins WHERE person_id = ?;
 """
@@ -24,4 +28,11 @@ DELETE FROM admins WHERE admin_id = ?;
 
 SELECT_COUNT_ADMINS = """
 SELECT COUNT(*) FROM admins;
+"""
+
+
+SELECT_ADMIN_IN_PERSON = """
+SELECT p.person_id, a.admin_id, p.name, p.email, p.password
+FROM persons p
+JOIN admins a ON p.person_id = a.person_id;
 """
