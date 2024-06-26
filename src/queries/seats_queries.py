@@ -1,12 +1,12 @@
 CREATE_SEATS_TABLE = """
 CREATE TABLE IF NOT EXISTS seats (
-    seat_id INTEGER PRIMARY KEY AUTOINCREMENT,
-    room_id INTEGER,
+    seat_id TEXT PRIMARY KEY AUTOINCREMENT,
+    room_id TEXT,
 
     line TEXT,
     column TEXT,
 
-    state VARCHAR(25) CHECK (state in ('reserved', 'sold', 'available')),
+    state TEXT CHECK (state in ('reserved', 'sold', 'available')),
     FOREIGN KEY (room_id) REFERENCES rooms(id)
 );
 """

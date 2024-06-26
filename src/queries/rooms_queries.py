@@ -27,7 +27,7 @@ SELECT * FROM rooms;
 
 UPDATE_ROOM = """
 UPDATE rooms
-SET front_seats = ?, middle_seats = ?, back_seats = ?
+SET name TEXT = ?, rows = ?, columns = ?, type = ?
 WHERE room_id = ?;
 """
 
