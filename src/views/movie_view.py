@@ -45,10 +45,18 @@ class MovieView(BaseView):
             self.printer.error(e)
 
     def list_movies(self):
-        try:
-            self.terminal.clear()
-            header = ['ID', 'NAME', 'DURATION', 'SYNOPSIS']
-            movies_list: list = self.movies_crud.select_all_movies()
-            self.printer.display_table(header, movies_list)
-        except Exception as e:
-            print(f'Erro ao mostrar filmes {e}')
+        while True:
+            try:
+                self.terminal.clear()
+                header = ['ID', 'NAME', 'DURATION', 'SYNOPSIS']
+                movies_list: list = self.movies_crud.select_all_movies()
+                self.printer.display_table(header, movies_list)
+
+                input('Voltar? [press enter]')
+                break
+
+            except Exception as e:
+                print(f'Erro ao mostrar filmes {e}')
+                break
+
+        self.start()
