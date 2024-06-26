@@ -31,7 +31,8 @@ class TestPersonCrud:
 
     def test_select_by_email(self, test_data: dict):
         crud: PersonsCrud = PersonsCrud(self.conn)
-        crud.insert_person(test_data)
-
         person = crud.select_by_email(test_data['email'])
-        assert person is not None
+        assert person[0] is not None
+        assert person[1] == test_data['name']
+        assert person[2] == test_data['email']
+        assert person[3] is not None

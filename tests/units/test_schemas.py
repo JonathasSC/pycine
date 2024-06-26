@@ -6,7 +6,7 @@ from src.utils.uuid import UUID
 from faker import Faker
 
 
-class TestPersonCreate:
+class TestPersonSchema:
 
     @pytest.fixture(scope='class')
     def test_data(self):
@@ -38,7 +38,3 @@ class TestPersonCreate:
     def test_invalid_person_data(self, invalid_data):
         with pytest.raises(ValidationError):
             PersonCreate(**invalid_data)
-
-
-if __name__ == '__main__':
-    pytest.main()
