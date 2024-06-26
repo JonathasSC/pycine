@@ -1,6 +1,5 @@
 from src.views.base_view import BaseView
 from src.crud.rooms_crud import RoomsCrud
-from time import sleep
 
 
 class RoomView(BaseView):
@@ -36,12 +35,9 @@ class RoomView(BaseView):
                 self.printer.generic('Enter new room fields', line=True)
                 room_data: dict = self.inputs.input_room()
                 self.rooms_crud.insert_room(room_data)
-                self.printer.success(
-                    text='Sala adicionada com sucesso!',
-                    line=True,
-                    timer=True
-                )
+                self.printer.success('Sala adicionada com sucesso!')
                 break
+
             except Exception as e:
                 self.printer.error(f'Erro ao criar sala: {e}')
                 break
@@ -55,9 +51,26 @@ class RoomView(BaseView):
                 header = ['ID', 'NAME', 'ROWS', 'COLUMNS', 'TYPE']
                 rooms_list: list = self.rooms_crud.select_all_rooms()
                 self.printer.display_table(header, rooms_list)
+
+                input('Voltar? [press enter]')
                 break
+
             except Exception as e:
-                self.printer.error(f'Erro ao mostrar filmes {e}')
+                self.terminal.clear()
+                self.printer.error(f'Erro ao mostrar salas {e}')
                 break
 
         self.start()
+
+    def put_room(self):
+        while True:
+            try:
+                self.terminal.clear()
+                self.printer.generic('Enter new room fields', line=True)
+                room_data: dict = self.inputs.input_room()
+                room_data['room_id'] = input('Room id: ')
+
+            except Exception as e:
+                self.terminal.clear()
+                self.printer.error(f'Erro ao atualizar sala {e}')
+                break
