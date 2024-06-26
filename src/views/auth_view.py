@@ -45,22 +45,20 @@ class AuthView(BaseView):
     def start(self):
         if self.admins_crud.get_count_admin() == 0:
             self.terminal.clear()
-            self.printer.generic('Create first admin', line=True)
+            self.printer.generic('Crie o primeiro admin:', line=True)
             self.create_admin()
 
         self.terminal.clear()
-        self.printer.generic('Pycine - Your cinema in terminal', line=True)
+        self.printer.generic('Pycine - seu cinema pelo terminal', line=True)
         option: int = self.choose_an_option(self.list_options)
         self.execute_option(self.option_actions, option)
 
     def login(self):
         self.terminal.clear()
-        self.printer.generic('Welcome to the pycine!', line=True)
-        person_data: dict = {}
+        self.printer.generic('Bem-vindo á Pycine!', line=True)
 
         while True:
-            person_data['email'] = input('Email: ')
-            person_data['password'] = input('Senha: ')
+            person_data: dict = self.inputs.input_login()
 
             try:
                 person = self.persons_crud.select_by_credentials(person_data)
@@ -70,22 +68,10 @@ class AuthView(BaseView):
                     person_role: str = self.persons_crud.get_person_role(
                         person_id)
 
-                    if person_role == 'admin':
-                        self.terminal.clear()
-                        self.printer.success('Login realizado com sucesso')
-                        admin_view = AdminView()
-                        admin_view.start()
-                        break
-                    elif person_role == 'client':
-                        self.terminal.clear()
-                        self.printer.success('Login realizado com sucesso')
-                        client_view = ClientView()
-                        client_view.start()
-                        break
-                    else:
-                        self.terminal.clear()
-                        self.printer.error('Função de usuário desconhecida')
-                        break
+                    self.terminal.clear()
+                    self.printer.success('Login realizado com sucesso')
+                    return person_role
+
                 else:
                     self.terminal.clear()
                     self.printer.error(
@@ -99,7 +85,7 @@ class AuthView(BaseView):
 
     def register(self):
         self.terminal.clear()
-        self.printer.generic('Create your account now!', line=True)
+        self.printer.generic('Crie sua conta agora!', line=True)
         person_data: dict = {}
 
         while True:
@@ -114,6 +100,6 @@ class AuthView(BaseView):
             except ValidationError as e:
                 self.handlers.handle_validation_error(e)
             except Exception as e:
-                self.printer.error(f'Register error: {str(e)}')
+                self.printer.error(f'Erro ao registrar-se: {str(e)}')
             else:
                 self.printer.success('Registro realizado com sucesso!')

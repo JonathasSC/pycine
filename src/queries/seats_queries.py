@@ -1,6 +1,6 @@
 CREATE_SEATS_TABLE = """
 CREATE TABLE IF NOT EXISTS seats (
-    seat_id TEXT PRIMARY KEY AUTOINCREMENT,
+    seat_id TEXT PRIMARY KEY,
     room_id TEXT,
 
     line TEXT,

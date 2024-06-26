@@ -2,6 +2,14 @@ class Inputs:
     def __init__(self) -> None:
         pass
 
+    def input_login(self):
+        person_data: dict = {}
+
+        person_data['email'] = input('Email: ')
+        person_data['password'] = input('Senha: ')
+
+        return person_data
+
     def input_person(self):
         person_data: dict = {}
 

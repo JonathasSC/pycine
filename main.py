@@ -1,8 +1,8 @@
-from src.views.auth_view import AuthView
+from src.views.home_view import HomeView
 
 
 def main():
-    AuthView().start()
+    HomeView().start()
 
 
 if __name__ == '__main__':
