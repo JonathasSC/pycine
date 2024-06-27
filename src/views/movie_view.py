@@ -49,7 +49,7 @@ class MovieView(BaseView):
     def list_movies(self):
         try:
             self.terminal.clear()
-            header = ['ID', 'NAME', 'DURATION', 'SYNOPSIS']
+            header = ['ID', 'NAME', 'GENRE', 'DURATION', 'SYNOPSIS']
             movies_list: list = self.movies_crud.select_all_movies()
             self.printer.display_table(header, movies_list)
             input('Voltar? [press enter]')

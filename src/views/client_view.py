@@ -49,9 +49,15 @@ class ClientView(BaseView):
         self.printer.generic(text='Filmes em cartaz', line=True)
         try:
             movies_list: list = self.movies_crud.select_all_movies()
-            for movie in movies_list:
-                print(movie[1])
+            headers: list = ['NAME', 'GENRE', 'TIME', 'SYNOPSIS']
+            movies_compacted: list = [[
+                movie[1],
+                movie[2],
+                movie[3],
+                movie[4]
+            ] for movie in movies_list]
 
+            self.printer.display_table(headers, movies_compacted)
             input('Voltar? [press enter]')
             self.start()
 
