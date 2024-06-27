@@ -25,13 +25,15 @@ class AdminView(BaseView):
         self.list_options: list = [
             'Fluxo publico',
             'Fluxo administrativo',
-            'Sair'
+            'Logout',
+            'Sair',
         ]
 
         self.option_actions = {
             1: self.public_flow,
             2: self.admin_flow,
-            3: self.exit
+            3: self.logout,
+            4: self.exit
         }
 
     def start(self):

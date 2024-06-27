@@ -4,6 +4,7 @@ from src.utils.printer import Printer
 from src.utils.exceptions import ExceptionsHandlers
 from src.utils.terminal import Terminal
 from src.utils.inputs import Inputs
+from src.utils.token import Token
 
 from src.crud.admins_crud import AdminsCrud
 from src.crud.persons_crud import PersonsCrud
@@ -17,6 +18,7 @@ class BaseView:
         self.admin_crud: AdminsCrud = AdminsCrud()
         self.person_crud: PersonsCrud = PersonsCrud()
         self.handlers: ExceptionsHandlers = ExceptionsHandlers()
+        self.token: Token = Token()
 
     def start(self):
         raise NotImplementedError(
@@ -51,6 +53,11 @@ class BaseView:
     def exit(self):
         self.terminal.clear()
         self.printer.generic('Saindo...', line=True)
+
+    def logout(self):
+        self.terminal.clear()
+        self.printer.generic('Saindo...', line=True, timer=True)
+        self.token.delete_token()
 
     def create_admin(self):
         while True:
