@@ -34,13 +34,11 @@ class BaseView:
 
                 if option not in range(1, len(options) + 1):
                     self.invalid_option()
-                    self.choose_an_option(options, text)
 
                 return option
 
-            except ValueError as e:
+            except ValueError:
                 self.invalid_value()
-                self.choose_an_option(options, text)
 
     def execute_option(self, options: dict, option: int):
         action = options.get(option, self.invalid_option)
@@ -58,8 +56,7 @@ class BaseView:
 
     def exit(self):
         self.terminal.clear()
-        self.printer.generic('Saindo...', line=True)
-        self.terminal.clear()
+        self.printer.generic('Saindo...', line=True, timer=True)
 
     def logout(self):
         self.terminal.clear()

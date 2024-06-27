@@ -33,7 +33,6 @@ class AuthView(BaseView):
         self.token_manager: Token = Token()
 
         self.list_options: list = ['Login', 'Register', 'Sair']
-        self.option_actions = {1: self.login, 2: self.register, 3: self.exit}
 
     def start(self):
         while True:
@@ -44,11 +43,20 @@ class AuthView(BaseView):
                     self.create_admin()
 
                 self.terminal.clear()
-                self.printer.generic(
-                    'Pycine - seu cinema pelo terminal', line=True)
+                self.printer.generic('Pycine: cinema pelo terminal', line=True)
                 option: int = self.choose_an_option(self.list_options)
-                self.execute_option(self.option_actions, option)
-                break
+
+                match option:
+                    case 1:
+                        self.login()
+                    case 2:
+                        self.register()
+                    case 3:
+                        self.exit()
+                        return
+                    case _:
+                        self.invalid_option()
+                        self.start()
 
             except Exception as e:
                 self.printer.error(
@@ -111,8 +119,3 @@ class AuthView(BaseView):
         if person_id:
             return self.persons_crud.get_person_role(person_id)
         return None
-
-    def exit(self):
-        self.token_manager.delete_token()
-        self.printer.generic('Você saiu com sucesso!', line=True)
-        self.terminal.clear()
