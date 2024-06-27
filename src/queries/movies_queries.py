@@ -1,15 +1,16 @@
-CREATE_MOVIES_TABLE="""
+CREATE_MOVIES_TABLE = """
 CREATE TABLE IF NOT EXISTS movies (
     movie_id TEXT PRIMARY KEY,
     name TEXT,
+    genre TEXT,
     duration TEXT,
     synopsis TEXT
 );
 """
 
 INSERT_MOVIE = """
-INSERT INTO movies (movie_id, name, duration, synopsis) 
-VALUES (?, ?, ?, ?);
+INSERT INTO movies (movie_id, name,  genre, duration, synopsis) 
+VALUES (?, ?, ?, ?, ?);
 """
 
 SELECT_ALL_MOVIES = """
@@ -17,14 +18,14 @@ SELECT * FROM movies;
 """
 
 SELECT_MOVIE_BY_ID = """
-SELECT movie_id, name, duration, synopsis 
+SELECT movie_id, name, genre, duration, synopsis 
 FROM movies 
 WHERE movie_id = ?;
 """
 
 UPDATE_MOVIE = """
 UPDATE movies 
-SET name = ?, duration = ?, synopsis = ? 
+SET name = ?, genre = ?, duration = ?, synopsis = ? 
 WHERE movie_id = ?;
 """
 

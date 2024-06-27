@@ -16,7 +16,6 @@ class AdminView(BaseView):
         self.movies_crud: MoviesCrud = MoviesCrud()
         self.admins_crud: AdminsCrud = AdminsCrud()
         self.person_crud: PersonsCrud = PersonsCrud()
-
         self.person_view: PersonView = PersonView()
         self.client_view: ClientView = ClientView()
         self.movie_view: MovieView = MovieView()
@@ -37,36 +36,40 @@ class AdminView(BaseView):
         }
 
     def start(self):
-        try:
-            self.terminal.clear()
-            self.printer.generic('Escolha uma opção', line=True)
-            option: int = self.choose_an_option(self.list_options)
-            self.execute_option(self.option_actions, option)
-        except Exception as e:
-            self.printer.error(e)
+        while True:
+            try:
+                self.terminal.clear()
+                option: int = self.choose_an_option(self.list_options)
+                self.execute_option(self.option_actions, option)
+
+            except Exception as e:
+                self.printer.error(f'Erro ao iniciar tela de admin: {e}')
 
     def public_flow(self):
-        self.client_view.start()
+        client_view = ClientView()
+        client_view.start()
 
     def admin_flow(self):
+        self.room_view.set_before_view(self)
 
         admin_options: list = [
             'Gerenciar pessoas',
             'Gerenciar filmes',
             'Gerenciar salas',
+            'Voltar',
             'Sair'
         ]
 
         admin_actions = {
             1: self.person_view.start,
-            3: self.movie_view.start,
-            2: self.room_view.start,
-            4: self.exit
+            2: self.movie_view.start,
+            3: self.room_view.start,
+            4: self.start,
+            5: self.exit
         }
 
         try:
             self.terminal.clear()
-            self.printer.generic('Escolha uma opção', line=True)
             option: int = self.choose_an_option(admin_options)
             self.execute_option(admin_actions, option)
         except Exception as e:

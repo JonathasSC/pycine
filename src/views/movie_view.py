@@ -10,7 +10,7 @@ class MovieView(BaseView):
         self.list_options: list = [
             'Adicionar novo filme',
             'Ver lista de filmes',
-            'Sair'
+            'Sair',
         ]
 
         self.option_actions = {
@@ -20,43 +20,41 @@ class MovieView(BaseView):
         }
 
     def start(self):
-        try:
-            self.terminal.clear()
-            self.printer.generic('Choice a option', line=True)
-            option: int = self.choose_an_option(self.list_options)
-            self.execute_option(self.option_actions, option)
-        except Exception as e:
-            self.printer.error(e)
+        while True:
+            try:
+                self.terminal.clear()
+                self.printer.generic('Choice a option', line=True)
+                option: int = self.choose_an_option(self.list_options)
+                self.execute_option(self.option_actions, option)
+                break
+
+            except Exception as e:
+                self.printer.error(f'Erro ao iniciar movie view {e}')
+                self.exit()
 
     def create_movie(self):
         try:
             self.terminal.clear()
             self.printer.generic('Enter new movie fields', line=True)
             movie_data: dict = self.inputs.input_movie()
+            print(movie_data)
             self.movies_crud.insert_movie(movie_data)
-
-            self.printer.success(
-                text='Filme adicionado com sucesso!',
-                line=True,
-                timer=True
-            )
+            self.printer.success('Filme adicionado com sucesso!')
+            self.start()
 
         except Exception as e:
             self.printer.error(e)
+            self.start()
 
     def list_movies(self):
-        while True:
-            try:
-                self.terminal.clear()
-                header = ['ID', 'NAME', 'DURATION', 'SYNOPSIS']
-                movies_list: list = self.movies_crud.select_all_movies()
-                self.printer.display_table(header, movies_list)
+        try:
+            self.terminal.clear()
+            header = ['ID', 'NAME', 'DURATION', 'SYNOPSIS']
+            movies_list: list = self.movies_crud.select_all_movies()
+            self.printer.display_table(header, movies_list)
+            input('Voltar? [press enter]')
+            self.start()
 
-                input('Voltar? [press enter]')
-                break
-
-            except Exception as e:
-                print(f'Erro ao mostrar filmes {e}')
-                break
-
-        self.start()
+        except Exception as e:
+            print(f'Erro ao mostrar filmes: {e}')
+            self.start()

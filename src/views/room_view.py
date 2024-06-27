@@ -6,27 +6,39 @@ class RoomView(BaseView):
     def __init__(self):
         super().__init__()
         self.rooms_crud: RoomsCrud = RoomsCrud()
+        self.before_view = None
 
         self.list_options: list = [
             'Adicionar nova sala',
             'Ver lista de salas',
-            'Sair'
+            'Voltar'
         ]
 
         self.option_actions = {
             1: self.create_room,
             2: self.list_rooms,
-            3: self.exit
+            3: self.back_to_admin
         }
 
+    def set_before_view(self, view):
+        self.before_view = view
+
     def start(self):
-        try:
-            self.terminal.clear()
-            self.printer.generic('Choice a option', line=True)
-            option: int = self.choose_an_option(self.list_options)
-            self.execute_option(self.option_actions, option)
-        except Exception as e:
-            self.printer.error(f'Erro ao iniciar tela de salas: {e}')
+        while True:
+            try:
+                self.terminal.clear()
+                self.printer.generic('Choice a option', line=True)
+                option: int = self.choose_an_option(self.list_options)
+                self.execute_option(self.option_actions, option)
+                break
+
+            except Exception as e:
+                self.printer.error(f'Erro ao iniciar tela de salas: {e}')
+
+    def back_to_admin(self):
+        if self.admin_view:
+            self.admin_view.start()
+        self.printer.error('AdminView não definida')
 
     def create_room(self):
         while True:

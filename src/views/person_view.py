@@ -7,24 +7,28 @@ class PersonView(BaseView):
 
         self.list_options: list = [
             'Gerenciar Admins',
-            'Gerenciar Persons',
-            'Gerenciar Clients',
+            # 'Gerenciar Persons',
+            # 'Gerenciar Clients',
+            # 'Voltar',
             'Sair'
         ]
 
         self.option_actions = {
             1: self.manage_admin,
+            # 2: self.back_to,
             3: self.exit
         }
 
     def start(self):
-        try:
-            self.terminal.clear()
-            self.printer.generic('Escolha uma opção', line=True)
-            option: int = self.choose_an_option(self.list_options)
-            self.execute_option(self.option_actions, option)
-        except Exception as e:
-            self.printer.error(e)
+        while True:
+            try:
+                self.terminal.clear()
+                option: int = self.choose_an_option(self.list_options)
+                self.execute_option(self.option_actions, option)
+                break
+
+            except Exception as e:
+                self.printer.error(e)
 
     def manage_admin(self):
         def get_all_admins(admin_crud=self.admin_crud):
@@ -80,7 +84,6 @@ class PersonView(BaseView):
 
             try:
                 self.terminal.clear()
-                self.printer.generic('Escolha uma opção', line=True)
                 option: int = self.choose_an_option(manage_options)
                 self.execute_option(manage_actions, option)
 

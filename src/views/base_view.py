@@ -24,19 +24,23 @@ class BaseView:
         raise NotImplementedError(
             "Subclasses should implement start() method.")
 
-    def choose_an_option(self, options: list):
+    def choose_an_option(self, options: list, text: str = 'Escolha uma opção'):
         while True:
             try:
+                self.terminal.clear()
+                self.printer.generic(text, line=True)
                 self.printer.option_list(options)
                 option: int = int(input('Digite uma opção: '))
 
                 if option not in range(1, len(options) + 1):
                     self.invalid_option()
+                    self.choose_an_option(options, text)
 
                 return option
 
-            except ValueError:
+            except ValueError as e:
                 self.invalid_value()
+                self.choose_an_option(options, text)
 
     def execute_option(self, options: dict, option: int):
         action = options.get(option, self.invalid_option)
@@ -45,19 +49,23 @@ class BaseView:
     def invalid_option(self):
         self.terminal.clear()
         self.printer.error('Opção inválida, tente novamente')
+        self.terminal.clear()
 
     def invalid_value(self):
         self.terminal.clear()
         self.printer.error('Valor inválido, tente novamente')
+        self.terminal.clear()
 
     def exit(self):
         self.terminal.clear()
         self.printer.generic('Saindo...', line=True)
+        self.terminal.clear()
 
     def logout(self):
         self.terminal.clear()
         self.printer.generic('Saindo...', line=True, timer=True)
         self.token.delete_token()
+        self.terminal.clear()
 
     def create_admin(self):
         while True:

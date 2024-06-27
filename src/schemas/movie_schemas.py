@@ -8,6 +8,7 @@ class MovieBase(BaseModel):
 
 class MovieCreate(MovieBase):
     name: str
+    genre: str
     duration: str
     synopsis: Optional[str]
 

@@ -36,15 +36,23 @@ class AuthView(BaseView):
         self.option_actions = {1: self.login, 2: self.register, 3: self.exit}
 
     def start(self):
-        if self.admins_crud.get_count_admin() == 0:
-            self.terminal.clear()
-            self.printer.generic('Crie o primeiro admin:', line=True)
-            self.create_admin()
+        while True:
+            try:
+                if self.admins_crud.get_count_admin() == 0:
+                    self.terminal.clear()
+                    self.printer.generic('Crie o primeiro admin:', line=True)
+                    self.create_admin()
 
-        self.terminal.clear()
-        self.printer.generic('Pycine - seu cinema pelo terminal', line=True)
-        option: int = self.choose_an_option(self.list_options)
-        self.execute_option(self.option_actions, option)
+                self.terminal.clear()
+                self.printer.generic(
+                    'Pycine - seu cinema pelo terminal', line=True)
+                option: int = self.choose_an_option(self.list_options)
+                self.execute_option(self.option_actions, option)
+                break
+
+            except Exception as e:
+                self.printer.error(
+                    f'Erro ao iniciar tela de autenticação: {e}')
 
     def login(self):
         self.terminal.clear()
@@ -99,9 +107,9 @@ class AuthView(BaseView):
                 break
 
     def get_role_from_token(self, token: str) -> Optional[str]:
-        user_id = self.token_manager.person_role_from_token(token)
-        if user_id:
-            return self.persons_crud.get_person_role(user_id)
+        person_id = self.token_manager.person_id_from_token(token)
+        if person_id:
+            return self.persons_crud.get_person_role(person_id)
         return None
 
     def exit(self):

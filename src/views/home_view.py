@@ -29,22 +29,31 @@ class HomeView(BaseView):
         }
 
     def start(self):
-        if self.admins_crud.get_count_admin() == 0:
-            self.terminal.clear()
-            self.printer.generic('Create first admin', line=True)
-            self.create_admin()
+        while True:
+            try:
+                if self.admins_crud.get_count_admin() == 0:
+                    self.terminal.clear()
+                    self.printer.generic('Create first admin', line=True)
+                    self.create_admin()
 
-        token = self.token_manager.load_token()
-        if token:
-            person_role = self.auth_view.get_role_from_token(token)
-            if person_role:
-                self.redirect_to_role(person_role)
-                return
+                token = self.token_manager.load_token()
+                if token:
+                    person_role = self.auth_view.get_role_from_token(token)
+                    if person_role:
+                        self.redirect_to_role(person_role)
+                        return
 
-        self.terminal.clear()
-        self.printer.generic('Pycine - Your cinema in terminal', line=True)
-        option: int = self.choose_an_option(self.list_options)
-        self.execute_option(self.option_actions, option)
+                self.terminal.clear()
+                option: int = self.choose_an_option(
+                    options=self.list_options,
+                    text='Pycine - Your cinema in terminal'
+                )
+
+                self.execute_option(self.option_actions, option)
+                break
+
+            except Exception as e:
+                self.printer.error(f'Erro ao iniciar Inicial {e}')
 
     def redirect_before_login(self):
         person_role: str = self.auth_view.login()

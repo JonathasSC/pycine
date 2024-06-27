@@ -23,6 +23,7 @@ class Inputs:
         movie_data: dict = {}
 
         movie_data['name'] = input('Nome: ')
+        movie_data['genre'] = input('Genre: ')
         movie_data['duration'] = input('Duration: ')
         movie_data['synopsis'] = input('Synopsis: ')
 

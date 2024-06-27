@@ -1,5 +1,6 @@
 from src.views.base_view import BaseView
 from src.crud.movies_crud import MoviesCrud
+from src.crud.sessions_crud import SessionsCrud
 
 
 class ClientView(BaseView):
@@ -7,6 +8,7 @@ class ClientView(BaseView):
         super().__init__()
 
         self.movies_crud: MoviesCrud = MoviesCrud()
+        self.session_crud: SessionsCrud = SessionsCrud()
 
         self.list_options: list = [
             'Comprar ingresso',
@@ -21,13 +23,26 @@ class ClientView(BaseView):
         }
 
     def start(self):
-        self.terminal.clear()
-        self.printer.generic('Choice a option', line=True)
-        option: int = self.choose_an_option(self.list_options)
-        self.execute_option(self.option_actions, option)
+        while True:
+            try:
+                self.terminal.clear()
+                option: int = self.choose_an_option(self.list_options)
+                self.execute_option(self.option_actions, option)
+                break
+
+            except Exception as e:
+                self.printer.error(f'Erro ao iniciar tela publica: {e}')
 
     def buy_ticket(self):
-        print('Comprando ticket...')
+        try:
+            token = self.token.load_token()
+            self.printer.generic(text=token, timer=True)
+            sessions_list: list = self.session_crud.select_all_sessions()
+            self.choose_an_option(sessions_list)
+
+        except Exception as e:
+            self.printer.error(e)
+            self.buy_ticket()
 
     def view_movie_poster(self):
         self.terminal.clear()
@@ -36,5 +51,9 @@ class ClientView(BaseView):
             movies_list: list = self.movies_crud.select_all_movies()
             for movie in movies_list:
                 print(movie[1])
+
+            input('Voltar? [press enter]')
+            self.start()
+
         except Exception as e:
             print(f'Erro ao mostrar filmes {e}')

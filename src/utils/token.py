@@ -32,7 +32,7 @@ class Token:
         if os.path.exists(self.token_file):
             os.remove(self.token_file)
 
-    def person_role_from_token(self, token: str) -> Optional[str]:
+    def person_id_from_token(self, token: str) -> Optional[str]:
         if os.path.exists(self.token_file):
             with open(self.token_file, 'r') as file:
                 token_map = json.load(file)

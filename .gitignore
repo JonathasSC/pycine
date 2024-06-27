@@ -3,3 +3,4 @@ __pycache__/
 .ENV
 venv/
 *.db
+token.json
