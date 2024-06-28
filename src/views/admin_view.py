@@ -21,6 +21,10 @@ class AdminView(BaseView):
         self.movie_view: MovieView = MovieView()
         self.room_view: RoomView = RoomView()
 
+        self.room_view.set_before_view(self)
+        self.movie_view.set_before_view(self)
+        self.person_view.set_before_view(self)
+
         self.list_options: list = [
             'Fluxo publico',
             'Fluxo administrativo',
@@ -28,22 +32,19 @@ class AdminView(BaseView):
             'Sair',
         ]
 
+        self.option_actions = {
+            1: self.public_flow,
+            2: self.admin_flow,
+            3: self.logout,
+            4: self.exit
+        }
+
     def start(self):
         while True:
             try:
                 self.terminal.clear()
                 option: int = self.choose_an_option(self.list_options)
-                match option:
-                    case 1:
-                        self.public_flow()
-                    case 2:
-                        self.admin_flow()
-                    case 3:
-                        self.logout()
-                        return
-                    case 4:
-                        self.exit()
-                        return
+                self.execute_option(self.option_actions, option)
 
             except Exception as e:
                 self.printer.error(f'Erro ao iniciar tela de admin: {e}')
@@ -53,7 +54,6 @@ class AdminView(BaseView):
         client_view.start()
 
     def admin_flow(self):
-        self.room_view.set_before_view(self)
 
         admin_options: list = [
             'Gerenciar pessoas',
