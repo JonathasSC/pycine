@@ -1,6 +1,7 @@
 from src.views.base_view import BaseView
 from src.crud.movies_crud import MoviesCrud
 from src.crud.sessions_crud import SessionsCrud
+from time import sleep
 
 
 class ClientView(BaseView):
@@ -36,10 +37,22 @@ class ClientView(BaseView):
     def buy_ticket(self):
         while True:
             try:
-                token = self.token.load_token()
-                self.printer.generic(text=token, timer=True)
-                sessions_list: list = self.session_crud.select_all_sessions()
-                self.choose_an_option(sessions_list)
+                movies: list = self.movies_crud.select_all_movies()
+
+                movies_names = [movie[1] for movie in movies]
+                movies_id = [movie[0] for movie in movies]
+
+                option: int = self.choose_an_option(movies_names)
+
+                chosen_movie_id: str = movies_id[option]
+                chosen_movie_name: str = movies_id[option]
+
+                valid_sessions: list = self.session_crud.select_session_by_movie_id(
+                    chosen_movie_id
+                )
+
+                print(valid_sessions)
+                sleep(5)
                 break
 
             except Exception as e:

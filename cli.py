@@ -6,6 +6,8 @@ def cli(command: str):
     match command:
         case 'tests':
             os.system('python -m pytest')
+        case 'populate':
+            os.system('python -m pytest')
 
 
 if __name__ == "__main__":
@@ -13,7 +15,7 @@ if __name__ == "__main__":
     parser.add_argument('--command',
                         type=str,
                         required=True,
-                        choices=['tests'],
+                        choices=['tests', 'populate'],
                         help='Type of the command')
 
     args = parser.parse_args()

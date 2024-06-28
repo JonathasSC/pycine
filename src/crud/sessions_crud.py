@@ -1,10 +1,11 @@
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Optional
 
 from src.crud.base_crud import BaseCrud
 from src.database.conn import Connection
 from src.schemas.session_schemas import SessionCreate
 
 from src.queries.sessions_queries import (
+    SELECT_SESSIONS_BY_MOVIE_ID,
     SELECT_ALL_SESSIONS,
     INSERT_SESSION,
     UPDATE_SESSION,
@@ -15,6 +16,14 @@ from src.queries.sessions_queries import (
 class SessionsCrud(BaseCrud):
     def __init__(self, conn: Connection = None):
         super().__init__(conn)
+
+    def select_session_by_movie_id(self, movie_id) -> Optional[tuple]:
+        try:
+            self.conn.cursor.execute(SELECT_SESSIONS_BY_MOVIE_ID, movie_id)
+            session_list: List[Dict[str, Any]] = self.conn.cursor.fetchall()
+            return session_list
+        except Exception as e:
+            raise e
 
     def select_all_sessions(self) -> List[Dict[str, Any]]:
         try:

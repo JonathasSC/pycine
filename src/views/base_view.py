@@ -8,6 +8,7 @@ from src.utils.token import Token
 
 from src.crud.admins_crud import AdminsCrud
 from src.crud.persons_crud import PersonsCrud
+from src.crud.sessions_crud import SessionsCrud
 
 
 class BaseView:
@@ -15,8 +16,11 @@ class BaseView:
         self.inputs: Inputs = Inputs()
         self.printer: Printer = Printer()
         self.terminal: Terminal = Terminal()
+
         self.admin_crud: AdminsCrud = AdminsCrud()
         self.person_crud: PersonsCrud = PersonsCrud()
+        self.session_crud: SessionsCrud = SessionsCrud()
+
         self.handlers: ExceptionsHandlers = ExceptionsHandlers()
         self.token: Token = Token()
 
@@ -26,19 +30,21 @@ class BaseView:
 
     def choose_an_option(self, options: list, text: str = 'Escolha uma opção'):
         while True:
+            valid_options_range = len(options) + 1
             try:
                 self.terminal.clear()
                 self.printer.generic(text, line=True)
                 self.printer.option_list(options)
                 option: int = int(input('Digite uma opção: '))
 
-                if option not in range(1, len(options) + 1):
-                    self.invalid_option()
-
-                return option
-
             except ValueError:
                 self.invalid_value()
+
+            if option not in range(1, valid_options_range):
+                self.invalid_option()
+
+            else:
+                return option
 
     def execute_option(self, options: dict, option: int):
         action = options.get(option, self.invalid_option)

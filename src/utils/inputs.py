@@ -30,11 +30,21 @@ class Inputs:
         return movie_data
 
     def input_room(self):
-        movie_data: dict = {}
+        room_data: dict = {}
 
-        movie_data['name'] = input('Nome: ')
-        movie_data['rows'] = int(input('Rows: '))
-        movie_data['columns'] = int(input('Columns: '))
-        movie_data['type'] = input('Type: ')
+        room_data['name'] = input('Nome: ')
+        room_data['rows'] = int(input('Rows: '))
+        room_data['columns'] = int(input('Columns: '))
+        room_data['type'] = input('Type: ')
 
-        return movie_data
+        return room_data
+
+    def input_session(self):
+        session_data: dict = {}
+
+        session_data['room_id'] = input('Room ID: ')
+        session_data['movie_id'] = input('Movie ID: ')
+        session_data['price'] = input('Price: ')
+        session_data['start_time'] = input('Start time: ')
+
+        return session_data
