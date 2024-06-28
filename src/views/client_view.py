@@ -11,14 +11,14 @@ class ClientView(BaseView):
         self.session_crud: SessionsCrud = SessionsCrud()
 
         self.list_options: list = [
-            'Comprar ingresso',
             'Ver filmes em exibição',
+            'Comprar ingresso',
             'Sair'
         ]
 
         self.option_actions = {
-            1: self.buy_ticket,
-            2: self.view_movie_poster,
+            1: self.list_movies,
+            2: self.buy_ticket,
             3: self.exit
         }
 
@@ -34,32 +34,34 @@ class ClientView(BaseView):
                 self.printer.error(f'Erro ao iniciar tela publica: {e}')
 
     def buy_ticket(self):
-        try:
-            token = self.token.load_token()
-            self.printer.generic(text=token, timer=True)
-            sessions_list: list = self.session_crud.select_all_sessions()
-            self.choose_an_option(sessions_list)
+        while True:
+            try:
+                token = self.token.load_token()
+                self.printer.generic(text=token, timer=True)
+                sessions_list: list = self.session_crud.select_all_sessions()
+                self.choose_an_option(sessions_list)
+                break
 
-        except Exception as e:
-            self.printer.error(e)
-            self.buy_ticket()
+            except Exception as e:
+                self.printer.error(e)
 
-    def view_movie_poster(self):
-        self.terminal.clear()
-        self.printer.generic(text='Filmes em cartaz', line=True)
-        try:
-            movies_list: list = self.movies_crud.select_all_movies()
-            headers: list = ['NAME', 'GENRE', 'TIME', 'SYNOPSIS']
-            movies_compacted: list = [[
-                movie[1],
-                movie[2],
-                movie[3],
-                movie[4]
-            ] for movie in movies_list]
+    def list_movies(self):
+        while True:
+            self.terminal.clear()
+            self.printer.generic(text='Filmes em cartaz', line=True)
+            try:
+                movies_list: list = self.movies_crud.select_all_movies()
+                headers: list = ['NAME', 'GENRE', 'TIME', 'SYNOPSIS']
+                movies_compacted: list = [[
+                    movie[1],
+                    movie[2],
+                    movie[3],
+                    movie[4]
+                ] for movie in movies_list]
 
-            self.printer.display_table(headers, movies_compacted)
-            input('Voltar? [press enter]')
-            self.start()
+                self.printer.display_table(headers, movies_compacted)
+                input('Voltar? [press enter]')
+                break
 
-        except Exception as e:
-            print(f'Erro ao mostrar filmes {e}')
+            except Exception as e:
+                print(f'Erro ao mostrar filmes {e}')

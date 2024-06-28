@@ -36,8 +36,8 @@ class RoomView(BaseView):
                 self.printer.error(f'Erro ao iniciar tela de salas: {e}')
 
     def back_to_admin(self):
-        if self.admin_view:
-            self.admin_view.start()
+        if self.before_view:
+            self.before_view.start()
         self.printer.error('AdminView não definida')
 
     def create_room(self):
