@@ -13,15 +13,16 @@ class ClientsCrud(BaseCrud):
     def insert_client(self, person_id: str) -> bool:
         try:
             data: dict = {}
-            data['client_id'] = self.uuid.smaller_uuid()
+            client_id: str = self.uuid.smaller_uuid()
+            data['client_id'] = client_id
             data['person_id'] = person_id
 
-            data_dict: Dict[str, Any] = dict(ClientCreate**data)
+            data_dict: Dict[str, Any] = dict(ClientCreate(**data))
             data_list: List[Any] = list(data_dict.values())
 
             self.conn.cursor.execute(INSERT_CLIENT, data_list)
             self.conn.connection.commit()
-            return True
+            return client_id
 
         except Exception as e:
-            return False
+            return e

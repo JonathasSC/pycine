@@ -30,7 +30,7 @@ class PersonsCrud(BaseCrud):
 
             self.conn.cursor.execute(INSERT_PERSON, data_list)
             self.conn.connection.commit()
-            return True
+            return person_id
 
         except ValidationError as e:
             print(f"Validation error: {e}")

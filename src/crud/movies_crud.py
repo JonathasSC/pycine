@@ -26,7 +26,7 @@ class MoviesCrud(BaseCrud):
 
             self.conn.cursor.execute(INSERT_MOVIE, data_list)
             self.conn.connection.commit()
-            return True
+            return movie_id
 
         except Exception as e:
             raise e

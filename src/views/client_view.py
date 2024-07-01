@@ -1,6 +1,7 @@
 from src.views.base_view import BaseView
 from src.crud.movies_crud import MoviesCrud
 from src.crud.sessions_crud import SessionsCrud
+import traceback
 from time import sleep
 
 
@@ -18,7 +19,7 @@ class ClientView(BaseView):
         ]
 
         self.option_actions = {
-            1: self.list_movies,
+            1: self.list_movies_in_playing,
             2: self.buy_ticket,
             3: self.exit
         }
@@ -32,33 +33,53 @@ class ClientView(BaseView):
                 break
 
             except Exception as e:
+                traceback.print_exc()
+                sleep(10)
                 self.printer.error(f'Erro ao iniciar tela publica: {e}')
 
     def buy_ticket(self):
         while True:
             try:
                 movies: list = self.movies_crud.select_all_movies()
+                if not movies:
+                    self.printer.warning("Nenhum filme disponível.")
+                    return
 
                 movies_names = [movie[1] for movie in movies]
                 movies_id = [movie[0] for movie in movies]
 
-                option: int = self.choose_an_option(movies_names)
+                self.terminal.clear()
+                movie_option: int = self.choose_an_option(movies_names)
+                chosen_movie_id: str = movies_id[movie_option - 1]
 
-                chosen_movie_id: str = movies_id[option]
-                chosen_movie_name: str = movies_id[option]
-
-                valid_sessions: list = self.session_crud.select_session_by_movie_id(
+                self.terminal.clear()
+                sessions: list = self.session_crud.select_sessions_with_room_details(
                     chosen_movie_id
                 )
 
-                print(valid_sessions)
-                sleep(5)
+                if not sessions:
+                    self.printer.warning("Nenhuma sessão disponível.")
+                    return
+
+                sessions_formated: list = [
+                    f'{session[2].center(10, " ")} | {session[1].center(10, " ")} | {session[3].center(10, " ")} | {session[0].center(10, " ")}'
+                    for session in sessions
+                ]
+
+                session_option: int = self.choose_an_option(sessions_formated)
+                input('Voltar? [press enter]')
+                self.start()
                 break
+
+            except IndexError as e:
+                print("Erro ao acessar a lista de filmes ou sessões.")
+                traceback.print_exc()
 
             except Exception as e:
                 self.printer.error(e)
+                traceback.print_exc()
 
-    def list_movies(self):
+    def list_movies_in_playing(self):
         while True:
             self.terminal.clear()
             self.printer.generic(text='Filmes em cartaz', line=True)
@@ -69,7 +90,7 @@ class ClientView(BaseView):
                     movie[1],
                     movie[2],
                     movie[3],
-                    movie[4]
+                    f'{str(movie[4])[:50]}...'
                 ] for movie in movies_list]
 
                 self.printer.display_table(headers, movies_compacted)

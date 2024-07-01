@@ -47,13 +47,12 @@ class MovieView(BaseView):
                 self.terminal.clear()
                 self.printer.generic('Enter new movie fields', line=True)
                 movie_data: dict = self.inputs.input_movie()
-                print(movie_data)
                 self.movies_crud.insert_movie(movie_data)
                 self.printer.success('Filme adicionado com sucesso!')
                 self.start()
 
             except Exception as e:
-                self.printer.error(e)
+                self.printer.error(f'Erro ao criar filme: {e}')
                 self.start()
 
     def list_movies(self):
@@ -62,10 +61,18 @@ class MovieView(BaseView):
                 self.terminal.clear()
                 header = ['ID', 'NAME', 'GENRE', 'DURATION', 'SYNOPSIS']
                 movies_list: list = self.movies_crud.select_all_movies()
-                self.printer.display_table(header, movies_list)
+                movies_formated: list = [[
+                    movie[0],
+                    movie[1],
+                    movie[2],
+                    movie[3],
+                    f'{str(movie[4])[:50]}...'
+                ] for movie in movies_list]
+
+                self.printer.display_table(header, movies_formated)
                 input('Voltar? [press enter]')
                 self.start()
 
             except Exception as e:
-                print(f'Erro ao mostrar filmes: {e}')
+                self.printer.error(f'Erro ao mostrar filmes: {e}')
                 self.start()

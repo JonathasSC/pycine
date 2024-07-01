@@ -30,9 +30,8 @@ class BaseView:
 
     def choose_an_option(self, options: list, text: str = 'Escolha uma opção'):
         while True:
-            valid_options_range = len(options) + 1
             try:
-                self.terminal.clear()
+                valid_options_range = len(options) + 1
                 self.printer.generic(text, line=True)
                 self.printer.option_list(options)
                 option: int = int(input('Digite uma opção: '))

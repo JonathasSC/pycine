@@ -17,7 +17,9 @@ class AdminsCrud(BaseCrud):
     def insert_admin(self, person_id: str) -> None:
         try:
             data: dict = {}
-            data['admin_id'] = self.uuid.smaller_uuid()
+            admin_id: str = self.uuid.smaller_uuid()
+
+            data['admin_id'] = admin_id
             data['person_id'] = person_id
 
             data_dict: Dict[str, Any] = dict(AdminCreate(**data))
@@ -25,7 +27,7 @@ class AdminsCrud(BaseCrud):
 
             self.conn.cursor.execute(INSERT_ADMIN, data_list)
             self.conn.connection.commit()
-            return True
+            return admin_id
 
         except Exception as e:
             raise e

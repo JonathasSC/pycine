@@ -13,6 +13,24 @@ CREATE TABLE IF NOT EXISTS sessions (
 );
 """
 
+SELECT_SESSIONS_WITH_ROOM_DETAILS = '''
+SELECT 
+    s.price,
+    s.start_time,
+    r.type AS room_type,
+    r.name AS room_name,
+    m.name AS movie_name
+FROM 
+    sessions s
+JOIN 
+    rooms r ON s.room_id = r.room_id
+JOIN 
+    movies m ON s.movie_id = m.movie_id
+WHERE 
+    s.movie_id = ?;
+'''
+
+
 SELECT_ALL_SESSIONS = """
 SELECT session_id, price, room_id, movie_id, start_time
 FROM sessions;

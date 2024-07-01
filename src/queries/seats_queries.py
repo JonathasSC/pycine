@@ -2,18 +2,19 @@ CREATE_SEATS_TABLE = """
 CREATE TABLE IF NOT EXISTS seats (
     seat_id TEXT PRIMARY KEY,
     room_id TEXT,
-
-    line TEXT,
-    column TEXT,
-
-    state TEXT CHECK (state in ('reserved', 'sold', 'available')),
-    FOREIGN KEY (room_id) REFERENCES rooms(id)
+    seat_code TEXT,
+    row INTEGER,
+    col INTEGER,
+    FOREIGN KEY (room_id) REFERENCES rooms(room_id),
+    CONSTRAINT valid_coordinates CHECK (
+        row <= (SELECT rows FROM rooms WHERE rooms.room_id = seats.room_id) AND
+        col <= (SELECT columns FROM rooms WHERE rooms.room_id = seats.room_id)
+    )
 );
 """
 
 INSERT_SEAT = """
-INSERT INTO seats (seat_id, room_id, line, column, state)
-VALUES (?, ?, ?, ?, ?);
+INSERT INTO seats (seat_id, room_id, seat_code, row, col) VALUES (?, ?, ?, ?, ?)
 """
 
 
