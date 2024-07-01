@@ -33,3 +33,7 @@ DELETE_MOVIE = """
 DELETE FROM movies 
 WHERE movie_id = ?;
 """
+
+DELETE_ALL_MOVIES = """
+DELETE FROM movies;
+"""

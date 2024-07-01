@@ -46,7 +46,10 @@ class AdminView(BaseView):
         while True:
             try:
                 self.terminal.clear()
-                option: int = self.choose_an_option(self.list_options)
+                option: int = self.choose_an_option(
+                    self.list_options,
+                    text='Escolha o que gerenciar'
+                )
                 self.execute_option(self.option_actions, option)
 
             except Exception as e:
@@ -59,7 +62,6 @@ class AdminView(BaseView):
     def admin_flow(self):
 
         admin_options: list = [
-
             'Gerenciar pessoas',
             'Gerenciar filmes',
             'Gerenciar salas',

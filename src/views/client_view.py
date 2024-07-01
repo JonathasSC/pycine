@@ -1,6 +1,7 @@
 from src.views.base_view import BaseView
 from src.crud.movies_crud import MoviesCrud
 from src.crud.sessions_crud import SessionsCrud
+from src.crud.rooms_crud import RoomsCrud
 import traceback
 from time import sleep
 
@@ -9,6 +10,7 @@ class ClientView(BaseView):
     def __init__(self):
         super().__init__()
 
+        self.room_crud: RoomsCrud = RoomsCrud()
         self.movies_crud: MoviesCrud = MoviesCrud()
         self.session_crud: SessionsCrud = SessionsCrud()
 
@@ -40,18 +42,24 @@ class ClientView(BaseView):
     def buy_ticket(self):
         while True:
             try:
-                movies: list = self.movies_crud.select_all_movies()
-                if not movies:
+                sessions: list = self.session_crud.select_all_session_with_movies()
+
+                if not sessions:
                     self.terminal.clear()
                     self.printer.warning("Nenhum filme disponível.")
                     self.start()
 
-                movies_names = [movie[1] for movie in movies]
-                movies_id = [movie[0] for movie in movies]
+                movies_names = [session[0] for session in sessions]
+                movies_names = [session[0] for session in sessions]
+                movies_id = [session[4] for session in sessions]
 
                 self.terminal.clear()
                 movie_option: int = self.choose_an_option(movies_names)
                 chosen_movie_id: str = movies_id[movie_option - 1]
+
+                print(chosen_movie_id)
+                print(movies_names[movie_option - 1])
+                sleep(5)
 
                 self.terminal.clear()
                 sessions: list = self.session_crud.select_sessions_with_room_details(
@@ -69,7 +77,9 @@ class ClientView(BaseView):
                     for session in sessions
                 ]
 
-                session_option: int = self.choose_an_option(sessions_formated)
+                session_option: int = self.choose_an_option(
+                    sessions_formated, 'Escolha uma sessão')
+
                 input('Voltar? [press enter]')
                 self.start()
                 break

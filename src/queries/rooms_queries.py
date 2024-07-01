@@ -34,3 +34,7 @@ WHERE room_id = ?;
 DELETE_ROOM = """
 DELETE FROM rooms WHERE room_id = ?;
 """
+
+DELETE_ALL_ROOMS = """
+DELETE FROM rooms;
+"""

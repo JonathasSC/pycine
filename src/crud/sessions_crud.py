@@ -11,7 +11,8 @@ from src.queries.sessions_queries import (
     UPDATE_SESSION,
     DELETE_SESSION,
     SELECT_SESSIONS_WITH_ROOM_DETAILS,
-    SELECT_ALL_SESSIONS_WITH_MOVIES
+    SELECT_ALL_SESSIONS_WITH_MOVIES,
+    DELETE_ALL_SESSIONS,
 )
 
 
@@ -86,6 +87,15 @@ class SessionsCrud(BaseCrud):
             self.conn.cursor.execute(SELECT_ALL_SESSIONS_WITH_MOVIES)
             session_list: List[Dict[str, Any]] = self.conn.cursor.fetchall()
             return session_list
+
+        except Exception as e:
+            raise e
+
+    def delete_all_sessions(self):
+        try:
+            self.conn.cursor.execute(DELETE_ALL_SESSIONS)
+            self.conn.connection.commit()
+            return True
 
         except Exception as e:
             raise e

@@ -36,5 +36,4 @@ class Connection:
         self.cursor.execute(CREATE_SEATS_TABLE)
 
         self.cursor.execute(TRIGGER_CHECK_SEAT_CAPACITY)
-
         self.connection.commit()

@@ -8,8 +8,6 @@ class PersonView(BaseView):
 
         self.list_options: list = [
             'Gerenciar Admins',
-            # 'Gerenciar Persons',
-            # 'Gerenciar Clients',
             'Voltar',
             'Sair'
         ]

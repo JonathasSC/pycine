@@ -32,7 +32,6 @@ class MovieView(BaseView):
         while True:
             try:
                 self.terminal.clear()
-                self.printer.generic('Choice a option', line=True)
                 option: int = self.choose_an_option(self.list_options)
                 self.execute_option(self.option_actions, option)
                 break

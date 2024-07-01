@@ -1,5 +1,5 @@
 from src.crud.base_crud import BaseCrud
-from src.queries.movies_queries import SELECT_ALL_MOVIES, INSERT_MOVIE
+from src.queries.movies_queries import SELECT_ALL_MOVIES, INSERT_MOVIE, DELETE_ALL_MOVIES
 from src.database.conn import Connection
 from src.schemas.movie_schemas import MovieCreate
 from typing import List, Dict, Any
@@ -27,6 +27,15 @@ class MoviesCrud(BaseCrud):
             self.conn.cursor.execute(INSERT_MOVIE, data_list)
             self.conn.connection.commit()
             return movie_id
+
+        except Exception as e:
+            raise e
+
+    def delete_all_movies(self):
+        try:
+            self.conn.cursor.execute(DELETE_ALL_MOVIES)
+            self.conn.connection.commit()
+            return True
 
         except Exception as e:
             raise e
