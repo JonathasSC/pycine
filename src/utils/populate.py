@@ -71,3 +71,38 @@ class Populate:
             }
 
             self.movies_crud.insert_movie(data)
+
+    def populate_sessions(self):
+        movies_id_list: list = []
+        rooms_id_list: list = []
+
+        for _ in range(self.populate_range):
+            data = {
+                'name': Faker().name(),
+                'genre': 'ação',
+                'duration': Faker().time(pattern='%H:%M:%S'),
+                'synopsis': Faker().text()
+            }
+
+            movies_id_list.append(self.movies_crud.insert_movie(data))
+
+        for _ in range(self.populate_range):
+            data = {
+                'name': Faker().name(),
+                'genre': 'ação',
+                'duration': Faker().time(pattern='%H:%M:%S'),
+                'synopsis': Faker().text()
+            }
+
+            rooms_id_list.append(self.movies_crud.insert_movie(data))
+
+        for n in range(self.populate_range):
+            data = {
+                'price': 'R$25',
+                'room_id': rooms_id_list[n],
+                'movie_id': movies_id_list[n],
+                'start_time': '12:25',
+
+            }
+
+            self.session_crud.insert_session(data)

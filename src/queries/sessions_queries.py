@@ -30,6 +30,16 @@ WHERE
     s.movie_id = ?;
 '''
 
+SELECT_ALL_SESSIONS_WITH_MOVIES = '''
+SELECT 
+    m.name AS movie_name,
+    m.genre AS movie_genre,
+    m.duration AS movie_duration,
+    m.synopsis AS movie_synopsis
+FROM sessions s
+JOIN movies m ON s.movie_id = m.movie_id;
+'''
+
 
 SELECT_ALL_SESSIONS = """
 SELECT session_id, price, room_id, movie_id, start_time

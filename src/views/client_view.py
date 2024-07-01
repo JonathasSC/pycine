@@ -42,8 +42,9 @@ class ClientView(BaseView):
             try:
                 movies: list = self.movies_crud.select_all_movies()
                 if not movies:
+                    self.terminal.clear()
                     self.printer.warning("Nenhum filme disponível.")
-                    return
+                    self.start()
 
                 movies_names = [movie[1] for movie in movies]
                 movies_id = [movie[0] for movie in movies]
@@ -58,11 +59,13 @@ class ClientView(BaseView):
                 )
 
                 if not sessions:
+                    self.terminal.clear()
                     self.printer.warning("Nenhuma sessão disponível.")
-                    return
+                    self.start()
 
                 sessions_formated: list = [
-                    f'{session[2].center(10, " ")} | {session[1].center(10, " ")} | {session[3].center(10, " ")} | {session[0].center(10, " ")}'
+                    f'{session[2].center(10, " ")} | {session[1].center(10, " ")} | {
+                        session[3].center(10, " ")} | {session[0].center(10, " ")}'
                     for session in sessions
                 ]
 
@@ -81,16 +84,23 @@ class ClientView(BaseView):
 
     def list_movies_in_playing(self):
         while True:
-            self.terminal.clear()
-            self.printer.generic(text='Filmes em cartaz', line=True)
             try:
-                movies_list: list = self.movies_crud.select_all_movies()
-                headers: list = ['NAME', 'GENRE', 'TIME', 'SYNOPSIS']
+                movies_list: list = self.session_crud.select_all_session_with_movies()
+
+                if not movies_list:
+                    self.terminal.clear()
+                    self.printer.warning("Nenhum filme com sessão disponivel.")
+                    self.start()
+
+                self.terminal.clear()
+                self.printer.generic(text='Filmes em cartaz', line=True)
+                headers: list = ['NAME', 'GENRE', 'DURATION', 'SYNOPSIS']
+
                 movies_compacted: list = [[
+                    movie[0],
                     movie[1],
                     movie[2],
-                    movie[3],
-                    f'{str(movie[4])[:50]}...'
+                    f'{str(movie[3])[:50]}...'
                 ] for movie in movies_list]
 
                 self.printer.display_table(headers, movies_compacted)
