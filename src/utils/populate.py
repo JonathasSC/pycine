@@ -6,6 +6,8 @@ from src.crud.sessions_crud import SessionsCrud
 from src.crud.rooms_crud import RoomsCrud
 from src.crud.movies_crud import MoviesCrud
 from faker import Faker
+import random
+from time import sleep
 
 
 class Populate:
@@ -76,6 +78,7 @@ class Populate:
         movies_id_list: list = []
         rooms_id_list: list = []
 
+        # insert movie
         for _ in range(self.populate_range):
             data = {
                 'name': Faker().name(),
@@ -86,23 +89,31 @@ class Populate:
 
             movies_id_list.append(self.movies_crud.insert_movie(data))
 
+        # insert room
         for _ in range(self.populate_range):
+
             data = {
-                'name': Faker().name(),
-                'genre': 'ação',
-                'duration': Faker().time(pattern='%H:%M:%S'),
-                'synopsis': Faker().text()
+                'name': self.generate_pattern(),
+                'rows': 10,
+                'columns': 10,
+                'type': 'vip'
             }
 
-            rooms_id_list.append(self.movies_crud.insert_movie(data))
+            rooms_id_list.append(self.rooms_crud.insert_room(data))
 
+        # insert session
         for n in range(self.populate_range):
+
             data = {
                 'price': 'R$25',
                 'room_id': rooms_id_list[n],
                 'movie_id': movies_id_list[n],
                 'start_time': '12:25',
-
             }
 
             self.session_crud.insert_session(data)
+
+    def generate_pattern(self):
+        letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H']
+        number = random.randint(1, 99)
+        return random.choice(letters) + str(number)
