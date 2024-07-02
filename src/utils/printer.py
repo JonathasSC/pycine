@@ -10,9 +10,8 @@ class Printer:
     def generic(self, text: str, color: str = 'white', line: bool = False, timer: bool = False):
         if line:
             self.line(size=len(text) + 8, color=color)
-            self.console.print(f'[bold {color}] {
-                               text.center(len(text) + 4)} [/bold {color}]'
-                               )
+            self.console.print(
+                f'[bold {color}] {text.center(len(text) + 4)} [/bold {color}]')
 
             self.line(size=len(text) + 8, color=color)
         else:
@@ -68,8 +67,8 @@ class Printer:
 
                         print(table)
                     else:
-                        print(f"Página inválida. Digite um número entre 1 e {
-                              total_pages}.")
+                        print(
+                            f"Página inválida. Digite um número entre 1 e {total_pages}.")
                 else:
                     print(
                         "Entrada inválida. Digite um número de página válido ou 'q' para sair.")

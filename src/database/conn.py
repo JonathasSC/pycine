@@ -33,7 +33,7 @@ class Connection:
         self.cursor.execute(CREATE_ADMINS_TABLE)
         self.cursor.execute(CREATE_MOVIES_TABLE)
         self.cursor.execute(CREATE_ROOMS_TABLE)
-        self.cursor.execute(CREATE_SEATS_TABLE)
+        # self.cursor.execute(CREATE_SEATS_TABLE)
 
-        self.cursor.execute(TRIGGER_CHECK_SEAT_CAPACITY)
+        # self.cursor.execute(TRIGGER_CHECK_SEAT_CAPACITY)
         self.connection.commit()

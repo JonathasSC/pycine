@@ -28,22 +28,26 @@ class BaseView:
         raise NotImplementedError(
             "Subclasses should implement start() method.")
 
-    def choose_an_option(self, options: list, text: str = 'Escolha uma opção'):
+    def choose_an_option(self, options: list, text: str = 'Escolha uma opção', cancel: bool = False):
         while True:
             try:
-                valid_options_range = len(options) + 1
                 self.printer.generic(text, line=True)
                 self.printer.option_list(options)
+
+                if cancel:
+                    self.printer.generic(f'[0] - Cancelar')
                 option: int = int(input('Digite uma opção: '))
 
+                if cancel and option == 0:
+                    return None
+                if 0 < option <= len(options) + 1:
+                    return option
+                else:
+                    self.printer.error("Opção inválida. Tente novamente.")
+
             except ValueError:
-                self.invalid_value()
-
-            if option not in range(1, valid_options_range):
-                self.invalid_option()
-
-            else:
-                return option
+                self.printer.error(
+                    "Entrada inválida. Por favor, digite um número.")
 
     def execute_option(self, options: dict, option: int):
         action = options.get(option, self.invalid_option)

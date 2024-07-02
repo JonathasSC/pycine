@@ -54,12 +54,15 @@ class ClientView(BaseView):
                 movies_id = [session[4] for session in sessions]
 
                 self.terminal.clear()
-                movie_option: int = self.choose_an_option(movies_names)
-                chosen_movie_id: str = movies_id[movie_option - 1]
+                movie_option: int = self.choose_an_option(
+                    options=movies_names,
+                    cancel=True
+                )
 
-                print(chosen_movie_id)
-                print(movies_names[movie_option - 1])
-                sleep(5)
+                if movie_option is None:
+                    self.start()
+
+                chosen_movie_id: str = movies_id[movie_option - 1]
 
                 self.terminal.clear()
                 sessions: list = self.session_crud.select_sessions_with_room_details(
@@ -72,13 +75,18 @@ class ClientView(BaseView):
                     self.start()
 
                 sessions_formated: list = [
-                    f'{session[2].center(10, " ")} | {session[1].center(10, " ")} | {
-                        session[3].center(10, " ")} | {session[0].center(10, " ")}'
+                    f'{session[2].center(10, " ")} | {session[1].center(10, " ")} | {session[3].center(10, " ")} | {session[0].center(10, " ")}'
                     for session in sessions
                 ]
 
                 session_option: int = self.choose_an_option(
-                    sessions_formated, 'Escolha uma sessão')
+                    sessions_formated,
+                    'Escolha uma sessão',
+                    True
+                )
+
+                if session_option is None:
+                    self.start()
 
                 input('Voltar? [press enter]')
                 self.start()
