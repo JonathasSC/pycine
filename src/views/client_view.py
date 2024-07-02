@@ -1,7 +1,10 @@
 from src.views.base_view import BaseView
 from src.crud.movies_crud import MoviesCrud
 from src.crud.sessions_crud import SessionsCrud
+
 from src.crud.rooms_crud import RoomsCrud
+from src.crud.seats_crud import SeatsCrud
+
 import traceback
 from time import sleep
 
@@ -13,6 +16,7 @@ class ClientView(BaseView):
         self.room_crud: RoomsCrud = RoomsCrud()
         self.movies_crud: MoviesCrud = MoviesCrud()
         self.session_crud: SessionsCrud = SessionsCrud()
+        self.seats_crud: SeatsCrud = SeatsCrud()
 
         self.list_options: list = [
             'Ver filmes em exibição',
@@ -42,66 +46,119 @@ class ClientView(BaseView):
     def buy_ticket(self):
         while True:
             try:
-                sessions: list = self.session_crud.select_all_session_with_movies()
+                sessions_with_movies = self.session_crud.select_all_session_with_movies()
 
-                if not sessions:
+                if not sessions_with_movies:
                     self.terminal.clear()
                     self.printer.warning("Nenhum filme disponível.")
                     self.start()
 
-                movies_names = [session[0] for session in sessions]
-                movies_names = [session[0] for session in sessions]
-                movies_id = [session[4] for session in sessions]
-
-                self.terminal.clear()
-                movie_option: int = self.choose_an_option(
-                    options=movies_names,
-                    cancel=True
+                movie_id = self.choose_movie(sessions_with_movies)
+                sessions_with_room_details = self.session_crud.select_sessions_with_room_details(
+                    movie_id
                 )
 
-                if movie_option is None:
-                    self.start()
-
-                chosen_movie_id: str = movies_id[movie_option - 1]
-                self.terminal.clear()
-                sessions: list = self.session_crud.select_sessions_with_room_details(
-                    chosen_movie_id
-                )
-
-                if not sessions:
+                if not sessions_with_room_details:
                     self.terminal.clear()
                     self.printer.warning("Nenhuma sessão disponível.")
                     self.start()
 
-                sessions_formated: list = [
-                    f'{session[2].center(10, " ")} | {session[1].center(10, " ")} | {session[3].center(10, " ")} | {session[0].center(10, " ")}'
-                    for session in sessions
-                ]
+                chosen_session_id = self.choose_session(
+                    sessions_with_room_details
+                )
+                self.printer.generic(chosen_session_id, timer=True)
 
-                sessions_id = [session[5] for session in sessions]
-                session_option: int = self.choose_an_option(
-                    sessions_formated,
-                    'Escolha uma sessão',
-                    True
+                session: tuple = self.session_crud.select_session_by_id(
+                    chosen_session_id
                 )
 
-                if session_option is None:
-                    self.start()
+                self.printer.generic(session, timer=True)
+                self.process_ticket_purchase(chosen_session_id)
 
-                chosen_session_id: str = sessions_id[session_option - 1]
-                self.printer.generic(chosen_session_id)
-
-                input('Voltar? [press enter]')
-                self.start()
-                break
-
-            except IndexError as e:
-                print("Erro ao acessar a lista de filmes ou sessões.")
+            except IndexError:
+                self.printer.generic(
+                    "Erro ao acessar a lista de filmes ou sessões."
+                )
                 traceback.print_exc()
 
             except Exception as e:
                 self.printer.error(e)
                 traceback.print_exc()
+
+    def choose_movie(self, sessions):
+        movies_names = [session[0] for session in sessions]
+        movies_ids = [session[4] for session in sessions]
+
+        self.terminal.clear()
+        movie_option = self.choose_an_option(
+            options=movies_names,
+            text='Escolha uma sessão',
+            cancel=True
+        )
+
+        if movie_option is None:
+            self.start()
+
+        chosen_movie_id = movies_ids[movie_option - 1]
+        return chosen_movie_id
+
+    def choose_session(self, sessions):
+        sessions_formatted = [
+            f'{session[2].center(10, " ")} | {session[1].center(10, " ")} | {
+                session[3].center(10, " ")} | {session[0].center(10, " ")}'
+            for session in sessions
+        ]
+
+        sessions_ids = [session[5] for session in sessions]
+
+        session_option = self.choose_an_option(
+            sessions_formatted,
+            'Escolha uma sessão',
+            True
+        )
+
+        if session_option is None:
+            self.start()
+
+        chosen_session_id = sessions_ids[session_option - 1]
+        return chosen_session_id
+
+    def process_ticket_purchase(self, chosen_session_id):
+        try:
+            session = self.session_crud.select_session_by_id(chosen_session_id)
+
+            if not session:
+                self.printer.error(
+                    f"Sessão com ID {chosen_session_id} não encontrada.")
+                return
+
+            room_id = session[3]
+
+            seats = self.seats_crud.get_seats_by_room_id(room_id)
+
+            if not seats:
+                self.terminal.clear()
+                self.printer.warning(
+                    "Nenhuma cadeira disponível para esta sala.")
+                input('Voltar? [press enter]')
+                self.start()
+
+            self.terminal.clear()
+            self.printer.generic(f'Cadeiras da Sala {room_id}', line=True)
+            headers = ['Seat Code', 'Row', 'Column', 'State']
+
+            seats_compacted = [
+                [seat[2], seat[3], seat[4], seat[5]]
+                for seat in seats
+            ]
+
+            self.printer.display_table(headers, seats_compacted)
+            input('Voltar? [press enter]')
+            self.start()
+
+        except Exception as e:
+            self.printer.error(f'Erro ao processar compra de ingresso: {e}')
+            traceback.print_exc()
 
     def list_movies_in_playing(self):
         while True:

@@ -10,13 +10,15 @@ class RoomView(BaseView):
 
         self.list_options: list = [
             'Adicionar nova sala',
+            'Adicionar nova sala com assentos',
             'Ver lista de salas',
             'Voltar'
         ]
 
         self.option_actions = {
             1: self.create_room,
-            2: self.list_rooms,
+            2: self.create_room_with_seats,
+            3: self.list_rooms,
             3: self.back_to_admin
         }
 
@@ -43,12 +45,37 @@ class RoomView(BaseView):
         while True:
             try:
                 self.terminal.clear()
-                self.printer.generic('Enter new room fields', line=True)
+                self.printer.generic(
+                    'Coloque os campos de uma nova sala',
+                    line=True
+                )
+
                 room_data: dict = self.inputs.input_room()
                 self.rooms_crud.insert_room(room_data)
                 self.printer.success('Sala adicionada com sucesso!')
                 break
 
+            except Exception as e:
+                self.printer.error(f'Erro ao criar sala: {e}')
+                break
+
+        self.start()
+
+    def create_room_with_seats(self):
+        while True:
+            try:
+                self.terminal.clear()
+                self.printer.generic(
+                    'Coloque os campos de uma nova sala',
+                    line=True
+                )
+                room_data: dict = self.inputs.input_room()
+                if room_data:
+                    self.rooms_crud.insert_room_with_seats(room_data)
+                    self.printer.success('Sala adicionada com sucesso!')
+                    break
+
+                self.start()
             except Exception as e:
                 self.printer.error(f'Erro ao criar sala: {e}')
                 break
@@ -77,7 +104,7 @@ class RoomView(BaseView):
         while True:
             try:
                 self.terminal.clear()
-                self.printer.generic('Enter new room fields', line=True)
+                self.printer.generic('Coloque os novos campos da sala', line=True)
                 room_data: dict = self.inputs.input_room()
                 room_data['room_id'] = input('Room id: ')
 

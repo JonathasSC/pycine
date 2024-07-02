@@ -6,6 +6,7 @@ from src.schemas.session_schemas import SessionCreate
 
 from src.queries.sessions_queries import (
     SELECT_SESSIONS_BY_MOVIE_ID,
+    SELECT_SESSIONS_BY_ID,
     SELECT_ALL_SESSIONS,
     INSERT_SESSION,
     UPDATE_SESSION,
@@ -19,6 +20,14 @@ from src.queries.sessions_queries import (
 class SessionsCrud(BaseCrud):
     def __init__(self, conn: Connection = None):
         super().__init__(conn)
+
+    def select_session_by_id(self, session_id):
+        try:
+            self.conn.cursor.execute(SELECT_SESSIONS_BY_ID, [session_id])
+            session_list: List[Dict[str, Any]] = self.conn.cursor.fetchone()
+            return session_list
+        except Exception as e:
+            raise e
 
     def select_session_by_movie_id(self, movie_id) -> Optional[tuple]:
         try:

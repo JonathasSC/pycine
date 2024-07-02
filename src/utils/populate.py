@@ -96,7 +96,7 @@ class Populate:
                 'type': 'vip'
             }
 
-            rooms_id_list.append(self.rooms_crud.insert_room(data))
+            rooms_id_list.append(self.rooms_crud.insert_room_with_seats(data))
 
         for n in range(self.populate_range):
 
@@ -106,7 +106,6 @@ class Populate:
                 'movie_id': movies_id_list[n],
                 'start_time': '12:25',
             }
-
             self.session_crud.insert_session(data)
 
     def generate_pattern(self):

@@ -20,7 +20,8 @@ SELECT
     r.type AS room_type,
     r.name AS room_name,
     m.name AS movie_name, 
-    s.session_id AS session_id
+    s.session_id AS session_id,
+    r.room_id AS room_id
 FROM 
     sessions s
 JOIN 
@@ -54,6 +55,11 @@ FROM sessions;
 SELECT_SESSIONS_BY_MOVIE_ID = """
 SELECT session_id, price, room_id, movie_id, start_time
 FROM sessions WHERE movie_id = ?;
+"""
+
+SELECT_SESSIONS_BY_ID = """
+SELECT session_id, price, room_id, movie_id, start_time
+FROM sessions WHERE session_id = ?;
 """
 
 INSERT_SESSION = """

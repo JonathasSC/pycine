@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS rooms (
 
 INSERT_ROOM = """
 INSERT INTO rooms (room_id, name, rows, columns, type)
-VALUES (?, ?, ?, ?, ?);
+VALUES (?, ?, ?, ?, ?)
 """
 
 SELECT_ROOM_BY_ID = """
