@@ -19,7 +19,8 @@ SELECT
     s.start_time,
     r.type AS room_type,
     r.name AS room_name,
-    m.name AS movie_name
+    m.name AS movie_name, 
+    s.session_id AS session_id
 FROM 
     sessions s
 JOIN 

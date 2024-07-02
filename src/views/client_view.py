@@ -63,7 +63,6 @@ class ClientView(BaseView):
                     self.start()
 
                 chosen_movie_id: str = movies_id[movie_option - 1]
-
                 self.terminal.clear()
                 sessions: list = self.session_crud.select_sessions_with_room_details(
                     chosen_movie_id
@@ -79,6 +78,7 @@ class ClientView(BaseView):
                     for session in sessions
                 ]
 
+                sessions_id = [session[5] for session in sessions]
                 session_option: int = self.choose_an_option(
                     sessions_formated,
                     'Escolha uma sessão',
@@ -87,6 +87,9 @@ class ClientView(BaseView):
 
                 if session_option is None:
                     self.start()
+
+                chosen_session_id: str = sessions_id[session_option - 1]
+                self.printer.generic(chosen_session_id)
 
                 input('Voltar? [press enter]')
                 self.start()
