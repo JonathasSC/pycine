@@ -7,7 +7,6 @@ from src.crud.rooms_crud import RoomsCrud
 from src.crud.movies_crud import MoviesCrud
 from faker import Faker
 import random
-from time import sleep
 
 
 class Populate:
@@ -22,7 +21,7 @@ class Populate:
         self.session_crud: SessionsCrud = SessionsCrud()
 
     def populate_persons(self):
-        for n in range(self.populate_range):
+        for _ in range(self.populate_range):
             data = {
                 'name': Faker().name(),
                 'email': Faker().email(),
@@ -31,7 +30,7 @@ class Populate:
             self.person_crud.insert_person(data)
 
     def populate_admins(self):
-        for n in range(self.populate_range):
+        for _ in range(self.populate_range):
             data = {
                 'name': Faker().name(),
                 'email': Faker().email(),
@@ -42,7 +41,7 @@ class Populate:
             self.admin_crud.insert_admin(person_id)
 
     def populate_clients(self):
-        for n in range(self.populate_range):
+        for _ in range(self.populate_range):
             data = {
                 'name': Faker().name(),
                 'email': Faker().email(),
@@ -53,7 +52,7 @@ class Populate:
             self.client_crud.insert_client(person_id)
 
     def populate_movies(self):
-        for n in range(self.populate_range):
+        for _ in range(self.populate_range):
             data = {
                 'name': Faker().name(),
                 'genre': 'ação',
@@ -78,7 +77,6 @@ class Populate:
         movies_id_list: list = []
         rooms_id_list: list = []
 
-        # insert movie
         for _ in range(self.populate_range):
             data = {
                 'name': Faker().name(),
@@ -89,7 +87,6 @@ class Populate:
 
             movies_id_list.append(self.movies_crud.insert_movie(data))
 
-        # insert room
         for _ in range(self.populate_range):
 
             data = {
@@ -101,7 +98,6 @@ class Populate:
 
             rooms_id_list.append(self.rooms_crud.insert_room(data))
 
-        # insert session
         for n in range(self.populate_range):
 
             data = {

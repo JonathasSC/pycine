@@ -15,8 +15,6 @@ from src.views.admin_view import AdminView
 from src.views.client_view import ClientView
 from src.utils.token import Token
 
-from time import sleep
-
 
 class AuthView(BaseView):
     def __init__(self):
