@@ -1,6 +1,7 @@
 from src.database.conn import Connection
 from src.utils.uuid import UUID
 from src.utils.hashing import Hashing
+from src.utils.logger import Logger
 
 
 class BaseCrud:
@@ -8,3 +9,4 @@ class BaseCrud:
         self.conn = conn if conn else Connection()
         self.uuid: UUID = UUID()
         self.hash: Hashing = Hashing()
+        self.logger: Logger = Logger()

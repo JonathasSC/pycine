@@ -9,6 +9,7 @@ from src.schemas.client_schemas import ClientCreate
 class ClientsCrud(BaseCrud):
     def __init__(self, conn: Connection = None):
         super().__init__(conn)
+        self.conn: Connection = Connection(auto_connect=False)
 
     def insert_client(self, person_id: str) -> bool:
         try:
@@ -20,8 +21,11 @@ class ClientsCrud(BaseCrud):
             data_dict: Dict[str, Any] = dict(ClientCreate(**data))
             data_list: List[Any] = list(data_dict.values())
 
+            self.conn.connect()
             self.conn.cursor.execute(INSERT_CLIENT, data_list)
             self.conn.connection.commit()
+            self.conn.close()
+
             return client_id
 
         except Exception as e:

@@ -8,11 +8,16 @@ from typing import List, Dict, Any
 class MoviesCrud(BaseCrud):
     def __init__(self, conn: Connection = None):
         super().__init__(conn)
+        self.conn: Connection = Connection(auto_connect=False)
 
     def select_all_movies(self) -> list:
         try:
+            self.conn.connect()
             self.conn.cursor.execute(SELECT_ALL_MOVIES)
             movies_list: list = self.conn.cursor.fetchall()
+            self.conn.close()
+
+            self.logger.info('SELECIONANDO TODOS OS FILMES')
             return movies_list
         except Exception as e:
             raise e
@@ -24,8 +29,11 @@ class MoviesCrud(BaseCrud):
             data_dict: Dict[str, Any] = dict(MovieCreate(**data))
             data_list: List[Any] = list(data_dict.values())
 
+            self.conn.connect()
             self.conn.cursor.execute(INSERT_MOVIE, data_list)
             self.conn.connection.commit()
+            self.conn.close()
+
             return movie_id
 
         except Exception as e:
