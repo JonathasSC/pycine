@@ -66,14 +66,17 @@ class ClientView(BaseView):
                 chosen_session_id = self.choose_session(
                     sessions_with_room_details
                 )
-                self.printer.generic(chosen_session_id, timer=True)
 
                 session: tuple = self.session_crud.select_session_by_id(
                     chosen_session_id
                 )
 
-                self.printer.generic(session, timer=True)
-                self.process_ticket_purchase(chosen_session_id)
+                if not session:
+                    self.terminal.clear()
+                    self.printer.warning("Nenhuma sessão disponível.")
+                    self.start()
+
+                self.process_ticket_purchase(session)
 
             except IndexError:
                 self.printer.generic(
@@ -104,8 +107,7 @@ class ClientView(BaseView):
 
     def choose_session(self, sessions):
         sessions_formatted = [
-            f'{session[2].center(10, " ")} | {session[1].center(10, " ")} | {
-                session[3].center(10, " ")} | {session[0].center(10, " ")}'
+            f'{session[2].center(10, " ")} | {session[1].center(10, " ")} | { session[3].center(10, " ")} | {session[0].center(10, " ")}'
             for session in sessions
         ]
 
@@ -123,42 +125,96 @@ class ClientView(BaseView):
         chosen_session_id = sessions_ids[session_option - 1]
         return chosen_session_id
 
-    def process_ticket_purchase(self, chosen_session_id):
-        try:
-            session = self.session_crud.select_session_by_id(chosen_session_id)
+    def show_seats_in_room(self, seats):
+        seat_matrix = self.create_seat_matrix(seats)
+        self.print_seat_matrix(seat_matrix)
 
-            if not session:
-                self.printer.error(
-                    f"Sessão com ID {chosen_session_id} não encontrada.")
-                return
+    def create_seat_matrix(self, seats):
+        max_row = max(seat[3] for seat in seats) + 1
+        max_col = max(seat[4] for seat in seats) + 1
 
-            room_id = session[3]
+        seat_matrix = [['' for _ in range(max_col)] for _ in range(max_row)]
 
-            seats = self.seats_crud.get_seats_by_room_id(room_id)
+        for seat in seats:
+            row = seat[3]
+            col = seat[4]
+            state = seat[5]
+            seat_code = seat[2]
 
-            if not seats:
-                self.terminal.clear()
-                self.printer.warning(
-                    "Nenhuma cadeira disponível para esta sala.")
+            match state:
+                case 'available':
+                    color_code = '\033[92m'
+                case 'reserved':
+                    color_code = '\033[93m'
+                case 'sold':
+                    color_code = '\033[91m'
+                case _:
+                    color_code = '\033[0m'
+
+            seat_matrix[row][col] = f"{color_code}[{seat_code}]\033[0m"
+
+        return seat_matrix
+
+    def print_seat_matrix(self, seat_matrix):
+        self.terminal.clear()
+        print(' tela '.center(len(seat_matrix[0]) * 5, '-'))
+
+        for row in seat_matrix:
+            print(" ".join(row))
+
+    def process_ticket_purchase(self, session):
+        while True:
+            try:
+                room_id = session[1]
+                seats = self.seats_crud.get_seats_by_room_id(room_id)
+                self.show_seats_in_room(seats)
+                chosen_seat = input(
+                    'Escolha um assento pelo código (ou digite "q" para voltar): '
+                )
+
+                if chosen_seat.lower() == 'q':
+                    self.start()
+                    return
+
+                seat_state = self.validate_seat_choice(seats, chosen_seat)
+
+                match seat_state:
+                    case 'available':
+                        self.terminal.clear()
+                        self.printer.success(
+                            f'Você escolheu o assento {chosen_seat}.')
+                        break
+
+                    case 'reserved':
+                        self.terminal.clear()
+                        self.printer.error(
+                            f'O assento {chosen_seat} está reservado.')
+                        self.process_ticket_purchase(session)
+
+                    case 'sold':
+                        self.terminal.clear()
+                        self.printer.error(
+                            f'O assento {chosen_seat} está vendido.')
+                        self.process_ticket_purchase(session)
+
+                    case _:
+                        self.terminal.clear()
+                        self.printer.error('Código de assento inválido.')
+                        self.process_ticket_purchase(session)
+
                 input('Voltar? [press enter]')
                 self.start()
 
-            self.terminal.clear()
-            self.printer.generic(f'Cadeiras da Sala {room_id}', line=True)
-            headers = ['Seat Code', 'Row', 'Column', 'State']
+            except Exception as e:
+                self.printer.error(
+                    f'Erro ao processar compra de ingresso: {e}')
+                traceback.print_exc()
 
-            seats_compacted = [
-                [seat[2], seat[3], seat[4], seat[5]]
-                for seat in seats
-            ]
-
-            self.printer.display_table(headers, seats_compacted)
-            input('Voltar? [press enter]')
-            self.start()
-
-        except Exception as e:
-            self.printer.error(f'Erro ao processar compra de ingresso: {e}')
-            traceback.print_exc()
+    def validate_seat_choice(self, seats, chosen_seat):
+        for seat in seats:
+            if seat[2] == chosen_seat:
+                return seat[5]
+        return None
 
     def list_movies_in_playing(self):
         while True:
@@ -182,8 +238,7 @@ class ClientView(BaseView):
                 ] for movie in movies_list]
 
                 self.printer.display_table(headers, movies_compacted)
-                input('Voltar? [press enter]')
-                break
+                self.start()
 
             except Exception as e:
                 print(f'Erro ao mostrar filmes {e}')

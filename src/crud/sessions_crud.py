@@ -16,6 +16,8 @@ from src.queries.sessions_queries import (
     DELETE_ALL_SESSIONS,
 )
 
+import traceback
+
 
 class SessionsCrud(BaseCrud):
     def __init__(self, conn: Connection = None):
@@ -49,6 +51,7 @@ class SessionsCrud(BaseCrud):
         try:
             session_id: str = self.uuid.smaller_uuid()
             data['session_id'] = session_id
+            print(data)
             session_data: Dict[str, Any] = dict(SessionCreate(**data))
             data_list: List[Any] = list(session_data.values())
 
@@ -57,6 +60,7 @@ class SessionsCrud(BaseCrud):
             return True
 
         except Exception as e:
+            traceback.print_exc()
             raise e
 
     def update_session(self, data: Dict[str, Any]) -> bool:

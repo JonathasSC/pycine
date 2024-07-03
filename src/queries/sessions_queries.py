@@ -58,8 +58,7 @@ FROM sessions WHERE movie_id = ?;
 """
 
 SELECT_SESSIONS_BY_ID = """
-SELECT session_id, price, room_id, movie_id, start_time
-FROM sessions WHERE session_id = ?;
+SELECT * FROM sessions WHERE session_id = ?;
 """
 
 INSERT_SESSION = """

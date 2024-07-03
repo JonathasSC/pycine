@@ -59,7 +59,7 @@ class RoomsCrud(BaseCrud):
                     )
 
             self.conn.connection.commit()
-            return True
+            return room_id
 
         except Exception as e:
             self.conn.connection.rollback()

@@ -28,19 +28,19 @@ class Connection:
 
     def create_database(self):
         self.cursor.execute(CREATE_SESSION_TABLE)
-        self.cursor.execute(DELETE_ALL_SESSIONS)
+        # self.cursor.execute(DELETE_ALL_SESSIONS)
 
         self.cursor.execute(CREATE_PERSONS_TABLE)
         self.cursor.execute(CREATE_CLIENTS_TABLE)
         self.cursor.execute(CREATE_ADMINS_TABLE)
 
-        self.cursor.execute(DELETE_ALL_MOVIES)
+        # self.cursor.execute(DELETE_ALL_MOVIES)
         self.cursor.execute(CREATE_MOVIES_TABLE)
 
-        self.cursor.execute(DELETE_ALL_ROOMS)
+        # self.cursor.execute(DELETE_ALL_ROOMS)
         self.cursor.execute(CREATE_ROOMS_TABLE)
 
-        self.cursor.execute(DELETE_SEATS_TABLE)
+        # self.cursor.execute(DELETE_SEATS_TABLE)
         self.cursor.execute(CREATE_SEATS_TABLE)
 
         self.cursor.execute(TRIGGER_CHECK_SEAT_CAPACITY)
