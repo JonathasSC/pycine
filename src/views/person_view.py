@@ -72,18 +72,32 @@ class PersonView(BaseView):
                     self.printer.error(f'Erro ao criar sala: {e}')
                     self.manage_admin()
 
+        def create_admin(admin_crud=self.admin_crud):
+            while True:
+                try:
+                    person_id: str = input('Person ID: ')
+                    admin_crud.insert_admin(person_id)
+                    self.printer.success('Admin criado com sucesso!')
+                    self.manage_admin()
+
+                except Exception as e:
+                    self.printer.error(f'Erro ao criar sala: {e}')
+                    self.manage_admin()
+
         while True:
 
             manage_options: list = [
+                'Criar novo admin',
                 'Listar admins',
                 'Deletar admin',
                 'Voltar'
             ]
 
             manage_actions = {
-                1: get_all_admins,
-                2: del_admin,
-                3: self.start,
+                1: create_admin,
+                2: get_all_admins,
+                3: del_admin,
+                4: self.start,
             }
 
             try:
