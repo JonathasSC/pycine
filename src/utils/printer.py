@@ -51,10 +51,11 @@ class Printer:
 
             while True:
                 user_input = input(
-                    f"Digite o número da página (1 - {total_pages}) ou 'q' para sair: ").strip().lower()
+                    f"Digite o número da página (1 - {total_pages}) ou 'q' para voltar: ").strip().lower()
 
                 if user_input == 'q':
                     break
+
                 elif user_input.isdigit():
                     page = int(user_input)
                     if 1 <= page <= total_pages:
