@@ -8,3 +8,4 @@ class TicketBase(BaseModel):
 class TicketCreate(TicketBase):
     person_id: str
     session_id: str
+    seat_id: str
