@@ -40,6 +40,10 @@ DELETE_SEAT = """
 DELETE FROM seats WHERE id = ?;
 """
 
+DELETE_ALL_SEATS = """
+DELETE FROM seats;
+"""
+
 TRIGGER_CHECK_SEAT_CAPACITY = """
 CREATE TRIGGER IF NOT EXISTS validate_seat_coordinates
 BEFORE INSERT ON seats

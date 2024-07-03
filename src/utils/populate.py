@@ -74,8 +74,8 @@ class Populate:
             self.movies_crud.insert_movie(data)
 
     def populate_sessions(self):
-        movies_id_list: list = []
         rooms_id_list: list = []
+        movies_id_list: list = []
 
         for _ in range(self.populate_range):
             data = {
