@@ -3,10 +3,10 @@ from src.crud.movies_crud import MoviesCrud
 from src.crud.admins_crud import AdminsCrud
 from src.crud.persons_crud import PersonsCrud
 
+from src.views.room_view import RoomView
+from src.views.movie_view import MovieView
 from src.views.person_view import PersonView
 from src.views.client_view import ClientView
-from src.views.movie_view import MovieView
-from src.views.room_view import RoomView
 from src.views.session_view import SessionView
 
 
@@ -51,6 +51,7 @@ class AdminView(BaseView):
                     text='Escolha o que gerenciar'
                 )
                 self.execute_option(self.option_actions, option)
+                break
 
             except Exception as e:
                 self.printer.error(f'Erro ao iniciar tela de admin: {e}')

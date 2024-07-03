@@ -5,9 +5,6 @@ from src.crud.sessions_crud import SessionsCrud
 from src.crud.rooms_crud import RoomsCrud
 from src.crud.seats_crud import SeatsCrud
 
-import traceback
-from time import sleep
-
 
 class ClientView(BaseView):
     def __init__(self):
@@ -21,27 +18,30 @@ class ClientView(BaseView):
         self.list_options: list = [
             'Ver filmes em exibição',
             'Comprar ingresso',
+            'Logout',
             'Sair'
         ]
 
         self.option_actions = {
             1: self.list_movies_in_playing,
             2: self.buy_ticket,
-            3: self.exit
+            3: self.logout,
+            4: self.exit
         }
 
     def start(self):
+        self.logger.info('INICIANDO LOOP DE CLIENT VIEW')
         while True:
             try:
                 self.terminal.clear()
                 option: int = self.choose_an_option(self.list_options)
                 self.execute_option(self.option_actions, option)
-                break
 
             except Exception as e:
-                traceback.print_exc()
-                sleep(10)
                 self.printer.error(f'Erro ao iniciar tela publica: {e}')
+
+            self.logger.info('PARANDO LOOP DE CLIENT VIEW')
+            break
 
     def buy_ticket(self):
         while True:
@@ -82,11 +82,9 @@ class ClientView(BaseView):
                 self.printer.generic(
                     "Erro ao acessar a lista de filmes ou sessões."
                 )
-                traceback.print_exc()
 
             except Exception as e:
                 self.printer.error(e)
-                traceback.print_exc()
 
     def choose_movie(self, sessions):
         movies_names = [session[0] for session in sessions]
@@ -107,7 +105,8 @@ class ClientView(BaseView):
 
     def choose_session(self, sessions):
         sessions_formatted = [
-            f'{session[2].center(10, " ")} | {session[1].center(10, " ")} | { session[3].center(10, " ")} | {session[0].center(10, " ")}'
+            f'{session[2].center(10, " ")} | {session[1].center(10, " ")} | {
+                session[3].center(10, " ")} | {session[0].center(10, " ")}'
             for session in sessions
         ]
 
@@ -208,7 +207,6 @@ class ClientView(BaseView):
             except Exception as e:
                 self.printer.error(
                     f'Erro ao processar compra de ingresso: {e}')
-                traceback.print_exc()
 
     def validate_seat_choice(self, seats, chosen_seat):
         for seat in seats:
@@ -242,3 +240,5 @@ class ClientView(BaseView):
 
             except Exception as e:
                 print(f'Erro ao mostrar filmes {e}')
+
+            break

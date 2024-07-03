@@ -2,33 +2,36 @@ from typing import Optional
 from pydantic import ValidationError
 
 from src.utils.uuid import UUID
+from src.utils.token import Token
 from src.utils.printer import Printer
-from src.utils.exceptions import ExceptionsHandlers
 from src.utils.terminal import Terminal
+from src.utils.exceptions import ExceptionsHandlers
 
+from src.crud.admins_crud import AdminsCrud
 from src.crud.persons_crud import PersonsCrud
 from src.crud.clients_crud import ClientsCrud
-from src.crud.admins_crud import AdminsCrud
 
 from src.views.base_view import BaseView
 from src.views.admin_view import AdminView
 from src.views.client_view import ClientView
-from src.utils.token import Token
 
 
 class AuthView(BaseView):
     def __init__(self):
         super().__init__()
-        self.uuid: UUID = UUID()
+        self.admins_crud: AdminsCrud = AdminsCrud()
         self.clients_crud: ClientsCrud = ClientsCrud()
         self.persons_crud: PersonsCrud = PersonsCrud()
-        self.admins_crud: AdminsCrud = AdminsCrud()
+
+        self.uuid: UUID = UUID()
         self.printer: Printer = Printer()
+        self.token_manager: Token = Token()
         self.terminal: Terminal = Terminal()
-        self.handlers: ExceptionsHandlers = ExceptionsHandlers()
+
         self.admin_view: AdminView = AdminView()
         self.client_view: ClientView = ClientView()
-        self.token_manager: Token = Token()
+
+        self.handlers: ExceptionsHandlers = ExceptionsHandlers()
 
         self.list_options: list = ['Login', 'Register', 'Sair']
 
@@ -104,12 +107,20 @@ class AuthView(BaseView):
                 person_created: tuple = self.persons_crud.select_by_email(
                     person_data['email'])
                 self.clients_crud.insert_client(person_created[0])
+
             except ValidationError as e:
+                self.terminal.clear()
                 self.handlers.handle_validation_error(e)
+                self.start()
+
             except Exception as e:
+                self.terminal.clear()
                 self.printer.error(f'Erro ao registrar-se: {str(e)}')
+                self.start()
             else:
+                self.terminal.clear()
                 self.printer.success('Registro realizado com sucesso!')
+                self.start()
                 break
 
     def get_role_from_token(self, token: str) -> Optional[str]:
