@@ -6,6 +6,7 @@ from src.utils.terminal import Terminal
 from src.utils.inputs import Inputs
 from src.utils.token import Token
 
+from src.utils.logger import Logger
 from src.crud.admins_crud import AdminsCrud
 from src.crud.persons_crud import PersonsCrud
 from src.crud.sessions_crud import SessionsCrud
@@ -22,6 +23,7 @@ class BaseView:
         self.session_crud: SessionsCrud = SessionsCrud()
 
         self.handlers: ExceptionsHandlers = ExceptionsHandlers()
+        self.logger: Logger = Logger()
         self.token: Token = Token()
 
     def start(self):
