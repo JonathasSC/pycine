@@ -1,5 +1,5 @@
 from src.crud.base_crud import BaseCrud
-from src.queries.movies_queries import SELECT_ALL_MOVIES, INSERT_MOVIE, DELETE_ALL_MOVIES
+from src.queries.movies_queries import SELECT_ALL_MOVIES, INSERT_MOVIE, DELETE_ALL_MOVIES, SELECT_MOVIE_BY_ID
 from src.database.conn import Connection
 from src.schemas.movie_schemas import MovieCreate
 from typing import List, Dict, Any
@@ -9,6 +9,19 @@ class MoviesCrud(BaseCrud):
     def __init__(self, conn: Connection = None):
         super().__init__(conn)
         self.conn: Connection = Connection(auto_connect=False)
+
+    def select_movie_by_id(self, movie_id) -> tuple:
+        try:
+            self.conn.connect()
+            self.conn.cursor.execute(SELECT_MOVIE_BY_ID, [movie_id])
+            movie: tuple = self.conn.cursor.fetchone()
+            self.conn.close()
+
+            self.logger.info('SELECIONANDO FILME POR ID')
+            return movie
+
+        except Exception as e:
+            raise e
 
     def select_all_movies(self) -> list:
         try:

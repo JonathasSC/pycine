@@ -18,7 +18,7 @@ SELECT * FROM movies;
 """
 
 SELECT_MOVIE_BY_ID = """
-SELECT movie_id, name, genre, duration, synopsis 
+SELECT *
 FROM movies 
 WHERE movie_id = ?;
 """

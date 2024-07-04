@@ -24,7 +24,7 @@ class SessionsCrud(BaseCrud):
     def select_session_by_id(self, session_id):
         try:
             self.conn.cursor.execute(SELECT_SESSIONS_BY_ID, [session_id])
-            session_list: List[Dict[str, Any]] = self.conn.cursor.fetchone()
+            session_list: tuple = self.conn.cursor.fetchone()
             return session_list
         except Exception as e:
             raise e

@@ -62,9 +62,11 @@ class Inputs:
 
         return session_data
 
-    def choose_an_option(self, options: list, text: str = 'Escolha uma opção', cancel: bool = False):
+    def choose_an_option(self, options: list, text: str = 'Escolha uma opção', cancel: bool = False, clear: bool = True):
         while True:
-            self.terminal.clear()
+            if clear:
+                self.terminal.clear()
+
             self.printer.generic(text, line=True)
             self.printer.option_list(options)
 
