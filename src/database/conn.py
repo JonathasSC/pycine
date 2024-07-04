@@ -24,12 +24,12 @@ class Connection:
     def connect(self):
         self.connection = sqlite3.connect(self.db_name)
         self.cursor = self.connection.cursor()
-        self.logger.info('ABRINDO CONEXÃO COM BANCO DE DADOS')
+        self.logger.info('ABRINDO CONEXAO COM BANCO DE DADOS')
 
     def close(self):
         if self.connection:
             self.connection.close()
-            self.logger.info('FECHANDO CONEXÃO COM BANCO DE DADOS')
+            self.logger.info('FECHANDO CONEXAO COM BANCO DE DADOS')
         self.connection = None
 
     def delete_data(self):
