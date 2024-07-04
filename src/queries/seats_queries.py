@@ -23,7 +23,7 @@ INSERT INTO seats (seat_id, room_id, seat_code, row, col, state)
 
 
 SELECT_SEAT_BY_ID = """
-SELECT * FROM seats WHERE id = ?;
+SELECT * FROM seats WHERE seat_id = ?;
 """
 
 SELECT_SEATS_BY_ROOM_ID = """

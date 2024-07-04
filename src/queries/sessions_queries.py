@@ -33,15 +33,7 @@ WHERE
 '''
 
 SELECT_ALL_SESSIONS_WITH_MOVIES = '''
-SELECT 
-    m.name AS movie_name,
-    m.genre AS movie_genre,
-    m.duration AS movie_duration,
-    m.synopsis AS movie_synopsis,
-    s.movie_id AS session_movie_id,
-    s.session_id AS session_id,
-    s.room_id AS session_room_id
-FROM sessions s
+SELECT * FROM sessions s
 JOIN movies m ON s.movie_id = m.movie_id;
 '''
 
