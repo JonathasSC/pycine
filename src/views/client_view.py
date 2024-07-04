@@ -27,7 +27,7 @@ class ClientView(BaseView):
 
         self.option_actions = {
             1: self.list_movies_in_playing,
-            2: self.buy_ticket,
+            2: self.purchase_ticket,
             3: self.logout,
             4: self.exit
         }
@@ -44,7 +44,7 @@ class ClientView(BaseView):
             self.logger.info('PARANDO LOOP DE CLIENT VIEW')
             break
 
-    def buy_ticket(self):
+    def purchase_ticket(self):
         while True:
             try:
                 sessions_with_movies = self.session_crud.select_all_session_with_movies()
@@ -135,7 +135,8 @@ class ClientView(BaseView):
 
     def choose_session(self, sessions):
         sessions_formatted = [
-            f'{session[2].center(10, " ")} | {session[1].center(10, " ")} | {session[3].center(10, " ")} | {session[0].center(10, " ")}'
+            f'{session[2].center(10, " ")} | {session[1].center(10, " ")} | {
+                session[3].center(10, " ")} | {session[0].center(10, " ")}'
             for session in sessions
         ]
 
