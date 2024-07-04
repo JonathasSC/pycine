@@ -7,7 +7,7 @@ class Logger:
         self.level = logging.INFO
 
         logging.basicConfig(
-            filename=f'logs/system.log',
+            filename='logs/system.log',
             level=logging.INFO
         )
 

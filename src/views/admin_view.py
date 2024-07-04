@@ -59,6 +59,7 @@ class AdminView(BaseView):
     def public_flow(self):
         client_view = ClientView()
         client_view.start()
+        self.start()
 
     def admin_flow(self):
 

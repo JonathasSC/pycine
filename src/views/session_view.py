@@ -41,7 +41,6 @@ class SessionView(BaseView):
                 ] for movie in movies_list]
 
                 self.printer.display_table(header, movies_formated)
-                input('Voltar? [press enter]')
                 self.start()
 
             except Exception as e:

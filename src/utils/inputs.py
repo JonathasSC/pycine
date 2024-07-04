@@ -55,33 +55,38 @@ class Inputs:
     def input_session(self):
         session_data: dict = {}
 
+        session_data['price'] = input('Price: ')
         session_data['room_id'] = input('Room ID: ')
         session_data['movie_id'] = input('Movie ID: ')
-        session_data['price'] = input('Price: ')
         session_data['start_time'] = input('Start time: ')
 
         return session_data
 
     def choose_an_option(self, options: list, text: str = 'Escolha uma opção', cancel: bool = False):
         while True:
+            self.terminal.clear()
+            self.printer.generic(text, line=True)
+            self.printer.option_list(options)
+
+            valid_range = range(1, len(options) + 1)
+            if cancel:
+                self.printer.generic('[0] - Cancelar')
+
+            self.printer.line(len(text)+8)
             try:
-                self.printer.generic(text, line=True)
-                self.printer.option_list(options)
-
-                if cancel:
-                    self.printer.generic(f'[0] - Cancelar')
-                option: int = int(input('Digite uma opção: '))
-
+                option = int(input('Digite uma opção: '))
                 if cancel and option == 0:
-                    return None
-                if 0 < option <= len(options) + 1:
+                    return
+                elif option in valid_range:
                     return option
-                else:
-                    self.printer.error("Opção inválida. Tente novamente.")
+
+                self.terminal.clear()
+                self.printer.error('Opção inválida. Tente novamente.')
 
             except ValueError:
+                self.terminal.clear()
                 self.printer.error(
-                    "Entrada inválida. Por favor, digite um número.")
+                    'Entrada inválida. Por favor, digite um número.')
 
     def execute_option(self, options: dict, option: int):
         action = options.get(option, self.invalid_option)

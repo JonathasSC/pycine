@@ -51,8 +51,6 @@ class PersonView(BaseView):
                     ]
                     admin_list: list = admin_crud.select_all_admins()
                     self.printer.display_table(header, admin_list)
-
-                    input('Voltar? [press enter]')
                     self.manage_admin()
 
                 except Exception as e:

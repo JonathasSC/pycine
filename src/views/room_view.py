@@ -89,8 +89,6 @@ class RoomView(BaseView):
                 header = ['ID', 'NAME', 'ROWS', 'COLUMNS', 'TYPE']
                 rooms_list: list = self.rooms_crud.select_all_rooms()
                 self.printer.display_table(header, rooms_list)
-
-                input('Voltar? [press enter]')
                 break
 
             except Exception as e:
@@ -104,7 +102,8 @@ class RoomView(BaseView):
         while True:
             try:
                 self.terminal.clear()
-                self.printer.generic('Coloque os novos campos da sala', line=True)
+                self.printer.generic(
+                    'Coloque os novos campos da sala', line=True)
                 room_data: dict = self.inputs.input_room()
                 room_data['room_id'] = input('Room id: ')
 
