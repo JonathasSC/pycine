@@ -16,6 +16,8 @@ from src.queries.sessions_queries import (
     DELETE_ALL_SESSIONS,
 )
 
+from typing import Tuple, Optional, Any
+
 
 class SessionsCrud(BaseCrud):
     def __init__(self, conn: Connection = None):
@@ -29,10 +31,10 @@ class SessionsCrud(BaseCrud):
         except Exception as e:
             raise e
 
-    def select_session_by_movie_id(self, movie_id) -> Optional[tuple]:
+    def select_sessions_by_movie_id(self, movie_id) -> Optional[List[Tuple[str]]]:
         try:
             self.conn.cursor.execute(SELECT_SESSIONS_BY_MOVIE_ID, [movie_id])
-            session_list: List[Dict[str, Any]] = self.conn.cursor.fetchall()
+            session_list: List[Dict[str, Any]] = self.conn.cursor.fetchone()
             return session_list
         except Exception as e:
             raise e

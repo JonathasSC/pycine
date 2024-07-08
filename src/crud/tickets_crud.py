@@ -4,7 +4,7 @@ from src.crud.base_crud import BaseCrud
 from src.database.conn import Connection
 
 from src.schemas.ticket_schemas import TicketCreate
-from src.queries.tickets_queries import INSERT_TICKET
+from src.queries.tickets_queries import INSERT_TICKET, SELECT_TICKETS_BY_PERSON_ID
 
 
 class TicketsCrud(BaseCrud):
@@ -16,15 +16,26 @@ class TicketsCrud(BaseCrud):
         try:
             ticket_id: str = self.uuid.smaller_uuid()
             data['ticket_id'] = ticket_id
-            session_data: Dict[str, Any] = dict(TicketCreate(**data))
-            data_list: List[Any] = list(session_data.values())
-
+            ticket_data: Dict[str, Any] = dict(TicketCreate(**data))
+            data_list: List[Any] = list(ticket_data.values())
             self.conn.connect()
             self.conn.cursor.execute(INSERT_TICKET, data_list)
             self.conn.connection.commit()
             self.conn.close()
 
             return ticket_id
+
+        except Exception as e:
+            raise e
+
+    def select_tickets_by_person_id(self, person_id):
+        try:
+            self.conn.connect()
+            self.conn.cursor.execute(SELECT_TICKETS_BY_PERSON_ID, [person_id])
+            tickets_list: list = self.conn.cursor.fetchall()
+            self.conn.close()
+
+            return tickets_list
 
         except Exception as e:
             raise e
