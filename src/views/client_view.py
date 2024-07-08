@@ -146,11 +146,10 @@ class ClientView(BaseView):
 
     def choose_session(self, sessions):
         sessions_formatted = [
-            f'{session[2].center(10, " ")} | {session[1].center(10, " ")} | {
-                session[3].center(10, " ")} | {session[0].center(10, " ")}'
+            f"{session[2].center(10, ' ')} | {session[1].center(10, ' ')} | {session[3].center(10, ' ')} | {session[0].center(10, ' ')}"
             for session in sessions
         ]
-
+        
         sessions_ids = [session[5] for session in sessions]
         session_option = self.choose_an_option(
             sessions_formatted, 'Escolha uma sessão', True)
