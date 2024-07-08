@@ -9,7 +9,7 @@ class ExceptionsHandlers:
         self.terminal: Terminal = Terminal()
 
     def handle_validation_error(self, e: ValidationError):
-        self.terminal.clear()
         for error in e.errors():
             field = " -> ".join(map(str, error['loc']))
-            self.printer.error(f'Error in {field}, try again', True)
+            self.printer.error(f'Erro no campo {field}, tente novamente', True)
+        self.terminal.clear()

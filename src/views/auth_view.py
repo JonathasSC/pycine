@@ -16,6 +16,7 @@ from src.views.admin_view import AdminView
 from src.views.client_view import ClientView
 
 
+
 class AuthView(BaseView):
     def __init__(self):
         super().__init__()
@@ -64,9 +65,6 @@ class AuthView(BaseView):
                     f'Erro ao iniciar tela de autenticação: {e}')
 
     def login(self):
-        self.terminal.clear()
-        self.printer.generic('Bem-vindo á Pycine!', line=True)
-
         token = self.token_manager.load_token()
         if token:
             user_role = self.get_role_from_token(token)
@@ -74,6 +72,8 @@ class AuthView(BaseView):
                 return user_role
 
         while True:
+            self.terminal.clear()
+            self.printer.generic('Bem-vindo á Pycine!', line=True)
             person_data: dict = self.inputs.input_login()
             try:
                 person = self.persons_crud.select_by_credentials(person_data)
@@ -86,21 +86,27 @@ class AuthView(BaseView):
                     self.terminal.clear()
                     self.printer.success('Login realizado com sucesso')
                     return person_role
+                
                 else:
                     self.terminal.clear()
                     self.printer.error(
                         'Credenciais erradas, tente novamente...')
-                    continue
+                    
+
             except ValidationError as e:
+                self.terminal.clear()
                 self.handlers.handle_validation_error(e)
+
             except Exception as e:
+                self.terminal.clear()
                 self.printer.error(f'Erro ao fazer login: {e}')
 
     def register(self):
-        self.terminal.clear()
-        self.printer.generic('Crie sua conta agora!', line=True)
-        person_data: dict = {}
         while True:
+            self.terminal.clear()
+            self.printer.generic('Crie sua conta agora!', line=True)
+            person_data: dict = {}
+
             try:
                 person_data: dict = self.inputs.input_person()
                 self.persons_crud.insert_person(person_data)
@@ -111,12 +117,11 @@ class AuthView(BaseView):
             except ValidationError as e:
                 self.terminal.clear()
                 self.handlers.handle_validation_error(e)
-                self.start()
 
             except Exception as e:
                 self.terminal.clear()
                 self.printer.error(f'Erro ao registrar-se: {str(e)}')
-                self.start()
+
             else:
                 self.terminal.clear()
                 self.printer.success('Registro realizado com sucesso!')

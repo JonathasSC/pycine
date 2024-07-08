@@ -33,12 +33,10 @@ class PersonsCrud(BaseCrud):
             return person_id
 
         except ValidationError as e:
-            print(f"Validation error: {e}")
-            return False
+            raise e
 
         except Exception as e:
-            print(f"Error inserting person: {e}")
-            return False
+            raise e
 
     def select_by_credentials(self, data: Dict[str, str]) -> Union[tuple, None]:
         try:
@@ -96,5 +94,5 @@ class PersonsCrud(BaseCrud):
 
             return None
         except Exception as e:
-            print(f"Error getting person role: {e}")
+            print(f"Erro ao pegar papel de pessoa: {e}")
             return None
