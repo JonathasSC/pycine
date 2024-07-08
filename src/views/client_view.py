@@ -27,7 +27,7 @@ class ClientView(BaseView):
 
         self.option_actions = {
             1: self.list_movies_in_playing,
-            2: self.buy_ticket,
+            2: self.purchase_ticket,
             3: self.logout,
             4: self.exit
         }
@@ -44,7 +44,7 @@ class ClientView(BaseView):
             self.logger.info('PARANDO LOOP DE CLIENT VIEW')
             break
 
-    def buy_ticket(self):
+    def purchase_ticket(self):
         while True:
             try:
                 sessions_with_movies = self.session_crud.select_all_session_with_movies()
@@ -61,15 +61,21 @@ class ClientView(BaseView):
 
                 chosen_session_id = self.choose_session(
                     sessions_with_room_details)
-                session = self.session_crud.select_session_by_id(
+
+                chosen_session: tuple = self.session_crud.select_session_by_id(
                     chosen_session_id)
-                if not session:
+
+                if not chosen_session:
                     self.handle_no_sessions_available()
                     return
 
-                chosen_seat = self.process_ticket_purchase(session)
+                chosen_seat = self.process_ticket_purchase(chosen_session)
+                chosen_movie: str = self.movies_crud.select_movie_by_id(movie_id)[
+                    1]
 
-                if self.confirm_purchase(chosen_seat, chosen_session_id):
+                if self.confirm_purchase(chosen_movie=chosen_movie,
+                                         session=chosen_session,
+                                         chosen_seat=chosen_seat):
                     self.printer.success('COMPRA FEITA COM SUCESSO!')
                     break
 
@@ -86,17 +92,22 @@ class ClientView(BaseView):
         self.printer.warning("Nenhum filme disponível.")
         self.start()
 
-    def confirm_purchase(self, chosen_seat, chosen_session_id):
+    def confirm_purchase(self, chosen_seat: str, session: tuple, chosen_movie: str):
         self.terminal.clear()
         self.printer.generic("Confirmação de Compra", line=True)
-        self.printer.generic(f"Assento escolhido: {chosen_seat}")
-        self.printer.generic("Confirmar sua compra?")
+
+        session_id: str = session[0]
+        start_time: str = session[4]
+        self.printer.generic(f"Filme: {chosen_movie}")
+        self.printer.generic(f"Assento: {chosen_seat}")
+        self.printer.generic(f"Horário: {start_time}")
 
         confirm_options = ['Sim, confirmar', 'Não, cancelar']
-        option = self.inputs.choose_an_option(options=confirm_options)
+        option = self.inputs.choose_an_option(
+            options=confirm_options, clear=False)
 
         if option == 1:
-            self.process_ticket(chosen_seat, chosen_session_id)
+            self.process_ticket(chosen_seat, session_id)
             return True
         else:
             self.terminal.clear()
@@ -135,7 +146,8 @@ class ClientView(BaseView):
 
     def choose_session(self, sessions):
         sessions_formatted = [
-            f'{session[2].center(10, " ")} | {session[1].center(10, " ")} | {session[3].center(10, " ")} | {session[0].center(10, " ")}'
+            f'{session[2].center(10, " ")} | {session[1].center(10, " ")} | {
+                session[3].center(10, " ")} | {session[0].center(10, " ")}'
             for session in sessions
         ]
 
