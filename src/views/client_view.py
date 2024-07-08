@@ -21,6 +21,7 @@ class ClientView(BaseView):
         self.list_options: list = [
             'Ver filmes em exibição',
             'Comprar ingresso',
+            'Ver meus tickets',
             'Logout',
             'Sair'
         ]
@@ -28,8 +29,9 @@ class ClientView(BaseView):
         self.option_actions = {
             1: self.list_movies_in_playing,
             2: self.purchase_ticket,
-            3: self.logout,
-            4: self.exit
+            3: self.show_my_tickets,
+            4: self.logout,
+            5: self.exit
         }
 
     def start(self):
@@ -43,6 +45,38 @@ class ClientView(BaseView):
                 self.printer.error(f'Erro ao iniciar tela publica: {e}')
             self.logger.info('PARANDO LOOP DE CLIENT VIEW')
             break
+
+    def show_my_tickets(self):
+        header = ['SEAT', 'MOVIE', 'TIME']
+
+        token = self.token.load_token()
+        person_id = self.token.person_id_from_token(token)
+
+        try:
+            tickets_list = self.tickets_crud.select_tickets_by_person_id(
+                person_id)
+
+            formated_list = []
+            for ticket in tickets_list:
+                seat_id = ticket[1]
+                session_id = ticket[3]
+
+                seat = self.seats_crud.select_seat_by_id(seat_id)
+                seat_code = seat[2]
+
+                session = self.session_crud.select_session_by_id(session_id)
+                movie_id = session[2]
+                start_time = session[4]
+                movie = self.movies_crud.select_movie_by_id(movie_id)
+                movie_title = movie[1]
+
+                formated_list.append([seat_code, movie_title, start_time])
+
+            self.printer.display_table(
+                headers=header, table_data=formated_list)
+
+        except Exception as e:
+            self.printer.error(f'Erro ao mostrar os tickets: {e}')
 
     def purchase_ticket(self):
         while True:
@@ -96,8 +130,12 @@ class ClientView(BaseView):
         self.terminal.clear()
         self.printer.generic("Confirmação de Compra", line=True)
 
+        seat: tuple = self.seats_crud.select_seat_by_room_id_and_seat_code(
+            session[1], seat_code=chosen_seat)
+
         session_id: str = session[0]
         start_time: str = session[4]
+
         self.printer.generic(f"Filme: {chosen_movie}")
         self.printer.generic(f"Assento: {chosen_seat}")
         self.printer.generic(f"Horário: {start_time}")
@@ -107,30 +145,36 @@ class ClientView(BaseView):
             options=confirm_options, clear=False)
 
         if option == 1:
-            self.process_ticket(chosen_seat, session_id)
+            self.process_ticket(seat, session_id)
             return True
         else:
             self.terminal.clear()
             self.printer.warning("Compra cancelada.")
             return False
 
-    def process_ticket(self, seat_id, session_id):
+    def process_ticket(self, seat, session_id):
         try:
+            seat_id: str = seat[0]
             data = self.prepare_ticket_data(seat_id, session_id)
+
             self.tickets_crud.insert_ticket(data)
+            self.seats_crud.update_seat_state(seat_id, 'sold')
+
         except Exception as e:
             self.printer.error(e)
 
     def prepare_ticket_data(self, seat_id, session_id):
+
         token = self.token.load_token()
         person_id = self.token.person_id_from_token(token)
-        room_id = self.seats_crud.get_seat_by_id(seat_id)
-        return {
-            'session_id': session_id,
-            'person_id': person_id,
+
+        data = {
             'seat_id': seat_id,
-            'room_id': room_id
+            'person_id': person_id,
+            'session_id': session_id,
         }
+
+        return data
 
     def choose_movie(self, sessions):
         movies_names = [session[6] for session in sessions]
@@ -146,10 +190,11 @@ class ClientView(BaseView):
 
     def choose_session(self, sessions):
         sessions_formatted = [
-            f"{session[2].center(10, ' ')} | {session[1].center(10, ' ')} | {session[3].center(10, ' ')} | {session[0].center(10, ' ')}"
+            f"{session[2].center(10, ' ')} | {session[1].center(10, ' ')} | {
+                session[3].center(10, ' ')} | {session[0].center(10, ' ')}"
             for session in sessions
         ]
-        
+
         sessions_ids = [session[5] for session in sessions]
         session_option = self.choose_an_option(
             sessions_formatted, 'Escolha uma sessão', True)
