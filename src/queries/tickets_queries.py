@@ -15,5 +15,9 @@ CREATE TABLE IF NOT EXISTS tickets (
 
 INSERT_TICKET = """
 INSERT INTO tickets (ticket_id, seat_id, person_id, session_id)
-VALUES (?, ?, ?, ?);
+VALUES (?, ?, ?, ?)
+"""
+
+SELECT_TICKETS_BY_PERSON_ID = """
+SELECT * FROM tickets WHERE person_id = ?
 """

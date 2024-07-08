@@ -30,10 +30,15 @@ SELECT_SEATS_BY_ROOM_ID = """
 SELECT * FROM seats WHERE room_id = ?;
 """
 
-UPDATE_SEAT = """
+SELECT_SEATS_BY_ROOM_ID_SEAT_CODE = """
+SELECT * FROM seats WHERE room_id = ? AND seat_code = ?;
+"""
+
+
+UPDATE_SEAT_STATE = """
 UPDATE seats 
-SET room_id = ?, row = ?, number = ?, is_available = ? 
-WHERE id = ?;
+SET state = ?
+WHERE seat_id = ?;
 """
 
 DELETE_SEAT = """
