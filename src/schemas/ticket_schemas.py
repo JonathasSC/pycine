@@ -6,6 +6,6 @@ class TicketBase(BaseModel):
 
 
 class TicketCreate(TicketBase):
+    seat_id: str
     person_id: str
     session_id: str
-    seat_id: str
