@@ -45,11 +45,15 @@ class BaseView:
                 if 0 < option <= len(options) + 1:
                     return option
                 else:
-                    self.printer.error("Opção inválida. Tente novamente.")
+                    self.terminal.clear()
+                    self.printer.error("Opção inválida, Tente novamente.")
+                    self.terminal.clear()
 
             except ValueError:
+                self.terminal.clear()
                 self.printer.error(
                     "Entrada inválida. Por favor, digite um número.")
+                self.terminal.clear()
 
     def execute_option(self, options: dict, option: int):
         action = options.get(option, self.invalid_option)
