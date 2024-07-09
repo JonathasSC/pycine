@@ -1,5 +1,6 @@
 from src.utils.printer import Printer
 from src.utils.terminal import Terminal
+import getpass
 
 
 class Inputs:
@@ -23,6 +24,25 @@ class Inputs:
         person_data['password'] = input('Senha: ')
 
         return person_data
+
+    def input_register(self):
+        person_data: dict = {}
+
+        person_data['name'] = input('Nome: ')
+        person_data['email'] = input('Email: ')
+        person_data['password'] = self.input_password()
+
+        return person_data
+
+    def input_password(self):
+        while True:
+            password = getpass.getpass('Senha (ela está ocultada): ')
+            confirm_password: str = getpass.getpass('Confirme a senha: ')
+
+            if password == confirm_password:
+                return password
+
+            self.printer.error('Senhas não correspondem, tente novamente')
 
     def input_movie(self):
         movie_data: dict = {}

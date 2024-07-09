@@ -17,10 +17,12 @@ class AdminView(BaseView):
         self.movies_crud: MoviesCrud = MoviesCrud()
         self.admins_crud: AdminsCrud = AdminsCrud()
         self.person_crud: PersonsCrud = PersonsCrud()
+
         self.person_view: PersonView = PersonView()
         self.client_view: ClientView = ClientView()
         self.movie_view: MovieView = MovieView()
         self.room_view: RoomView = RoomView()
+
         self.session_view: SessionView = SessionView()
 
         self.room_view.set_before_view(self)

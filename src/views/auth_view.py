@@ -1,3 +1,4 @@
+from time import sleep
 from typing import Optional
 from pydantic import ValidationError
 
@@ -10,11 +11,9 @@ from src.utils.exceptions import ExceptionsHandlers
 from src.crud.admins_crud import AdminsCrud
 from src.crud.persons_crud import PersonsCrud
 from src.crud.clients_crud import ClientsCrud
-
 from src.views.base_view import BaseView
 from src.views.admin_view import AdminView
 from src.views.client_view import ClientView
-
 
 
 class AuthView(BaseView):
@@ -86,12 +85,11 @@ class AuthView(BaseView):
                     self.terminal.clear()
                     self.printer.success('Login realizado com sucesso')
                     return person_role
-                
+
                 else:
                     self.terminal.clear()
                     self.printer.error(
                         'Credenciais erradas, tente novamente...')
-                    
 
             except ValidationError as e:
                 self.terminal.clear()
@@ -108,7 +106,7 @@ class AuthView(BaseView):
             person_data: dict = {}
 
             try:
-                person_data: dict = self.inputs.input_person()
+                person_data: dict = self.inputs.input_register()
                 self.persons_crud.insert_person(person_data)
                 person_created: tuple = self.persons_crud.select_by_email(
                     person_data['email'])
@@ -116,7 +114,16 @@ class AuthView(BaseView):
 
             except ValidationError as e:
                 self.terminal.clear()
-                self.handlers.handle_validation_error(e)
+
+                for erro in e.errors():
+                    self.printer.error(
+                        text=erro['msg'][12:],
+                        line=False,
+                        timer=False
+                    )
+
+                    self.printer.line(len(erro['msg'][12:]), color='red')
+                sleep(5)
 
             except Exception as e:
                 self.terminal.clear()

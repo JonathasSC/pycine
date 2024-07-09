@@ -67,6 +67,6 @@ class HomeView(BaseView):
             self.admin_view.start()
 
     def exit(self):
-        self.token_manager.delete_token()
-        self.printer.generic('Você saiu com sucesso!', line=True)
+        self.terminal.clear()
+        self.printer.generic('Você saiu com sucesso!', line=True, timer=True)
         self.terminal.clear()

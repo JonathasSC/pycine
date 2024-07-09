@@ -26,6 +26,16 @@ class BaseView:
         self.logger: Logger = Logger()
         self.token: Token = Token()
 
+    def exit(self):
+        self.terminal.clear()
+        self.printer.generic('Saindo...', line=True, timer=True)
+
+    def logout(self):
+        self.terminal.clear()
+        self.printer.generic('Saindo...', line=True, timer=True)
+        self.token.delete_token()
+        self.terminal.clear()
+
     def start(self):
         raise NotImplementedError(
             "Subclasses should implement start() method.")
@@ -67,16 +77,6 @@ class BaseView:
     def invalid_value(self):
         self.terminal.clear()
         self.printer.error('Valor inválido, tente novamente')
-        self.terminal.clear()
-
-    def exit(self):
-        self.terminal.clear()
-        self.printer.generic('Saindo...', line=True, timer=True)
-
-    def logout(self):
-        self.terminal.clear()
-        self.printer.generic('Saindo...', line=True, timer=True)
-        self.token.delete_token()
         self.terminal.clear()
 
     def create_admin(self):

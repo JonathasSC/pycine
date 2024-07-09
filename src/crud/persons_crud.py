@@ -22,10 +22,11 @@ class PersonsCrud(BaseCrud):
     def insert_person(self, data: Dict[str, Any]) -> bool:
         try:
             person_id: str = self.uuid.smaller_uuid()
-            data['password'] = self.hash.generate_hash(data['password'])
             data['person_id'] = person_id
 
             data_dict: Dict[str, Any] = dict(PersonCreate(**data))
+            data['password'] = self.hash.generate_hash(data['password'])
+
             data_list: List[Any] = list(data_dict.values())
 
             self.conn.cursor.execute(INSERT_PERSON, data_list)
