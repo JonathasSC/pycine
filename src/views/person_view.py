@@ -61,8 +61,8 @@ class PersonView(BaseView):
         def del_admin(admin_crud=self.admin_crud):
             while True:
                 try:
-                    person_id: str = input('Person ID: ')
-                    admin_crud.delete_admin(person_id)
+                    admin_id: str = input('Admin ID: ')
+                    admin_crud.delete_admin(admin_id)
                     self.printer.success('Admin deletado com sucesso!')
                     self.manage_admin()
 
