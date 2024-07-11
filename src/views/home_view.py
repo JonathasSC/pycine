@@ -1,8 +1,9 @@
 from src.views.base_view import BaseView
 from src.views.auth_view import AuthView
-from src.views.client_view import ClientView
 from src.views.admin_view import AdminView
 from src.crud.admins_crud import AdminsCrud
+from src.views.client_view import ClientView
+
 from src.utils.token import Token
 
 
@@ -10,11 +11,11 @@ class HomeView(BaseView):
     def __init__(self):
         super().__init__()
 
-        self.auth_view: AuthView = AuthView()
-        self.client_view: ClientView = ClientView()
-        self.admin_view: AdminView = AdminView()
-        self.admins_crud: AdminsCrud = AdminsCrud()
         self.token_manager: Token = Token()
+        self.auth_view: AuthView = AuthView()
+        self.admin_view: AdminView = AdminView()
+        self.client_view: ClientView = ClientView()
+        self.admins_crud: AdminsCrud = AdminsCrud()
 
         self.list_options: list = [
             'Login',

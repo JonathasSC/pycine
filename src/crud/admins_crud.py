@@ -79,5 +79,5 @@ class AdminsCrud(BaseCrud):
             self.logger.warning('EXCESSÃO TENTAR MOSTRAR QUANTIDADE DE ADMINS')
             raise e
 
-        self.logger.info('QUANTIDADE DA ADMINS CONTADA BEM SUCESSIDIDO')
+        self.logger.info('QUANTIDADE DA ADMINS CONTADA BEM SUCEDIDO')
         return count_admin

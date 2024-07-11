@@ -15,7 +15,7 @@ class PersonView(BaseView):
         self.option_actions = {
             1: self.manage_admin,
             2: self.back_to_admin,
-            3: self.exit
+            3: self.close
         }
 
     def start(self):
@@ -23,13 +23,23 @@ class PersonView(BaseView):
             try:
                 self.terminal.clear()
                 option: int = self.choose_an_option(self.list_options)
-                self.execute_option(self.option_actions, option)
-                break
+
+                match option:
+                    case 1:
+                        self.manage_admin()
+                    case 2:
+                        self.back_to_admin()
+                    case 3:
+                        self.close()
+                        break
+                    case _:
+                        self.invalid_option()
+                        self.start()
 
             except Exception as e:
                 self.printer.error(e, timer=True)
 
-    def set_before_view(self, view):
+    def set_back_view(self, view):
         self.before_view = view
 
     def back_to_admin(self):
@@ -61,8 +71,8 @@ class PersonView(BaseView):
         def del_admin(admin_crud=self.admin_crud):
             while True:
                 try:
-                    admin_id: str = input('Admin ID: ')
-                    admin_crud.delete_admin(admin_id)
+                    person_id: str = input('Person ID: ')
+                    admin_crud.delete_admin(person_id)
                     self.printer.success('Admin deletado com sucesso!')
                     self.manage_admin()
 
@@ -105,3 +115,19 @@ class PersonView(BaseView):
 
             except Exception as e:
                 self.printer.error(e)
+
+    def close(self):
+        self.terminal.clear()
+        self.printer.generic("Deseja realmente sair?", line=True)
+
+        confirm_options = ['Sim', 'Não']
+        option = self.choose_an_option(
+            confirm_options,
+            text='Escolha uma opção')
+
+        if option == 1:
+            self.terminal.clear()
+            self.printer.generic('Fechado...', line=True, timer=True)
+            self.terminal.clear()
+        else:
+            self.start()

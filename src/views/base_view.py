@@ -26,10 +26,6 @@ class BaseView:
         self.logger: Logger = Logger()
         self.token: Token = Token()
 
-    def exit(self):
-        self.terminal.clear()
-        self.printer.generic('Saindo...', line=True, timer=True)
-
     def logout(self):
         self.terminal.clear()
         self.printer.generic('Saindo...', line=True, timer=True)
@@ -37,8 +33,7 @@ class BaseView:
         self.terminal.clear()
 
     def start(self):
-        raise NotImplementedError(
-            "Subclasses should implement start() method.")
+        raise NotImplementedError("Subclasses should implement start() method.")
 
     def choose_an_option(self, options: list, text: str = 'Escolha uma opção', cancel: bool = False):
         while True:

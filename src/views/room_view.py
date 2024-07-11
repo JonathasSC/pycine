@@ -19,10 +19,10 @@ class RoomView(BaseView):
             1: self.create_room,
             2: self.create_room_with_seats,
             3: self.list_rooms,
-            3: self.back_to_admin
+            4: self.back_to_admin
         }
 
-    def set_before_view(self, view):
+    def set_back_view(self, view):
         self.before_view = view
 
     def start(self):
@@ -30,8 +30,20 @@ class RoomView(BaseView):
             try:
                 self.terminal.clear()
                 option: int = self.choose_an_option(self.list_options)
-                self.execute_option(self.option_actions, option)
-                break
+                match option:
+                    case 1:
+                        self.create_room()
+                    case 2:
+                        self.create_room_with_seats()
+                    case 3:
+                        self.list_rooms()
+                        break
+                    case 4:
+                        self.back_to_admin()
+                        break
+                    case _:
+                        self.invalid_option()
+                        self.start()
 
             except Exception as e:
                 self.printer.error(f'Erro ao iniciar tela de salas: {e}')
