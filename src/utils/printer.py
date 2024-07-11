@@ -20,7 +20,7 @@ class Printer:
             self.console.print(f'[bold {color}] {text} [/bold {color}]')
 
         if timer:
-            sleep(5)
+            sleep(1)
 
     def line(self, size, color: str = 'white') -> None:
         self.console.print(f'[{color}]{"="*size}[/{color}]')
