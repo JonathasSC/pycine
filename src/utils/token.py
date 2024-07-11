@@ -2,12 +2,14 @@ import os
 import json
 from typing import Optional
 from src.utils.uuid import UUID
+from src.crud.persons_crud import PersonsCrud
 
 
 class Token:
     def __init__(self) -> None:
         self.token_file = 'token.json'
         self.uuid: UUID = UUID()
+        self.persons_crud: PersonsCrud = PersonsCrud()
 
     def create_token(self) -> str:
         return self.uuid.smaller_uuid()
@@ -45,4 +47,10 @@ class Token:
                 token_map = json.load(file)
                 if token_map:
                     return list(token_map.keys())[0]
+        return None
+
+    def get_role_from_token(self, token: str) -> Optional[str]:
+        person_id = self.person_id_from_token(token)
+        if person_id:
+            return self.persons_crud.get_person_role(person_id)
         return None
