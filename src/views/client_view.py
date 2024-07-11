@@ -5,7 +5,6 @@ from src.crud.sessions_crud import SessionsCrud
 from src.crud.rooms_crud import RoomsCrud
 from src.crud.seats_crud import SeatsCrud
 from src.crud.tickets_crud import TicketsCrud
-from typing import Optional
 
 
 class ClientView(BaseView):
@@ -18,65 +17,75 @@ class ClientView(BaseView):
         self.tickets_crud: TicketsCrud = TicketsCrud()
         self.session_crud: SessionsCrud = SessionsCrud()
 
+        self.back_view = None
+
         self.list_options: list = [
             'Ver filmes em exibição',
             'Comprar ingresso',
-            'Ver meus tickets',
             'Logout',
-            'Sair'
+            'Fechar'
         ]
 
-        self.option_actions = {
-            1: self.list_movies_in_playing,
-            2: self.purchase_ticket,
-            3: self.show_my_tickets,
-            4: self.logout,
-            5: self.exit
-        }
-
-    def start(self):
+    def start(self, is_admin: bool = False):
         self.logger.info('INICIANDO LOOP DE CLIENT VIEW')
+
         while True:
             try:
                 self.terminal.clear()
+                self.update_options(is_admin)
                 option: int = self.choose_an_option(self.list_options)
-                self.execute_option(self.option_actions, option)
+
+                if is_admin:
+                    self.handle_admin_options(option)
+                    break
+                else:
+                    self.handle_client_options(option)
+                    break
+
             except Exception as e:
                 self.printer.error(f'Erro ao iniciar tela publica: {e}')
-            self.logger.info('PARANDO LOOP DE CLIENT VIEW')
-            break
 
-    def show_my_tickets(self):
-        header = ['SEAT', 'MOVIE', 'TIME']
+    def update_options(self, is_admin: bool):
+        if is_admin and 'Voltar' not in self.list_options:
+            self.list_options.append('Voltar')
+            self.list_options.remove('Fechar')
+            self.list_options.remove('Logout')
 
-        token = self.token.load_token()
-        person_id = self.token.person_id_from_token(token)
+    def handle_admin_options(self, option: int):
+        if option == 1:
+            self.list_movies_in_playing()
+        elif option == 2:
+            self.purchase_ticket()
+        elif option == 3 or option == 4:
+            self.back()
+        else:
+            self.invalid_option()
 
-        try:
-            tickets_list = self.tickets_crud.select_tickets_by_person_id(
-                person_id)
+    def handle_client_options(self, option):
+        if option == 1:
+            self.list_movies_in_playing()
+        elif option == 2:
+            self.purchase_ticket()
+        elif option == 3:
+            self.logout()
+            return False
+        elif option == 4:
+            if self.close():
+                return False
+            else:
+                self.start()
+        else:
+            self.invalid_option()
+        return True
 
-            formated_list = []
-            for ticket in tickets_list:
-                seat_id = ticket[1]
-                session_id = ticket[3]
+    def set_back_view(self, view):
+        self.back_view = view
 
-                seat = self.seats_crud.select_seat_by_id(seat_id)
-                seat_code = seat[2]
-
-                session = self.session_crud.select_session_by_id(session_id)
-                movie_id = session[2]
-                start_time = session[4]
-                movie = self.movies_crud.select_movie_by_id(movie_id)
-                movie_title = movie[1]
-
-                formated_list.append([seat_code, movie_title, start_time])
-
-            self.printer.display_table(
-                headers=header, table_data=formated_list)
-
-        except Exception as e:
-            self.printer.error(f'Erro ao mostrar os tickets: {e}')
+    def back(self):
+        if self.back_view:
+            self.back_view.start()
+        else:
+            self.printer.error('View anterior não definida')
 
     def purchase_ticket(self):
         while True:
@@ -107,9 +116,7 @@ class ClientView(BaseView):
                 chosen_movie: str = self.movies_crud.select_movie_by_id(movie_id)[
                     1]
 
-                if self.confirm_purchase(chosen_movie=chosen_movie,
-                                         session=chosen_session,
-                                         chosen_seat=chosen_seat):
+                if self.confirm_purchase(chosen_movie=chosen_movie, session=chosen_session, chosen_seat=chosen_seat):
                     self.printer.success('COMPRA FEITA COM SUCESSO!')
                     break
 
@@ -121,21 +128,12 @@ class ClientView(BaseView):
 
             self.start()
 
-    def handle_no_sessions_available(self):
-        self.terminal.clear()
-        self.printer.warning("Nenhum filme disponível.")
-        self.start()
-
     def confirm_purchase(self, chosen_seat: str, session: tuple, chosen_movie: str):
         self.terminal.clear()
         self.printer.generic("Confirmação de Compra", line=True)
 
-        seat: tuple = self.seats_crud.select_seat_by_room_id_and_seat_code(
-            session[1], seat_code=chosen_seat)
-
         session_id: str = session[0]
         start_time: str = session[4]
-
         self.printer.generic(f"Filme: {chosen_movie}")
         self.printer.generic(f"Assento: {chosen_seat}")
         self.printer.generic(f"Horário: {start_time}")
@@ -145,36 +143,30 @@ class ClientView(BaseView):
             options=confirm_options, clear=False)
 
         if option == 1:
-            self.process_ticket(seat, session_id)
+            self.process_ticket(chosen_seat, session_id)
             return True
         else:
             self.terminal.clear()
             self.printer.warning("Compra cancelada.")
             return False
 
-    def process_ticket(self, seat, session_id):
+    def process_ticket(self, seat_id, session_id):
         try:
-            seat_id: str = seat[0]
             data = self.prepare_ticket_data(seat_id, session_id)
-
             self.tickets_crud.insert_ticket(data)
-            self.seats_crud.update_seat_state(seat_id, 'sold')
-
         except Exception as e:
             self.printer.error(e)
 
     def prepare_ticket_data(self, seat_id, session_id):
-
         token = self.token.load_token()
         person_id = self.token.person_id_from_token(token)
-
-        data = {
-            'seat_id': seat_id,
-            'person_id': person_id,
+        room_id = self.seats_crud.get_seat_by_id(seat_id)
+        return {
             'session_id': session_id,
+            'person_id': person_id,
+            'seat_id': seat_id,
+            'room_id': room_id
         }
-
-        return data
 
     def choose_movie(self, sessions):
         movies_names = [session[6] for session in sessions]
@@ -190,89 +182,31 @@ class ClientView(BaseView):
 
     def choose_session(self, sessions):
         sessions_formatted = [
-            f"{session[2].center(10, ' ')} | {session[1].center(10, ' ')} | {
-                session[3].center(10, ' ')} | {session[0].center(10, ' ')}"
+            f"{session[2].center(10, ' ')} | {session[1].center(10, ' ')} | {session[4].center(10, ' ')}"
             for session in sessions
         ]
+        sessions_ids = [session[0] for session in sessions]
 
-        sessions_ids = [session[5] for session in sessions]
-        session_option = self.choose_an_option(
-            sessions_formatted, 'Escolha uma sessão', True)
+        self.terminal.clear()
+        session_option = self.inputs.choose_an_option(
+            options=sessions_formatted, text='Escolha uma sessão', cancel=True)
         if session_option is None:
             self.start()
+
         return sessions_ids[session_option - 1]
 
-    def show_seats_in_room(self, seats):
-        seat_matrix = self.create_seat_matrix(seats)
-        self.print_seat_matrix(seat_matrix)
+    def process_ticket_purchase(self, chosen_session):
+        room_id = chosen_session[3]
+        seats = self.seats_crud.select_seats_by_room_id(room_id)
+        seats_formatted = [f"{seat[0]} - {seat[1]}" for seat in seats]
 
-    def create_seat_matrix(self, seats):
-        max_row = max(seat[3] for seat in seats) + 1
-        max_col = max(seat[4] for seat in seats) + 1
-
-        seat_matrix = [['' for _ in range(max_col)] for _ in range(max_row)]
-        for seat in seats:
-            row, col, state, seat_code = seat[3], seat[4], seat[5], seat[2]
-            color_code = self.get_seat_color(state)
-            seat_matrix[row][col] = f"{color_code}[{seat_code}]\033[0m"
-        return seat_matrix
-
-    def get_seat_color(self, state):
-        return {
-            'available': '\033[92m',
-            'reserved': '\033[93m',
-            'sold': '\033[91m'
-        }.get(state, '\033[0m')
-
-    def print_seat_matrix(self, seat_matrix):
         self.terminal.clear()
-        print(' tela '.center(len(seat_matrix[0]) * 5, '-'))
+        chosen_seat_option = self.inputs.choose_an_option(
+            options=seats_formatted, text='Escolha seu assento', cancel=True)
+        if chosen_seat_option is None:
+            self.start()
 
-        for row in seat_matrix:
-            print(" ".join(row))
-
-    def process_ticket_purchase(self, session):
-        while True:
-            try:
-                room_id = session[1]
-                seats = self.seats_crud.get_seats_by_room_id(room_id)
-                self.show_seats_in_room(seats)
-                chosen_seat = input(
-                    'Escolha um assento pelo código (ou digite "q" para voltar): ')
-                if chosen_seat.lower() == 'q':
-                    self.start()
-                    return
-
-                seat_state = self.validate_seat_choice(seats, chosen_seat)
-                if self.handle_seat_selection(seat_state, chosen_seat):
-                    break
-            except Exception as e:
-                self.printer.error(
-                    f'Erro ao processar compra de ingresso: {e}')
-
-        return chosen_seat
-
-    def handle_seat_selection(self, seat_state, chosen_seat):
-        if seat_state == 'available':
-            self.terminal.clear()
-            self.printer.success(f'Você escolheu o assento {chosen_seat}.')
-            return True
-        elif seat_state == 'reserved':
-            self.terminal.clear()
-            self.printer.error(f'O assento {chosen_seat} está reservado.')
-        elif seat_state == 'sold':
-            self.terminal.clear()
-            self.printer.error(f'O assento {chosen_seat} está vendido.')
-        else:
-            self.terminal.clear()
-            self.printer.error('Código de assento inválido.')
-        return False
-
-    def validate_seat_choice(self, seats, chosen_seat):
-        for seat in seats:
-            if seat[2] == chosen_seat:
-                return seat[5]
-        return None
+        return seats[chosen_seat_option - 1][0]
 
     def list_movies_in_playing(self):
         while True:
@@ -303,3 +237,34 @@ class ClientView(BaseView):
 
         self.printer.display_table(headers, movies_compacted)
         self.start()
+
+    def handle_no_movies_available(self):
+        self.terminal.clear()
+        self.printer.generic("Nenhum filme em exibição no momento", line=True)
+        self.printer.generic("Voltando para o início", timer=True)
+        self.start()
+
+    def handle_no_sessions_available(self):
+        self.terminal.clear()
+        self.printer.warning("Nenhum filme disponível.")
+        self.start()
+
+    def confirm_close(self):
+        self.terminal.clear()
+
+        confirm_options = ['Sim', 'Não']
+        option = self.choose_an_option(
+            confirm_options, text='Realmente deseja sair?')
+
+        if option == 1:
+            self.terminal.clear()
+            self.printer.generic('Fechado...', line=True, timer=True)
+            self.terminal.clear()
+            return True
+
+        return False
+
+    def close(self):
+        if self.confirm_close():
+            return True
+        return False
