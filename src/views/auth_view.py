@@ -66,7 +66,7 @@ class AuthView(BaseView):
     def login(self):
         token = self.token_manager.load_token()
         if token:
-            user_role = self.get_role_from_token(token)
+            user_role = self.token.get_role_from_token(token)
             if user_role:
                 return user_role
 
@@ -134,9 +134,3 @@ class AuthView(BaseView):
                 self.printer.success('Registro realizado com sucesso!')
                 self.start()
                 break
-
-    def get_role_from_token(self, token: str) -> Optional[str]:
-        person_id = self.token_manager.person_id_from_token(token)
-        if person_id:
-            return self.persons_crud.get_person_role(person_id)
-        return None

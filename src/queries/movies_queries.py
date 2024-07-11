@@ -17,6 +17,13 @@ SELECT_ALL_MOVIES = """
 SELECT * FROM movies;
 """
 
+SELECT_MOVIE_BY_NAME = """
+SELECT *
+FROM movies 
+WHERE name = ?;
+"""
+
+
 SELECT_MOVIE_BY_ID = """
 SELECT *
 FROM movies 

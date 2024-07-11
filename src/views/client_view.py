@@ -28,22 +28,28 @@ class ClientView(BaseView):
 
     def start(self, is_admin: bool = False):
         self.logger.info('INICIANDO LOOP DE CLIENT VIEW')
+        token: str = self.token.load_token()
+        person_role: str = self.token.get_role_from_token(token)
 
-        while True:
-            try:
-                self.terminal.clear()
-                self.update_options(is_admin)
-                option: int = self.choose_an_option(self.list_options)
+        if person_role:
+            while True:
+                try:
+                    self.terminal.clear()
+                    self.update_options(is_admin)
+                    option: int = self.choose_an_option(self.list_options)
 
-                if is_admin:
-                    self.handle_admin_options(option)
-                    break
-                else:
-                    self.handle_client_options(option)
-                    break
+                    if person_role == 'admin':
+                        self.handle_admin_options(option)
+                        break
+                    elif person_role == 'client':
+                        if self.handle_client_options(option):
+                            self.start()
+                        break
 
-            except Exception as e:
-                self.printer.error(f'Erro ao iniciar tela publica: {e}')
+                except Exception as e:
+                    self.printer.error(f'Erro ao iniciar tela publica: {e}')
+
+                break
 
     def update_options(self, is_admin: bool):
         if is_admin and 'Voltar' not in self.list_options:
@@ -56,7 +62,7 @@ class ClientView(BaseView):
             self.list_movies_in_playing()
         elif option == 2:
             self.purchase_ticket()
-        elif option == 3 or option == 4:
+        elif option == 3:
             self.back()
         else:
             self.invalid_option()
@@ -64,16 +70,19 @@ class ClientView(BaseView):
     def handle_client_options(self, option):
         if option == 1:
             self.list_movies_in_playing()
+
         elif option == 2:
             self.purchase_ticket()
+
         elif option == 3:
             self.logout()
             return False
+
         elif option == 4:
             if self.close():
                 return False
             else:
-                self.start()
+                return True
         else:
             self.invalid_option()
         return True
@@ -93,32 +102,50 @@ class ClientView(BaseView):
                 sessions_with_movies = self.session_crud.select_all_session_with_movies()
                 if not sessions_with_movies:
                     self.handle_no_sessions_available()
-                    return
+                    return False
 
                 movie_id = self.choose_movie(sessions_with_movies)
+
+                if movie_id == 0:
+                    return False
+
+                if not movie_id:
+                    self.handle_no_sessions_available()
+                    return False
+
                 sessions_with_room_details = self.session_crud.select_sessions_with_room_details(
                     movie_id)
+
                 if not sessions_with_room_details:
                     self.handle_no_sessions_available()
-                    return
+                    return False
 
                 chosen_session_id = self.choose_session(
                     sessions_with_room_details)
+                if not chosen_session_id:
+                    self.handle_no_sessions_available()
+                    return False
 
-                chosen_session: tuple = self.session_crud.select_session_by_id(
+                chosen_session = self.session_crud.select_session_by_id(
                     chosen_session_id)
-
                 if not chosen_session:
                     self.handle_no_sessions_available()
-                    return
+                    return False
 
-                chosen_seat = self.process_ticket_purchase(chosen_session)
-                chosen_movie: str = self.movies_crud.select_movie_by_id(movie_id)[
-                    1]
+                while True:
+                    chosen_seat = self.process_ticket_purchase(chosen_session)
+                    if not chosen_seat:
+                        if self.confirm_cancel("Deseja cancelar a compra?"):
+                            return
+                        else:
+                            continue
 
-                if self.confirm_purchase(chosen_movie=chosen_movie, session=chosen_session, chosen_seat=chosen_seat):
-                    self.printer.success('COMPRA FEITA COM SUCESSO!')
-                    break
+                    chosen_movie = self.movies_crud.select_movie_by_id(movie_id)[
+                        1]
+
+                    if self.confirm_purchase(chosen_movie=chosen_movie, session=chosen_session, chosen_seat=chosen_seat):
+                        self.printer.success('COMPRA FEITA COM SUCESSO!')
+                        break
 
             except IndexError:
                 self.printer.generic(
@@ -126,7 +153,8 @@ class ClientView(BaseView):
             except Exception as e:
                 self.printer.error(e)
 
-            self.start()
+            if not self.confirm_continue("Deseja continuar comprando?"):
+                return
 
     def confirm_purchase(self, chosen_seat: str, session: tuple, chosen_movie: str):
         self.terminal.clear()
@@ -174,15 +202,22 @@ class ClientView(BaseView):
 
         self.terminal.clear()
         movie_option = self.inputs.choose_an_option(
-            options=movies_names, text='Escolha uma sessão', cancel=True)
-        if movie_option is None:
-            self.start()
+            options=movies_names,
+            text='Escolha uma sessão',
+            cancel=True
+        )
 
-        return movies_ids[movie_option - 1]
+        if movie_option != 0 and movie_option != None:
+            return movies_ids[movie_option - 1]
+        elif movie_option == 0:
+            return 0
+
+        return None
 
     def choose_session(self, sessions):
         sessions_formatted = [
-            f"{session[2].center(10, ' ')} | {session[1].center(10, ' ')} | {session[4].center(10, ' ')}"
+            f"{session[2].center(10, ' ')} | {session[1].center(10, ' ')} | {
+                session[4].center(10, ' ')}"
             for session in sessions
         ]
         sessions_ids = [session[0] for session in sessions]
@@ -246,10 +281,9 @@ class ClientView(BaseView):
 
     def handle_no_sessions_available(self):
         self.terminal.clear()
-        self.printer.warning("Nenhum filme disponível.")
-        self.start()
+        self.printer.warning("Nenhuma sessão disponível.")
 
-    def confirm_close(self):
+    def close(self):
         self.terminal.clear()
 
         confirm_options = ['Sim', 'Não']
@@ -262,9 +296,4 @@ class ClientView(BaseView):
             self.terminal.clear()
             return True
 
-        return False
-
-    def close(self):
-        if self.confirm_close():
-            return True
         return False

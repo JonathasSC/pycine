@@ -37,9 +37,9 @@ class HomeView(BaseView):
                     self.printer.generic('Create first admin', line=True)
                     self.create_admin()
 
-                token = self.token_manager.load_token()
+                token = self.token.load_token()
                 if token:
-                    person_role = self.auth_view.get_role_from_token(token)
+                    person_role = self.token.get_role_from_token(token)
                     if person_role:
                         self.redirect_to_role(person_role)
                         return
