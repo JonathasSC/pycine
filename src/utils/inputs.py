@@ -65,12 +65,16 @@ class Inputs:
 
         self.terminal.clear()
         room_option: int = self.choose_an_option(
-            valid_types, 'Escolha o tipo da sala:', cancel=True)
-        if room_option is None:
-            return None
+            valid_types,
+            'Escolha o tipo da sala:',
+            cancel=True
+        )
 
-        room_data['type'] = valid_types[room_option - 1]
-        return room_data
+        if room_option:
+            room_data['type'] = valid_types[room_option - 1]
+            return room_data
+
+        return None
 
     def input_session(self):
         session_data: dict = {}
@@ -97,9 +101,7 @@ class Inputs:
             self.printer.line(len(text)+8)
             try:
                 option = int(input('Digite uma opção: '))
-                if cancel and option == 0:
-                    return
-                elif option in valid_range:
+                if option in valid_range or option == 0:
                     return option
 
                 self.terminal.clear()
@@ -107,8 +109,7 @@ class Inputs:
 
             except ValueError:
                 self.terminal.clear()
-                self.printer.error(
-                    'Entrada inválida. Por favor, digite um número.')
+                self.printer.error('Por favor, digite um número válido.')
 
     def execute_option(self, options: dict, option: int):
         action = options.get(option, self.invalid_option)
