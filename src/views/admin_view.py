@@ -14,14 +14,16 @@ class AdminView(BaseView):
     def __init__(self):
         super().__init__()
 
+        self.back_view = None
+
         self.movies_crud: MoviesCrud = MoviesCrud()
         self.admins_crud: AdminsCrud = AdminsCrud()
         self.person_crud: PersonsCrud = PersonsCrud()
 
+        self.room_view: RoomView = RoomView()
+        self.movie_view: MovieView = MovieView()
         self.person_view: PersonView = PersonView()
         self.client_view: ClientView = ClientView()
-        self.movie_view: MovieView = MovieView()
-        self.room_view: RoomView = RoomView()
         self.session_view: SessionView = SessionView()
 
         self.room_view.set_back_view(self)
@@ -37,6 +39,14 @@ class AdminView(BaseView):
             'Sair',
         ]
 
+    def set_back_view(self, view):
+        self.before_view = view
+
+    def back(self):
+        if self.before_view:
+            self.before_view.start()
+        self.printer.error('AdminView não definida')
+
     def start(self):
         self.logger.info('START ADMIN VIEW')
         while True:
@@ -51,6 +61,8 @@ class AdminView(BaseView):
                     self.admin_flow()
                 elif option == 3:
                     self.logout()
+                    self.back()
+
                 elif option == 4:
                     if self.close():
                         return False

@@ -17,6 +17,8 @@ class HomeView(BaseView):
         self.client_view: ClientView = ClientView()
         self.admins_crud: AdminsCrud = AdminsCrud()
 
+        self.admin_view.set_back_view(self)
+
         self.list_options: list = [
             'Login',
             'Register',
