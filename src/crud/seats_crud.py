@@ -21,7 +21,7 @@ class SeatsCrud(BaseCrud):
         except Exception as e:
             raise e
 
-    def get_seats_by_room_id(self, room_id):
+    def select_seats_by_room_id(self, room_id):
         try:
             self.conn.connect()
             self.conn.cursor.execute(SELECT_SEATS_BY_ROOM_ID, [room_id])

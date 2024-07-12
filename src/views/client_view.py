@@ -29,6 +29,73 @@ class ClientView(BaseView):
             'Fechar'
         ]
 
+    def choose_movies(self, sessions: list):
+        try:
+            movies_names = [session[6] for session in sessions]
+            movies_ids = [session[5] for session in sessions]
+
+            self.terminal.clear()
+            movie_option = self.inputs.choose_an_option(
+                options=movies_names,
+                text='Escolha uma sessão',
+                cancel=True
+            )
+
+            if movie_option != 0 and movie_option != None:
+                return movies_ids[movie_option - 1]
+            elif movie_option == 0:
+                return None
+
+        except Exception:
+            self.printer.error('Excessão ao tentar escolher filmes')
+
+    def choose_sessions(self, sessions: list):
+        sessions_ids: list = [
+            session[0] for session in sessions
+        ]
+
+        room_ids: list = [
+            session[1] for session in sessions
+        ]
+
+        room_type: list = []
+
+        for room_id in room_ids:
+            room: str = self.room_crud.select_by_room_id(room_id)
+            room_type.append(room[4])
+
+        formatted: list = []
+
+        for index in range(0, len(sessions)):
+            line = f"{room_type[index]} | {
+                sessions[index][4]} | {sessions[index][3]}"
+            formatted.append(line)
+
+        self.terminal.clear()
+
+        session_option = self.inputs.choose_an_option(
+            options=formatted,
+            text='Escolha uma sessão',
+            cancel=True)
+
+        if session_option is None:
+            self.start()
+
+        return sessions_ids[session_option - 1]
+
+    # def choose_seats(self, room_id: str):
+    #     try:
+    #         seats: list = self.seats_crud.select_seats_by_room_id(room_id)
+    #         self.create_seat_matrix(seats)
+    #         self.print_seat_matrix(seat_matrix)
+
+    def process_purchase(self):
+        sessions = self.session_crud.select_all_session_with_movies()
+        movie_id: str = self.choose_movies(sessions)
+        session_id: str = self.choose_sessions(sessions)
+        room_id: str = self.session_crud.se
+        seat_id: str = self.choose_seat(sessions)
+
     def start(self, is_admin: bool = False):
         self.logger.info('INICIANDO LOOP DE CLIENT VIEW')
         token: str = self.token.load_token()
@@ -69,7 +136,7 @@ class ClientView(BaseView):
             self.start()
 
         elif option == 3:
-            self.purchase_ticket()
+            self.process_purchase()
 
         elif option == 4:
             self.manager.admin_view.start()
@@ -87,7 +154,7 @@ class ClientView(BaseView):
             self.start()
 
         elif option == 3:
-            self.purchase_ticket()
+            self.process_purchase()
 
         elif option == 4:
             self.logout()
@@ -336,3 +403,36 @@ class ClientView(BaseView):
             return True
 
         return False
+
+    def create_seat_matrix(self, seats):
+        max_row = max(seat[3] for seat in seats) + 1
+        max_col = max(seat[4] for seat in seats) + 1
+
+        seat_matrix = [['' for _ in range(max_col)] for _ in range(max_row)]
+
+        for seat in seats:
+            row = seat[3]
+            col = seat[4]
+            state = seat[5]
+            seat_code = seat[2]
+
+            match state:
+                case 'available':
+                    color_code = '\033[92m'
+                case 'reserved':
+                    color_code = '\033[93m'
+                case 'sold':
+                    color_code = '\033[91m'
+                case _:
+                    color_code = '\033[0m'
+
+            seat_matrix[row][col] = f"{color_code}[{seat_code}]\033[0m"
+
+        return seat_matrix
+
+    def print_seat_matrix(self, seat_matrix):
+        self.terminal.clear()
+        print(' tela '.center(len(seat_matrix[0]) * 5, '-'))
+
+        for row in seat_matrix:
+            print(" ".join(row))
