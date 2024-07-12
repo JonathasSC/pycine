@@ -3,10 +3,11 @@ from src.crud.movies_crud import MoviesCrud
 
 
 class MovieView(BaseView):
-    def __init__(self):
+    def __init__(self, manager):
         super().__init__()
         self.movies_crud: MoviesCrud = MoviesCrud()
         self.before_view = None
+        self.manager = manager
 
         self.list_options: list = [
             'Adicionar novo filme',

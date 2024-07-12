@@ -2,9 +2,10 @@ from src.views.base_view import BaseView
 
 
 class PersonView(BaseView):
-    def __init__(self):
+    def __init__(self, manager):
         super().__init__()
         self.before_view = None
+        self.manager = manager
 
         self.list_options: list = [
             'Gerenciar Admins',

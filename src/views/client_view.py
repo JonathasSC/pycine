@@ -8,8 +8,10 @@ from src.crud.tickets_crud import TicketsCrud
 
 
 class ClientView(BaseView):
-    def __init__(self):
+    def __init__(self, manager):
         super().__init__()
+
+        self.manager = manager
 
         self.room_crud: RoomsCrud = RoomsCrud()
         self.seats_crud: SeatsCrud = SeatsCrud()
@@ -60,10 +62,13 @@ class ClientView(BaseView):
     def handle_admin_options(self, option: int):
         if option == 1:
             self.list_movies_in_playing()
+
         elif option == 2:
             self.purchase_ticket()
+
         elif option == 3:
-            self.back()
+            self.manager.admin_view.start()
+
         else:
             self.invalid_option()
 
@@ -76,6 +81,7 @@ class ClientView(BaseView):
 
         elif option == 3:
             self.logout()
+            self.manager.home_view.start()
             return False
 
         elif option == 4:

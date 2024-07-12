@@ -13,13 +13,12 @@ class HomeView(BaseView):
 
         self.manager = manager
 
-        self.token_manager: Token = Token()
         self.auth_view: AuthView = AuthView(self.manager)
         self.admin_view: AdminView = AdminView(self.manager)
-        self.client_view: ClientView = ClientView()
-        self.admins_crud: AdminsCrud = AdminsCrud()
+        self.client_view: ClientView = ClientView(self.manager)
 
-        self.admin_view.set_back_view(self)
+        self.token_manager: Token = Token()
+        self.admins_crud: AdminsCrud = AdminsCrud()
 
         self.list_options: list = [
             'Login',

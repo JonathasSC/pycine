@@ -3,10 +3,11 @@ from src.crud.rooms_crud import RoomsCrud
 
 
 class RoomView(BaseView):
-    def __init__(self):
+    def __init__(self, manager):
         super().__init__()
         self.rooms_crud: RoomsCrud = RoomsCrud()
         self.before_view = None
+        self.manager = manager
 
         self.list_options: list = [
             'Adicionar nova sala',
@@ -15,14 +16,7 @@ class RoomView(BaseView):
             'Voltar'
         ]
 
-        self.option_actions = {
-            1: self.create_room,
-            2: self.create_room_with_seats,
-            3: self.list_rooms,
-            4: self.back_to_admin
-        }
-
-    def set_back_view(self, view):
+    def set_before_view(self, view):
         self.before_view = view
 
     def start(self):
@@ -30,6 +24,7 @@ class RoomView(BaseView):
             try:
                 self.terminal.clear()
                 option: int = self.choose_an_option(self.list_options)
+
                 match option:
                     case 1:
                         self.create_room()
@@ -37,21 +32,14 @@ class RoomView(BaseView):
                         self.create_room_with_seats()
                     case 3:
                         self.list_rooms()
-                        break
                     case 4:
-                        self.back_to_admin()
-                        break
+                        self.manager.admin_view.admin_flow()
                     case _:
                         self.invalid_option()
                         self.start()
 
             except Exception as e:
                 self.printer.error(f'Erro ao iniciar tela de salas: {e}')
-
-    def back_to_admin(self):
-        if self.before_view:
-            self.before_view.start()
-        self.printer.error('AdminView não definida')
 
     def create_room(self):
         while True:

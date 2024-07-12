@@ -9,13 +9,13 @@ from src.views.session_view import SessionView
 
 class Manager:
     def __init__(self) -> None:
-        # self.room_view = RoomView(self)
         self.home_view = HomeView(self)
+        self.room_view = RoomView(self)
         self.admin_view = AdminView(self)
-        # self.movies_crud = MoviesCrud(self)
-        # self.client_view = ClientView(self)
-        # self.person_view = PersonView(self)
-        # self.session_view = SessionView(self)
+        self.movie_view = MoviesCrud(self)
+        self.person_view = PersonView(self)
+        self.client_view = ClientView(self)
+        self.session_view = SessionView(self)
 
     def start(self):
         self.home_view.start()

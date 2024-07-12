@@ -3,6 +3,7 @@ from src.crud.movies_crud import MoviesCrud
 from src.crud.admins_crud import AdminsCrud
 from src.crud.persons_crud import PersonsCrud
 
+# from src.views.home_view import HomeView
 from src.views.room_view import RoomView
 from src.views.movie_view import MovieView
 from src.views.person_view import PersonView
@@ -21,17 +22,11 @@ class AdminView(BaseView):
         self.admins_crud: AdminsCrud = AdminsCrud()
         self.person_crud: PersonsCrud = PersonsCrud()
 
-        self.room_view: RoomView = RoomView()
-        self.movie_view: MovieView = MovieView()
-        self.person_view: PersonView = PersonView()
-        self.client_view: ClientView = ClientView()
-        self.session_view: SessionView = SessionView()
-
-        self.room_view.set_back_view(self)
-        self.movie_view.set_back_view(self)
-        self.person_view.set_back_view(self)
-        self.session_view.set_back_view(self)
-        # self.client_view.set_back_view(self)
+        self.room_view: RoomView = RoomView(self.manager)
+        self.movie_view: MovieView = MovieView(self.manager)
+        self.client_view: ClientView = ClientView(self.manager)
+        self.person_view: PersonView = PersonView(self.manager)
+        self.session_view: SessionView = SessionView(self.manager)
 
         self.list_options: list = [
             'Fluxo publico',
@@ -39,17 +34,6 @@ class AdminView(BaseView):
             'Logout',
             'Sair',
         ]
-
-    def set_back_view(self, view):
-        self.before_view = view
-
-    def back(self):
-        if self.before_view:
-            self.before_view.start()
-        self.printer.error('AdminView não definida')
-
-    def back_to_home(self):
-        self.manager.home_view.start()
 
     def start(self):
         self.logger.info('START ADMIN VIEW')
@@ -60,18 +44,19 @@ class AdminView(BaseView):
                     self.list_options, text='Escolha o que gerenciar')
 
                 if option == 1:
-                    self.client_view.start(is_admin=True)
+                    self.manager.client_view.start(True)
+
                 elif option == 2:
                     self.admin_flow()
+
                 elif option == 3:
                     self.logout()
-                    self.back_to_home()
+                    self.manager.home_view.start()
 
                 elif option == 4:
-                    if self.close():
-                        return False
-                    else:
-                        self.start()
+                    self.close()
+                    break
+
                 else:
                     self.invalid_option()
                     continue
@@ -88,6 +73,7 @@ class AdminView(BaseView):
             'Gerenciar filmes',
             'Gerenciar salas',
             'Gerenciar sessões',
+            'Voltar',
         ]
 
         admin_actions = {
@@ -95,6 +81,7 @@ class AdminView(BaseView):
             2: self.movie_view.start,
             3: self.room_view.start,
             4: self.session_view.start,
+            5: self.start
         }
 
         try:

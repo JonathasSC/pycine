@@ -3,9 +3,10 @@ from src.crud.sessions_crud import SessionsCrud
 
 
 class SessionView(BaseView):
-    def __init__(self):
+    def __init__(self, manager):
         super().__init__()
         self.before_view = None
+        self.manager = manager
         self.session_crud: SessionsCrud = SessionsCrud()
 
         self.list_options: list = [
@@ -13,12 +14,6 @@ class SessionView(BaseView):
             'Ver lista de sessões',
             'Voltar'
         ]
-
-        self.option_actions = {
-            1: self.create_session,
-            2: self.list_sessions,
-            3: self.back_to_admin
-        }
 
     def list_sessions(self):
         while True:
@@ -47,20 +42,28 @@ class SessionView(BaseView):
                 self.printer.error(f'Erro ao iniciar sessões: {e}')
                 self.start()
 
-    def back_to_admin(self):
-        if self.before_view:
-            self.before_view.start()
-        self.printer.error('AdminView não definida')
-
-    def set_back_view(self, view):
-        self.before_view = view
-
     def start(self):
         while True:
             try:
                 self.terminal.clear()
-                option: int = self.choose_an_option(self.list_options)
-                self.execute_option(self.option_actions, option)
+                option: int = self.choose_an_option(
+                    self.list_options, text='Escolha o que gerenciar')
+
+                if option == 1:
+                    self.create_session()
+                    self.start()
+
+                elif option == 2:
+                    self.list_sessions()
+                    self.start()
+
+                elif option == 3:
+                    self.manager.admin_view.admin_flow()
+
+                else:
+                    self.invalid_option()
+                    continue
+
                 break
 
             except Exception as e:
@@ -79,5 +82,3 @@ class SessionView(BaseView):
             except Exception as e:
                 self.printer.error(f'Erro ao criar sessão: {e}')
                 break
-
-        self.start()

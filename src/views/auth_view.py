@@ -19,6 +19,9 @@ from src.views.client_view import ClientView
 class AuthView(BaseView):
     def __init__(self, manager):
         super().__init__()
+
+        self.manager = manager
+
         self.admins_crud: AdminsCrud = AdminsCrud()
         self.clients_crud: ClientsCrud = ClientsCrud()
         self.persons_crud: PersonsCrud = PersonsCrud()
@@ -28,8 +31,8 @@ class AuthView(BaseView):
         self.token_manager: Token = Token()
         self.terminal: Terminal = Terminal()
 
-        self.admin_view: AdminView = AdminView(manager)
-        self.client_view: ClientView = ClientView()
+        self.admin_view: AdminView = AdminView(self.manager)
+        self.client_view: ClientView = ClientView(self.manager)
 
         self.handlers: ExceptionsHandlers = ExceptionsHandlers()
 
