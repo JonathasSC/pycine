@@ -7,12 +7,12 @@ from src.utils.token import Token
 
 
 class HomeView(BaseView):
-    def __init__(self):
+    def __init__(self, manager):
         super().__init__()
 
-        self.auth_view: AuthView = AuthView()
+        self.auth_view: AuthView = AuthView(manager)
         self.client_view: ClientView = ClientView()
-        self.admin_view: AdminView = AdminView()
+        self.admin_view: AdminView = AdminView(manager)
         self.admins_crud: AdminsCrud = AdminsCrud()
         self.token_manager: Token = Token()
 

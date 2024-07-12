@@ -52,7 +52,7 @@ class SessionView(BaseView):
             self.before_view.start()
         self.printer.error('AdminView não definida')
 
-    def set_before_view(self, view):
+    def set_back_view(self, view):
         self.before_view = view
 
     def start(self):

@@ -20,7 +20,7 @@ class MovieView(BaseView):
             3: self.back_to_admin
         }
 
-    def set_before_view(self, view):
+    def set_back_view(self, view):
         self.before_view = view
 
     def back_to_admin(self):

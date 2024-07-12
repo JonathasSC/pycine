@@ -1,8 +1,9 @@
 from src.views.home_view import HomeView
+from src.views.manager import Manager
 
 
 def main():
-    HomeView().start()
+    Manager().start()
 
 
 if __name__ == '__main__':

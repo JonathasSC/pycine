@@ -29,7 +29,7 @@ class PersonView(BaseView):
             except Exception as e:
                 self.printer.error(e, timer=True)
 
-    def set_before_view(self, view):
+    def set_back_view(self, view):
         self.before_view = view
 
     def back_to_admin(self):

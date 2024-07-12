@@ -34,17 +34,30 @@ class ClientView(BaseView):
             5: self.exit
         }
 
-    def start(self):
+    def start(self, is_admin: bool = False):
         self.logger.info('INICIANDO LOOP DE CLIENT VIEW')
-        while True:
-            try:
-                self.terminal.clear()
-                option: int = self.choose_an_option(self.list_options)
-                self.execute_option(self.option_actions, option)
-            except Exception as e:
-                self.printer.error(f'Erro ao iniciar tela publica: {e}')
-            self.logger.info('PARANDO LOOP DE CLIENT VIEW')
-            break
+        token: str = self.token.load_token()
+        person_role: str = self.token.get_role_from_token(token)
+
+        if person_role:
+            while True:
+                try:
+                    self.terminal.clear()
+                    self.update_options(is_admin)
+                    option: int = self.choose_an_option(self.list_options)
+
+                    if person_role == 'admin':
+                        self.handle_admin_options(option)
+                        break
+                    elif person_role == 'client':
+                        if self.handle_client_options(option):
+                            self.start()
+                        break
+
+                except Exception as e:
+                    self.printer.error(f'Erro ao iniciar tela publica: {e}')
+
+                break
 
     def show_my_tickets(self):
         header = ['SEAT', 'MOVIE', 'TIME']
