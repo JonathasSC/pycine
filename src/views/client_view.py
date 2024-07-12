@@ -23,6 +23,7 @@ class ClientView(BaseView):
 
         self.list_options: list = [
             'Ver filmes em exibição',
+            'Ver meus tickets',
             'Comprar ingresso',
             'Logout',
             'Fechar'
@@ -64,27 +65,36 @@ class ClientView(BaseView):
             self.list_movies_in_playing()
 
         elif option == 2:
-            self.purchase_ticket()
+            self.show_my_tickets()
+            self.start()
 
         elif option == 3:
+            self.purchase_ticket()
+
+        elif option == 4:
             self.manager.admin_view.start()
 
         else:
             self.invalid_option()
 
     def handle_client_options(self, option):
+
         if option == 1:
             self.list_movies_in_playing()
 
         elif option == 2:
-            self.purchase_ticket()
+            self.show_my_tickets()
+            self.start()
 
         elif option == 3:
+            self.purchase_ticket()
+
+        elif option == 4:
             self.logout()
             self.manager.home_view.start()
             return False
 
-        elif option == 4:
+        elif option == 5:
             if self.close():
                 return False
             else:
@@ -93,14 +103,37 @@ class ClientView(BaseView):
             self.invalid_option()
         return True
 
-    def set_back_view(self, view):
-        self.back_view = view
+    def show_my_tickets(self):
+        header = ['SEAT', 'MOVIE', 'TIME']
 
-    def back(self):
-        if self.back_view:
-            self.back_view.start()
-        else:
-            self.printer.error('View anterior não definida')
+        token = self.token.load_token()
+        person_id = self.token.person_id_from_token(token)
+
+        try:
+            tickets_list = self.tickets_crud.select_tickets_by_person_id(
+                person_id)
+
+            formated_list = []
+            for ticket in tickets_list:
+                seat_id = ticket[1]
+                session_id = ticket[3]
+
+                seat = self.seats_crud.select_seat_by_id(seat_id)
+                seat_code = seat[2]
+
+                session = self.session_crud.select_session_by_id(session_id)
+                movie_id = session[2]
+                start_time = session[4]
+                movie = self.movies_crud.select_movie_by_id(movie_id)
+                movie_title = movie[1]
+
+                formated_list.append([seat_code, movie_title, start_time])
+
+            self.printer.display_table(
+                headers=header, table_data=formated_list)
+
+        except Exception as e:
+            self.printer.error(f'Erro ao mostrar os tickets: {e}')
 
     def purchase_ticket(self):
         while True:
