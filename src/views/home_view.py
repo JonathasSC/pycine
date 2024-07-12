@@ -8,7 +8,7 @@ from src.utils.token import Token
 
 
 class HomeView(BaseView):
-    def __init__(self):
+    def __init__(self, manager):
         super().__init__()
 
         self.token_manager: Token = Token()

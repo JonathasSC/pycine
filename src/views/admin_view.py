@@ -11,9 +11,10 @@ from src.views.session_view import SessionView
 
 
 class AdminView(BaseView):
-    def __init__(self):
+    def __init__(self, manager):
         super().__init__()
 
+        self.manager = manager
         self.back_view = None
 
         self.movies_crud: MoviesCrud = MoviesCrud()
@@ -30,7 +31,7 @@ class AdminView(BaseView):
         self.movie_view.set_back_view(self)
         self.person_view.set_back_view(self)
         self.session_view.set_back_view(self)
-        self.client_view.set_back_view(self)
+        # self.client_view.set_back_view(self)
 
         self.list_options: list = [
             'Fluxo publico',
@@ -47,6 +48,9 @@ class AdminView(BaseView):
             self.before_view.start()
         self.printer.error('AdminView não definida')
 
+    def back_to_home(self):
+        self.manager.home_view.start()
+
     def start(self):
         self.logger.info('START ADMIN VIEW')
         while True:
@@ -61,7 +65,7 @@ class AdminView(BaseView):
                     self.admin_flow()
                 elif option == 3:
                     self.logout()
-                    self.back()
+                    self.back_to_home()
 
                 elif option == 4:
                     if self.close():
