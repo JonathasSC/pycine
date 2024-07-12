@@ -11,9 +11,11 @@ class HomeView(BaseView):
     def __init__(self, manager):
         super().__init__()
 
+        self.manager = manager
+
         self.token_manager: Token = Token()
-        self.auth_view: AuthView = AuthView()
-        self.admin_view: AdminView = AdminView()
+        self.auth_view: AuthView = AuthView(self.manager)
+        self.admin_view: AdminView = AdminView(self.manager)
         self.client_view: ClientView = ClientView()
         self.admins_crud: AdminsCrud = AdminsCrud()
 
