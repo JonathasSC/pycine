@@ -8,7 +8,8 @@ from src.queries.persons_queries import (
     SELECT_BY_EMAIL,
     DELETE_ALL_PERSONS,
     SELECT_IS_ADMIN,
-    SELECT_IS_CLIENT
+    SELECT_IS_CLIENT,
+    SELECT_ALL_PERSONS,
 )
 
 from src.schemas.person_schemas import PersonCreate, PersonLogin
@@ -66,6 +67,16 @@ class PersonsCrud(BaseCrud):
 
         except ValidationError as e:
             raise e
+
+        except Exception as e:
+            raise e
+
+    def select_all_clients(self) -> list:
+        try:
+            self.conn.connect()
+            self.conn.cursor.execute(SELECT_ALL_PERSONS)
+            person_list: list = self.conn.cursor.fetchall()
+            return person_list
 
         except Exception as e:
             raise e

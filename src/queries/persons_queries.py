@@ -44,3 +44,7 @@ SELECT * FROM admins WHERE person_id = ?;
 SELECT_IS_CLIENT = """
 SELECT * FROM clients WHERE person_id = ?;
 """
+
+SELECT_ALL_PERSONS = """
+SELECT * FROM persons;
+"""

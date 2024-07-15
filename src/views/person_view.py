@@ -11,6 +11,7 @@ class PersonView(BaseView):
         self.list_options: list = [
             'Gerenciar Admins',
             'Gerenciar Clients',
+            'Gerenciar Persons',
             'Voltar',
         ]
 
@@ -26,6 +27,8 @@ class PersonView(BaseView):
                     case 2:
                         self.manage_client()
                     case 3:
+                        self.manage_person()
+                    case 4:
                         self.manager.admin_view.admin_flow()
                     case _:
                         self.invalid_option()
@@ -84,7 +87,7 @@ class PersonView(BaseView):
                     self.manage_admin()
 
                 except Exception as e:
-                    self.printer.error(f'Erro ao criar sala: {e}')
+                    self.printer.error(f'Erro ao criar admin: {e}')
                     self.manage_admin()
 
         while True:
@@ -200,6 +203,105 @@ class PersonView(BaseView):
                 1: create_client,
                 2: get_all_clients,
                 3: del_client,
+                4: self.start,
+            }
+
+            try:
+                self.terminal.clear()
+                option: int = self.choose_an_option(manage_options)
+                self.execute_option(manage_actions, option)
+
+            except Exception as e:
+                self.printer.error(e)
+
+    def manage_person(self):
+        def get_all_persons():
+            while True:
+                try:
+                    self.terminal.clear()
+                    header = [
+                        'PERSON ID',
+                        'NAME',
+                        'EMAIL',
+                        'PASSWORD'
+                    ]
+                    admin_list: list = self.person_crud.select_all_persons()
+                    self.printer.display_table(header, admin_list)
+                    self.manage_admin()
+
+                except Exception as e:
+                    self.terminal.clear()
+                    self.printer.error(f'Erro ao mostrar admins {e}')
+                    self.manage_admin()
+
+        def del_person():
+            while True:
+                try:
+                    self.terminal.clear()
+                    self.printer.generic(
+                        text='Preencha os campos ou digite "q" para cancelar',
+                        line=True)
+
+                    client_id: str = input('Client ID: ')
+
+                    if client_id.lower() == 'q':
+                        break
+
+                    confirm_delete: str = self.client_crud.delete_client(
+                        client_id)
+
+                    if client_id == confirm_delete:
+                        self.terminal.clear()
+                        self.printer.success('Cliente deletado com sucesso!')
+                        self.terminal.clear()
+
+                    self.manage_client()
+
+                except Exception as e:
+                    self.printer.error(f'Erro ao deletar cliente: {e}')
+                    self.manage_client()
+
+        def create_person():
+            while True:
+                try:
+                    self.terminal.clear()
+                    self.printer.generic(
+                        text='Preencha os campos ou digite deixe em branco para cancelar',
+                        line=True)
+
+                    person_data: dict = self.inputs.input_person()
+
+                    if any(value == '' for value in person_data.values()):
+                        break
+
+                    person_id: str = self.person_crud.insert_person(
+                        person_data)
+
+                    self.client_crud.insert_client(person_id)
+                    self.printer.success('Admin criado com sucesso!')
+                    self.manage_client()
+
+                except ValidationError as e:
+                    erro = e.errors()[0]
+                    message: str = erro['msg']
+                    self.printer.error(message[13:])
+
+                except Exception as e:
+                    self.printer.error(f'Erro ao criar cliente: {e}')
+
+        while True:
+
+            manage_options: list = [
+                'Criar nova pessoa',
+                'Listar pessoas',
+                'Deletar pessoa',
+                'Voltar'
+            ]
+
+            manage_actions = {
+                1: create_person,
+                2: get_all_persons,
+                3: del_person,
                 4: self.start,
             }
 
