@@ -29,8 +29,11 @@ class PersonsCrud(BaseCrud):
 
             data_list: List[Any] = list(data_dict.values())
 
+            self.conn.connect()
             self.conn.cursor.execute(INSERT_PERSON, data_list)
             self.conn.connection.commit()
+            self.conn.close()
+
             return person_id
 
         except ValidationError as e:

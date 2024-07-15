@@ -21,7 +21,7 @@ class Inputs:
 
         person_data['name'] = input('Nome: ')
         person_data['email'] = input('Email: ')
-        person_data['password'] = input('Senha: ')
+        person_data['password'] = self.input_password()
 
         return person_data
 

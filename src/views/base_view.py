@@ -7,11 +7,13 @@ from src.utils.inputs import Inputs
 from src.utils.token import Token
 
 from src.utils.logger import Logger
-from src.crud.admins_crud import AdminsCrud
-from src.crud.persons_crud import PersonsCrud
-from src.crud.sessions_crud import SessionsCrud
+
 from src.crud.seats_crud import SeatsCrud
+from src.crud.admins_crud import AdminsCrud
+from src.crud.clients_crud import ClientsCrud
+from src.crud.persons_crud import PersonsCrud
 from src.crud.tickets_crud import TicketsCrud
+from src.crud.sessions_crud import SessionsCrud
 
 
 class BaseView:
@@ -20,11 +22,12 @@ class BaseView:
         self.printer: Printer = Printer()
         self.terminal: Terminal = Terminal()
 
-        self.admin_crud: AdminsCrud = AdminsCrud()
-        self.person_crud: PersonsCrud = PersonsCrud()
-        self.session_crud: SessionsCrud = SessionsCrud()
-        self.ticket_crud: TicketsCrud = TicketsCrud()
         self.seat_crud: SeatsCrud = SeatsCrud()
+        self.admin_crud: AdminsCrud = AdminsCrud()
+        self.client_crud: ClientsCrud = ClientsCrud()
+        self.person_crud: PersonsCrud = PersonsCrud()
+        self.ticket_crud: TicketsCrud = TicketsCrud()
+        self.session_crud: SessionsCrud = SessionsCrud()
 
         self.handlers: ExceptionsHandlers = ExceptionsHandlers()
         self.logger: Logger = Logger()
