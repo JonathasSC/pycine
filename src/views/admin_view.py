@@ -54,14 +54,12 @@ class AdminView(BaseView):
                     self.manager.home_view.start()
 
                 elif option == 4:
-                    self.close()
-                    break
+                    if self.close():
+                        break
 
                 else:
                     self.invalid_option()
-                    continue
 
-                break
             except Exception as e:
                 self.printer.error(f'Erro ao iniciar tela de admin: {e}')
 
@@ -94,23 +92,3 @@ class AdminView(BaseView):
 
         except Exception as e:
             self.printer.error(e)
-
-    def confirm_close(self):
-        self.terminal.clear()
-
-        confirm_options = ['Sim', 'Não']
-        option = self.choose_an_option(
-            confirm_options, text='Realmente deseja sair?')
-
-        if option == 1:
-            self.terminal.clear()
-            self.printer.generic('Fechado...', line=True, timer=True)
-            self.terminal.clear()
-            return True
-
-        return False
-
-    def close(self):
-        if self.confirm_close():
-            return True
-        return False

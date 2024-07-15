@@ -61,29 +61,79 @@ class Printer:
 
                 page_input = self.validate_page(total_pages)
 
-                if page_input is None:
+                if page_input == 0:
                     break
                 elif 1 <= page_input <= total_pages:
                     page = page_input
-                else:
-                    print(
-                        f"Digite um número de página válido (1 - {total_pages}) ou '0' para voltar.")
 
             except Exception as e:
-                print(f'Erro ao mostrar tabela: {e}')
+                self.terminal.clear()
+                self.error(f'{e}')
+                self.terminal.clear()
 
     def validate_page(self, total_pages):
         while True:
             try:
-                user_input = int(
-                    input(f"Digite o número da página (1 - {total_pages}) ou '0' para voltar: "))
-
-                if user_input == 0 or user_input not in range(1, total_pages + 1):
-                    return None
-                else:
-                    return user_input
+                user_input: int
+                user_input = int(input(
+                    f"Escolha a pagina (1 - {total_pages}) ou '0' para voltar: "))
 
             except ValueError:
-                print("Entrada inválida. Por favor, digite um número válido.")
-            except Exception as e:
-                raise e
+                raise ValueError(f'Valor inválido, por favor digite um numero')
+
+            if user_input not in range(0, total_pages + 1):
+                raise ValueError(
+                    "Valor inválida. Por favor, digite um número válido."
+                )
+
+            return user_input
+
+    def display_movies(self, movies_list):
+        headers: list = ['NAME', 'GENRE', 'DURATION', 'SYNOPSIS']
+
+        self.terminal.clear()
+        self.printer.generic(
+            text='Filmes em cartaz',
+            line=True
+
+        )
+
+        movies_compacted = [
+            [movie[6], movie[7], movie[8], f'{str(movie[9])[:50]}...'] for movie in movies_list
+        ]
+
+        self.printer.display_table(headers, movies_compacted)
+        self.start()
+
+    def create_seat_matrix(self, seats):
+        max_row = max(seat[3] for seat in seats) + 1
+        max_col = max(seat[4] for seat in seats) + 1
+
+        seat_matrix = [['' for _ in range(max_col)] for _ in range(max_row)]
+
+        for seat in seats:
+            row = seat[3]
+            col = seat[4]
+            state = seat[5]
+            seat_code = seat[2]
+
+            match state:
+                case 'available':
+                    color_code = '\033[92m'
+                case 'reserved':
+                    color_code = '\033[93m'
+                case 'sold':
+                    color_code = '\033[91m'
+                case _:
+                    color_code = '\033[0m'
+
+            seat_matrix[row][col] = f"{color_code}[{seat_code}]\033[0m"
+
+        return seat_matrix
+
+    def print_seat_matrix(self, seat_matrix):
+        self.terminal.clear()
+        print(' Tela '.center(len(seat_matrix[0]) * 5, '-'))
+
+        for row in seat_matrix:
+            print(" ".join(row))

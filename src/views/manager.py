@@ -5,6 +5,7 @@ from src.views.movie_view import MoviesCrud
 from src.views.client_view import ClientView
 from src.views.person_view import PersonView
 from src.views.session_view import SessionView
+from src.views.purchase_view import PurchaseView
 
 
 class Manager:
@@ -16,6 +17,7 @@ class Manager:
         self.person_view = PersonView(self)
         self.client_view = ClientView(self)
         self.session_view = SessionView(self)
+        self.purchase_view = PurchaseView(self)
 
     def start(self):
         self.home_view.start()

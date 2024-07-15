@@ -18,6 +18,7 @@ class TicketsCrud(BaseCrud):
             data['ticket_id'] = ticket_id
             ticket_data: Dict[str, Any] = dict(TicketCreate(**data))
             data_list: List[Any] = list(ticket_data.values())
+
             self.conn.connect()
             self.conn.cursor.execute(INSERT_TICKET, data_list)
             self.conn.connection.commit()

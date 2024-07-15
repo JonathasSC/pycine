@@ -24,7 +24,6 @@ class Connection:
     def connect(self):
         self.connection = sqlite3.connect(self.db_name)
         self.cursor = self.connection.cursor()
-        self.logger.info('ABRINDO CONEXAO COM BANCO DE DADOS')
 
     def close(self):
         if self.connection:

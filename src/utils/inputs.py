@@ -94,14 +94,15 @@ class Inputs:
             self.printer.generic(text, line=True)
             self.printer.option_list(options)
 
-            valid_range = range(1, len(options) + 1)
+            valid_range = range(0, len(options))
+
             if cancel:
                 self.printer.generic('[0] - Cancelar')
 
             self.printer.line(len(text)+8)
             try:
                 option = int(input('Digite uma opção: '))
-                if option in valid_range or option == 0:
+                if option in valid_range:
                     return option
 
                 self.terminal.clear()
@@ -110,10 +111,6 @@ class Inputs:
             except ValueError:
                 self.terminal.clear()
                 self.printer.error('Por favor, digite um número válido.')
-
-    def execute_option(self, options: dict, option: int):
-        action = options.get(option, self.invalid_option)
-        action()
 
     def invalid_option(self):
         self.terminal.clear()

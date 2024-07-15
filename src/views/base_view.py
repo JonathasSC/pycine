@@ -10,6 +10,8 @@ from src.utils.logger import Logger
 from src.crud.admins_crud import AdminsCrud
 from src.crud.persons_crud import PersonsCrud
 from src.crud.sessions_crud import SessionsCrud
+from src.crud.seats_crud import SeatsCrud
+from src.crud.tickets_crud import TicketsCrud
 
 
 class BaseView:
@@ -21,6 +23,8 @@ class BaseView:
         self.admin_crud: AdminsCrud = AdminsCrud()
         self.person_crud: PersonsCrud = PersonsCrud()
         self.session_crud: SessionsCrud = SessionsCrud()
+        self.ticket_crud: TicketsCrud = TicketsCrud()
+        self.seat_crud: SeatsCrud = SeatsCrud()
 
         self.handlers: ExceptionsHandlers = ExceptionsHandlers()
         self.logger: Logger = Logger()
@@ -33,7 +37,8 @@ class BaseView:
         self.terminal.clear()
 
     def start(self):
-        raise NotImplementedError("Subclasses should implement start() method.")
+        raise NotImplementedError(
+            "Subclasses should implement start() method.")
 
     def choose_an_option(self, options: list, text: str = 'Escolha uma opção', cancel: bool = False):
         while True:
@@ -90,3 +95,18 @@ class BaseView:
                 self.handlers.handle_validation_error(e)
             except Exception as e:
                 self.printer.error(f'Erro ao criar admin: {str(e)}')
+
+    def close(self):
+        self.terminal.clear()
+
+        confirm_options = ['Sim', 'Não']
+        option = self.choose_an_option(
+            confirm_options, text='Realmente deseja sair?')
+
+        if option == 1:
+            self.terminal.clear()
+            self.printer.generic('Fechado...', line=True, timer=True)
+            self.terminal.clear()
+            return True
+
+        return False
