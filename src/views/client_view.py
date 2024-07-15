@@ -19,8 +19,6 @@ class ClientView(BaseView):
         self.tickets_crud: TicketsCrud = TicketsCrud()
         self.session_crud: SessionsCrud = SessionsCrud()
 
-        self.back_view = None
-
         self.list_options: list = [
             'Ver filmes em exibição',
             'Ver meus tickets',
@@ -30,12 +28,12 @@ class ClientView(BaseView):
         ]
 
     def start(self, is_admin: bool = False):
-        self.logger.info('INICIANDO LOOP DE CLIENT VIEW')
-        token: str = self.token.load_token()
-        person_role: str = self.token.get_role_from_token(token)
+        while True:
+            self.logger.info('INICIANDO LOOP DE CLIENT VIEW')
+            token: str = self.token.load_token()
+            person_role: str = self.token.get_role_from_token(token)
 
-        if person_role:
-            while True:
+            if person_role:
                 try:
                     self.terminal.clear()
                     self.update_options(is_admin)
@@ -43,9 +41,11 @@ class ClientView(BaseView):
 
                     if person_role == 'admin':
                         self.handle_admin_options(option)
+                        break
                     elif person_role == 'client':
+                        self.logger.info('INICIANDO HANDLE DE CLIENT VIEW')
                         self.handle_client_options(option)
-                    break
+                        break
 
                 except Exception as e:
                     self.printer.error(f'Erro ao iniciar tela publica: {e}')
@@ -80,13 +80,15 @@ class ClientView(BaseView):
             case 2:
                 self.show_my_tickets()
             case 3:
+                self.logger.info('INICIANDO PURCHASE VIEW')
                 self.manager.purchase_view.start()
             case 4:
                 self.logout()
                 self.manager.home_view.start()
             case 5:
-                if self.close() == False:
-                    self.start()
+                if self.close():
+                    return
+                self.start()
             case _:
                 self.invalid_option()
 

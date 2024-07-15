@@ -93,12 +93,10 @@ class Inputs:
 
             self.printer.generic(text, line=True)
             self.printer.option_list(options)
-
-            valid_range = range(0, len(options))
+            valid_range = range(1, len(options) + 1)
 
             if cancel:
                 self.printer.generic('[0] - Cancelar')
-
             self.printer.line(len(text)+8)
             try:
                 option = int(input('Digite uma opção: '))
