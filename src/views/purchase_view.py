@@ -11,7 +11,9 @@ class PurchaseView(BaseView):
     def process_ticket(self, seat_id: str, person_id: str, session_id: str):
         try:
             data: dict = {'seat_id': seat_id,
-                          'person_id': person_id, 'session_id': session_id}
+                          'person_id': person_id,
+                          'session_id': session_id}
+
             self.ticket_crud.insert_ticket(data)
             return True
         except Exception:
@@ -22,36 +24,55 @@ class PurchaseView(BaseView):
         while True:
             token: str = self.token.load_token()
             person_id: str = self.token.person_id_from_token(token)
+            person_role: str = self.token.get_role_from_token(token)
+
+            def back():
+                if person_role == 'client':
+                    self.manager.client_view.start()
+                elif person_role == 'admin':
+                    self.manager.client_view.start()
+
             movie_result = self.choose_movies()
             if movie_result is None:
-                return
+                back()
+
             movie_id, movie_name = movie_result
             session_result = self.choose_session()
+
             if session_result is None:
-                return
+                back()
+
             room_id, session_time, session_id = session_result
             seat_result = self.choose_seat(room_id, session_id)
             if seat_result is None:
-                return
+                back()
+
             seat_id, seat_code = seat_result
             if self.confirm_purchase(seat_code, session_time, movie_name):
                 if self.process_ticket(seat_id, person_id, session_id):
-                    self.printer.success('CHEGOU AQUI!')
+                    self.terminal.clear()
+                    self.printer.success('COMPRA BEM SUCESSIDA!')
+                    self.terminal.clear()
 
     def choose_movies(self):
         self.logger.info('INICIANDO CHOOSE MOVIES')
         try:
             self.terminal.clear()
             sessions: list = self.session_crud.select_all_session_with_movies()
+
             movies_names = [session[6] for session in sessions]
             movies_ids = [session[5] for session in sessions]
+
             movie_option = self.inputs.choose_an_option(
                 movies_names, 'Escolha um filme', True)
+
             if movie_option == 0:
                 return None
+
             choose_movie_index = movie_option - 1
             movie_id = movies_ids[choose_movie_index]
             movie_name = movies_names[choose_movie_index]
+
             return movie_id, movie_name
         except Exception:
             self.printer.error('Excessão ao tentar escolher filmes')
@@ -68,7 +89,7 @@ class PurchaseView(BaseView):
             session_times = [session[4] for session in sessions]
 
             sessions_formatted = [
-                f"{session[2]} | {session[1]} | { session[4]}" for session in sessions]
+                f"{session[2]} | {session[1]} | {session[4]}" for session in sessions]
 
             session_option = self.inputs.choose_an_option(
                 sessions_formatted, 'Escolha uma sessão', True)

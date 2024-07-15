@@ -120,6 +120,7 @@ class ClientView(BaseView):
 
             self.printer.display_table(
                 headers=header, table_data=formated_list)
+            self.start()
 
         except Exception as e:
             self.printer.error(f'Erro ao mostrar os tickets: {e}')
