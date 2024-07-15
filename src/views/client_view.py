@@ -91,6 +91,7 @@ class ClientView(BaseView):
                 self.start()
             case _:
                 self.invalid_option()
+                self.start()
 
     def show_my_tickets(self):
         header = ['SEAT', 'MOVIE', 'TIME']
