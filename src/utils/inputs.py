@@ -2,6 +2,8 @@ from src.utils.printer import Printer
 from src.utils.terminal import Terminal
 import getpass
 
+from src.utils.validators import password_validator
+
 
 class Inputs:
     def __init__(self) -> None:
@@ -39,10 +41,35 @@ class Inputs:
             password = getpass.getpass('Senha (ela está ocultada): ')
             confirm_password: str = getpass.getpass('Confirme a senha: ')
 
-            if password == confirm_password:
-                return password
+            if password != confirm_password:
+                self.printer.error('Senhas não correspondem, tente novamente')
+                pass
 
-            self.printer.error('Senhas não correspondem, tente novamente')
+            elif not password_validator(password):
+                self.terminal.clear()
+                self.printer.error('A senha deve conter: ', timer=False)
+
+                self.printer.error(
+                    text='- Pelo menos um digito',
+                    line=False,
+                    timer=False)
+
+                self.printer.error(
+                    '- Pelo menos um caractere especial',
+                    line=False,
+                    timer=False)
+
+                self.printer.error(
+                    '- Pelo menos um letra maiuscula',
+                    line=False,
+                    timer=True)
+
+                self.terminal.clear()
+                self.printer.warning('Tente novamente')
+                self.terminal.clear()
+
+            else:
+                return password
 
     def input_movie(self):
         movie_data: dict = {}
