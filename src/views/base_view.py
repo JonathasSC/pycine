@@ -1,12 +1,13 @@
 from pydantic import ValidationError
 
-from src.utils.printer import Printer
-from src.utils.exceptions import ExceptionsHandlers
-from src.utils.terminal import Terminal
-from src.utils.inputs import Inputs
 from src.utils.token import Token
-
 from src.utils.logger import Logger
+from src.utils.inputs import Inputs
+from src.utils.hashing import Hashing
+from src.utils.printer import Printer
+from src.utils.terminal import Terminal
+from src.utils.exceptions import ExceptionsHandlers
+
 
 from src.crud.seats_crud import SeatsCrud
 from src.crud.admins_crud import AdminsCrud
@@ -32,6 +33,7 @@ class BaseView:
         self.handlers: ExceptionsHandlers = ExceptionsHandlers()
         self.logger: Logger = Logger()
         self.token: Token = Token()
+        self.hash: Hashing = Hashing()
 
     def logout(self):
         self.terminal.clear()

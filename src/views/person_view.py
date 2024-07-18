@@ -1,5 +1,6 @@
-from src.views.base_view import BaseView
 from pydantic import ValidationError
+from src.views.base_view import BaseView
+from src.utils.validators import exists_email, password_validator
 
 
 class PersonView(BaseView):
@@ -83,22 +84,74 @@ class PersonView(BaseView):
 
         def put_admin():
             try:
-                admin_id: str = input('Admin ID: ')
-                name: str = input('Nome: ')
-                email: str = input('Email: ')
-                password: str = input('Senha: ')
+                old_data = {}
+                data = {}
 
-                data: dict = {
-                    'name': name,
-                    'email': email,
-                    'password': password
-                }
+                admin_id = input('Admin ID: ')
+                admin = self.admin_crud.select_by_id(admin_id)
 
-                self.admin_crud.update_admin(admin_id, data)
-                self.printer.success('Admin atualizado com sucesso!')
-                self.manage_admin()
+                person = self.person_crud.select_by_id(admin[1])
+
+                old_data['name'] = person[1]
+                old_data['email'] = person[2]
+                old_data['password'] = person[3]
+
+                name = input(
+                    'Nome (deixe em branco para manter o atual): ').strip()
+                email = input(
+                    'Email (deixe em branco para manter o atual): ').strip()
+                password = input(
+                    'Senha (deixe em branco para manter a atual): ').strip()
+
+                while email and not exists_email(email):
+                    self.terminal.clear()
+                    self.printer.error('Esse email já está em uso')
+                    self.terminal.clear()
+
+                    email = input('Email: ').strip()
+
+                while password and not password_validator(password):
+                    self.terminal.clear()
+                    self.printer.password_params()
+                    self.terminal.clear()
+
+                    password = input('Senha: ').strip()
+
+                if not name:
+                    data['name'] = old_data['name']
+                else:
+                    data['name'] = name
+
+                if not email:
+                    data['email'] = old_data['email']
+                else:
+                    data['email'] = email
+
+                if not password:
+                    data['password'] = old_data['password']
+                else:
+                    data['password'] = self.hash.generate_hash(
+                        password
+                    )
+
+                if data:
+                    self.admin_crud.update_admin(admin_id, data)
+                    self.printer.success('Admin atualizado com sucesso!')
+                else:
+                    self.printer.info(
+                        'Nenhum dado fornecido para atualização.')
+
+            except ValueError as e:
+                self.terminal.clear()
+                self.printer.error(f'{e}')
+                self.terminal.clear()
+                self.put_admin()
+
             except Exception as e:
                 self.printer.error(f'Erro ao atualizar admin: {e}')
+                self.put_admin()
+
+            finally:
                 self.manage_admin()
 
         while True:

@@ -47,22 +47,7 @@ class Inputs:
 
             elif not password_validator(password):
                 self.terminal.clear()
-                self.printer.error('A senha deve conter: ', timer=False)
-
-                self.printer.error(
-                    text='- Pelo menos um digito',
-                    line=False,
-                    timer=False)
-
-                self.printer.error(
-                    '- Pelo menos um caractere especial',
-                    line=False,
-                    timer=False)
-
-                self.printer.error(
-                    '- Pelo menos um letra maiuscula',
-                    line=False,
-                    timer=True)
+                self.printer.password_params()
 
                 self.terminal.clear()
                 self.printer.warning('Tente novamente')

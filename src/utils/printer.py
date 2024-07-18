@@ -20,7 +20,7 @@ class Printer:
             self.console.print(f'[bold {color}] {text} [/bold {color}]')
 
         if timer:
-            sleep(1)
+            sleep(2)
 
     def line(self, size, color: str = 'white') -> None:
         self.console.print(f'[{color}]{"="*size}[/{color}]')
@@ -137,3 +137,21 @@ class Printer:
 
         for row in seat_matrix:
             print(" ".join(row))
+
+    def password_params(self):
+        self.error('A senha deve conter: ', timer=False)
+
+        self.error(
+            text='- Pelo menos um digito',
+            line=False,
+            timer=False)
+
+        self.error(
+            '- Pelo menos um caractere especial',
+            line=False,
+            timer=False)
+
+        self.error(
+            '- Pelo menos um letra maiuscula',
+            line=False,
+            timer=True)

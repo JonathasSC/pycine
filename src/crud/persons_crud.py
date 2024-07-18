@@ -10,7 +10,8 @@ from src.queries.persons_queries import (
     SELECT_IS_ADMIN,
     SELECT_IS_CLIENT,
     SELECT_ALL_PERSONS,
-    DELETE_PERSON_BY_ID
+    DELETE_PERSON_BY_ID,
+    SELECT_PERSON_BY_ID
 )
 
 from src.schemas.person_schemas import PersonCreate, PersonLogin
@@ -79,6 +80,17 @@ class PersonsCrud(BaseCrud):
             person_list: list = self.conn.cursor.fetchall()
             self.conn.close()
             return person_list
+
+        except Exception as e:
+            raise e
+
+    def select_by_id(self, person_id: str) -> Optional[tuple]:
+        try:
+            self.conn.connect()
+            self.conn.cursor.execute(SELECT_PERSON_BY_ID, [person_id])
+            person: Optional[tuple] = self.conn.cursor.fetchone()
+            self.conn.close()
+            return person
 
         except Exception as e:
             raise e

@@ -1,6 +1,7 @@
 from src.queries.admins_queries import (
     INSERT_ADMIN,
     DELETE_ADMIN,
+    SELECT_ADMIN_BY_ID,
     SELECT_COUNT_ADMINS,
     SELECT_ADMIN_IN_PERSON,
     UPDATE_PERSON_ADMIN_BY_ADMIN_ID,
@@ -8,7 +9,7 @@ from src.queries.admins_queries import (
 )
 from src.queries.persons_queries import (
     DELETE_PERSON_BY_ID,
-    SELECT_PERSON_BY_ADMIN_ID,
+    SELECT_PERSON_BY_ID
 )
 
 from src.crud.base_crud import BaseCrud
@@ -16,6 +17,7 @@ from src.database.conn import Connection
 
 from src.schemas.admin_schemas import AdminCreate
 from src.schemas.person_schemas import PersonCreate
+from src.utils.validators import exists_email
 
 from typing import Any, Dict, List
 
@@ -24,6 +26,16 @@ class AdminsCrud(BaseCrud):
     def __init__(self, conn: Connection = None):
         super().__init__(conn)
         self.conn: Connection = Connection(auto_connect=False)
+
+    def select_by_id(self, admin_id: str) -> tuple:
+        try:
+            self.conn.connect()
+            self.conn.cursor.execute(SELECT_ADMIN_BY_ID, [admin_id])
+            admin: tuple = self.conn.cursor.fetchone()
+            return admin
+
+        except Exception as e:
+            raise e
 
     def insert_admin(self, person_id: str) -> None:
         try:
@@ -50,10 +62,12 @@ class AdminsCrud(BaseCrud):
     def delete_admin(self, admin_id: str) -> bool:
         try:
             self.conn.connect()
+            self.conn.cursor.execute(SELECT_ADMIN_BY_ID, [admin_id])
+            admin: tuple = self.conn.cursor.fetchone()
 
-            self.conn.cursor.execute(SELECT_PERSON_BY_ADMIN_ID, [admin_id])
+            self.conn.cursor.execute(SELECT_PERSON_BY_ID, [admin[1]])
             person: tuple = self.conn.cursor.fetchone()
-            person_id: str = person[1]
+            person_id: str = person[0]
 
             self.conn.cursor.execute(DELETE_ADMIN, [admin_id])
             self.conn.cursor.execute(DELETE_PERSON_BY_ID, [person_id])
@@ -102,19 +116,20 @@ class AdminsCrud(BaseCrud):
         try:
             self.logger.info(
                 'TENTANDO ATUALIZAR DADOS DE PERSONS QUE SÃO ADMINS BASEADO NO admin_id')
+
+            data_list: List[str] = [
+                data.get('name', None),
+                data.get('email', None),
+                data.get('password', None),
+                admin_id
+            ]
+
             self.conn.connect()
-
-            if 'password' in data:
-                data['password'] = self.hash.generate_hash(data['password'])
-
-            data_list: List[Any] = [
-                data['name'],
-                data['email'],
-                data['password'],
-                admin_id]
-
             self.conn.cursor.execute(
-                UPDATE_PERSON_ADMIN_BY_ADMIN_ID, data_list)
+                UPDATE_PERSON_ADMIN_BY_ADMIN_ID,
+                data_list
+            )
+
             self.conn.connection.commit()
             self.conn.close()
 

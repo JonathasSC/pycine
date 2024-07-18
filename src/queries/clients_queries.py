@@ -2,7 +2,8 @@ CREATE_CLIENTS_TABLE = """
 CREATE TABLE IF NOT EXISTS clients (
     client_id TEXT PRIMARY KEY,
     person_id TEXT,
-    FOREIGN KEY (person_id) REFERENCES persons(id)
+    
+    FOREIGN KEY (person_id) REFERENCES persons(person_id)
 );
 """
 
