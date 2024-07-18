@@ -25,10 +25,6 @@ SELECT_BY_EMAIL = """
 SELECT * FROM persons WHERE email = ?
 """
 
-DELETE_PERSON = """
-DELETE FROM persons WHERE person_id = ?;
-"""
-
 DELETE_ALL_PERSONS = """
 DELETE FROM persons;
 """
@@ -47,4 +43,12 @@ SELECT * FROM clients WHERE person_id = ?;
 
 SELECT_ALL_PERSONS = """
 SELECT * FROM persons;
+"""
+
+SELECT_PERSON_BY_ADMIN_ID = """
+SELECT * FROM admins WHERE admin_id = ?;
+"""
+
+DELETE_PERSON_BY_ID = """
+DELETE FROM persons WHERE person_id = ?;
 """

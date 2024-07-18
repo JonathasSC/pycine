@@ -10,6 +10,7 @@ from src.queries.persons_queries import (
     SELECT_IS_ADMIN,
     SELECT_IS_CLIENT,
     SELECT_ALL_PERSONS,
+    DELETE_PERSON_BY_ID
 )
 
 from src.schemas.person_schemas import PersonCreate, PersonLogin
@@ -24,9 +25,9 @@ class PersonsCrud(BaseCrud):
         try:
             person_id: str = self.uuid.smaller_uuid()
             data['person_id'] = person_id
+            data['password'] = self.hash.generate_hash(data['password'])
 
             data_dict: Dict[str, Any] = dict(PersonCreate(**data))
-            data['password'] = self.hash.generate_hash(data['password'])
 
             data_list: List[Any] = list(data_dict.values())
 
@@ -76,6 +77,7 @@ class PersonsCrud(BaseCrud):
             self.conn.connect()
             self.conn.cursor.execute(SELECT_ALL_PERSONS)
             person_list: list = self.conn.cursor.fetchall()
+            self.conn.close()
             return person_list
 
         except Exception as e:
@@ -83,9 +85,12 @@ class PersonsCrud(BaseCrud):
 
     def select_by_email(self, email: str) -> Optional[tuple]:
         try:
+            self.conn.connect()
             self.conn.cursor.execute(SELECT_BY_EMAIL, [email])
             person: Optional[tuple] = self.conn.cursor.fetchone()
+            self.conn.close()
             return person
+
         except Exception as e:
             raise e
 
@@ -110,4 +115,16 @@ class PersonsCrud(BaseCrud):
             return None
         except Exception as e:
             print(f"Erro ao pegar papel de pessoa: {e}")
+            return None
+
+    def delete_person(self, person_id: str):
+        try:
+            self.conn.connect()
+            self.conn.cursor.execute(DELETE_PERSON_BY_ID, [person_id])
+            self.conn.connection.commit()
+            self.conn.close()
+
+            return person_id
+        except Exception as e:
+            print(f"Erro ao deletar pessoa: {e}")
             return None

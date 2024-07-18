@@ -87,10 +87,12 @@ class BaseView:
             try:
                 person_data: dict = self.inputs.input_person()
                 self.person_crud.insert_person(person_data)
-                person: tuple = self.person_crud.select_by_email(
-                    person_data['email'])
 
-                self.admins_crud.insert_admin(person[0])
+                person: tuple = self.person_crud.select_by_email(
+                    person_data['email']
+                )
+
+                self.admin_crud.insert_admin(person[0])
                 self.printer.success('Admin criado com sucesso!')
                 break
 

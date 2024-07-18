@@ -26,6 +26,10 @@ DELETE_ADMIN = """
 DELETE FROM admins WHERE admin_id = ?;
 """
 
+DELETE_ALL_ADMINS = """
+DELETE FROM admins;
+"""
+
 SELECT_COUNT_ADMINS = """
 SELECT COUNT(*) FROM admins;
 """
@@ -35,4 +39,15 @@ SELECT_ADMIN_IN_PERSON = """
 SELECT p.person_id, a.admin_id, p.name, p.email, p.password
 FROM persons p
 JOIN admins a ON p.person_id = a.person_id;
+"""
+
+
+UPDATE_PERSON_ADMIN_BY_ADMIN_ID = """
+UPDATE persons
+SET name = ?, email = ?, password = ?
+WHERE person_id = (SELECT person_id FROM admins WHERE admin_id = ?);
+"""
+
+SELECT_PERSON_ID_BY_ADMIN_ID = """
+SELECT person_id FROM admins WHERE admin_id = ?;
 """

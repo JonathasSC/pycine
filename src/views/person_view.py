@@ -5,7 +5,6 @@ from pydantic import ValidationError
 class PersonView(BaseView):
     def __init__(self, manager):
         super().__init__()
-        self.before_view = None
         self.manager = manager
 
         self.list_options: list = [
@@ -37,16 +36,8 @@ class PersonView(BaseView):
             except Exception as e:
                 self.printer.error(e, timer=True)
 
-    def set_back_view(self, view):
-        self.before_view = view
-
-    def back_to_admin(self):
-        if self.before_view:
-            self.before_view.start()
-        self.printer.error('AdminView não definida')
-
     def manage_admin(self):
-        def get_all_admins(admin_crud=self.admin_crud):
+        def get_all_admins():
             while True:
                 try:
                     self.terminal.clear()
@@ -57,7 +48,7 @@ class PersonView(BaseView):
                         'EMAIL',
                         'PASSWORD'
                     ]
-                    admin_list: list = admin_crud.select_all_admins()
+                    admin_list: list = self.admin_crud.select_all_admins()
                     self.printer.display_table(header, admin_list)
                     self.manage_admin()
 
@@ -66,11 +57,11 @@ class PersonView(BaseView):
                     self.printer.error(f'Erro ao mostrar admins {e}')
                     self.manage_admin()
 
-        def del_admin(admin_crud=self.admin_crud):
+        def del_admin():
             while True:
                 try:
-                    person_id: str = input('Person ID: ')
-                    admin_crud.delete_admin(person_id)
+                    admin_id: str = input('Admin ID: ')
+                    self.admin_crud.delete_admin(admin_id)
                     self.printer.success('Admin deletado com sucesso!')
                     self.manage_admin()
 
@@ -78,11 +69,11 @@ class PersonView(BaseView):
                     self.printer.error(f'Erro ao criar sala: {e}')
                     self.manage_admin()
 
-        def create_admin(admin_crud=self.admin_crud):
+        def create_admin():
             while True:
                 try:
                     person_id: str = input('Person ID: ')
-                    admin_crud.insert_admin(person_id)
+                    self.admin_crud.insert_admin(person_id)
                     self.printer.success('Admin criado com sucesso!')
                     self.manage_admin()
 
@@ -90,12 +81,33 @@ class PersonView(BaseView):
                     self.printer.error(f'Erro ao criar admin: {e}')
                     self.manage_admin()
 
+        def put_admin():
+            try:
+                admin_id: str = input('Admin ID: ')
+                name: str = input('Nome: ')
+                email: str = input('Email: ')
+                password: str = input('Senha: ')
+
+                data: dict = {
+                    'name': name,
+                    'email': email,
+                    'password': password
+                }
+
+                self.admin_crud.update_admin(admin_id, data)
+                self.printer.success('Admin atualizado com sucesso!')
+                self.manage_admin()
+            except Exception as e:
+                self.printer.error(f'Erro ao atualizar admin: {e}')
+                self.manage_admin()
+
         while True:
 
             manage_options: list = [
                 'Criar novo admin',
                 'Listar admins',
                 'Deletar admin',
+                'Update admin',
                 'Voltar'
             ]
 
@@ -103,7 +115,8 @@ class PersonView(BaseView):
                 1: create_admin,
                 2: get_all_admins,
                 3: del_admin,
-                4: self.start,
+                4: put_admin,
+                5: self.start,
             }
 
             try:
@@ -242,24 +255,24 @@ class PersonView(BaseView):
                         text='Preencha os campos ou digite "q" para cancelar',
                         line=True)
 
-                    client_id: str = input('Client ID: ')
+                    person_id: str = input('Person ID: ')
 
-                    if client_id.lower() == 'q':
+                    if person_id.lower() == 'q':
                         break
 
-                    confirm_delete: str = self.client_crud.delete_client(
-                        client_id)
+                    confirm_delete: str = self.person_crud.delete_person(
+                        person_id)
 
-                    if client_id == confirm_delete:
+                    if person_id == confirm_delete:
                         self.terminal.clear()
-                        self.printer.success('Cliente deletado com sucesso!')
+                        self.printer.success('Pessoa deletado com sucesso!')
                         self.terminal.clear()
 
-                    self.manage_client()
+                    self.manage_person()
 
                 except Exception as e:
-                    self.printer.error(f'Erro ao deletar cliente: {e}')
-                    self.manage_client()
+                    self.printer.error(f'Erro ao deletar pessoa: {e}')
+                    self.manage_person()
 
         def create_person():
             while True:
