@@ -22,8 +22,16 @@ class Inputs:
         person_data: dict = {}
 
         person_data['name'] = input('Nome: ')
+        if person_data['name'] == 'q':
+            return None
+
         person_data['email'] = input('Email: ')
+        if person_data['email'] == 'q':
+            return None
+
         person_data['password'] = self.input_password()
+        if person_data['password'] == 'q':
+            return None
 
         return person_data
 
