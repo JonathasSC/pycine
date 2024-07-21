@@ -10,6 +10,7 @@ from src.utils.exceptions import ExceptionsHandlers
 
 
 from src.crud.seats_crud import SeatsCrud
+from src.crud.rooms_crud import RoomsCrud
 from src.crud.admins_crud import AdminsCrud
 from src.crud.clients_crud import ClientsCrud
 from src.crud.persons_crud import PersonsCrud
@@ -24,6 +25,7 @@ class BaseView:
         self.terminal: Terminal = Terminal()
 
         self.seat_crud: SeatsCrud = SeatsCrud()
+        self.room_crud: RoomsCrud = RoomsCrud()
         self.admin_crud: AdminsCrud = AdminsCrud()
         self.client_crud: ClientsCrud = ClientsCrud()
         self.person_crud: PersonsCrud = PersonsCrud()

@@ -81,27 +81,30 @@ class PurchaseView(BaseView):
     def choose_session(self):
         self.logger.info('INICIANDO CHOOSE SESSION')
         try:
-            self.terminal.clear()
+            options: list = []
             sessions: list = self.session_crud.select_all_session_with_movies()
 
-            sessions_id = [session[0] for session in sessions]
+            for session in sessions:
+                room: tuple = self.room_crud.select_by_room_id(session[1])
+                options.append(f"{session[4]} | {room[4]} | {session[3]}")
+
             rooms_id = [session[1] for session in sessions]
+            sessions_id = [session[0] for session in sessions]
             session_times = [session[4] for session in sessions]
 
-            sessions_formatted = [
-                f"{session[2]} | {session[1]} | {session[4]}" for session in sessions]
-
+            self.terminal.clear()
             session_option = self.inputs.choose_an_option(
-                sessions_formatted, 'Escolha uma sessão', True)
+                options, 'Escolha uma sessão', True)
+
+            room_id = rooms_id[session_option - 1]
+            session_id = sessions_id[session_option - 1]
+            session_time = session_times[session_option - 1]
 
             if session_option == 0:
                 return None
 
-            session_id = sessions_id[session_option - 1]
-            session_time = session_times[session_option - 1]
-            room_id = rooms_id[session_option - 1]
-
             return room_id, session_time, session_id
+
         except Exception:
             self.printer.error('Excessão ao tentar escolher sessão')
             return None
