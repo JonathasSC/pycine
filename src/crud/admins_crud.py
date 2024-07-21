@@ -16,9 +16,6 @@ from src.crud.base_crud import BaseCrud
 from src.database.conn import Connection
 
 from src.schemas.admin_schemas import AdminCreate
-from src.schemas.person_schemas import PersonCreate
-from src.utils.validators import exists_email
-
 from typing import Any, Dict, List
 
 
