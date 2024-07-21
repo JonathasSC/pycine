@@ -11,7 +11,6 @@ class PersonView(BaseView):
         self.list_options: list = [
             'Gerenciar Admins',
             'Gerenciar Clients',
-            'Gerenciar Persons',
             'Voltar',
         ]
 
@@ -27,8 +26,6 @@ class PersonView(BaseView):
                     case 2:
                         self.manage_client()
                     case 3:
-                        self.manage_person()
-                    case 4:
                         self.manager.admin_view.admin_flow()
                     case _:
                         self.invalid_option()
@@ -61,10 +58,46 @@ class PersonView(BaseView):
         def del_admin():
             while True:
                 try:
+                    token: str = self.token.load_token()
+
                     admin_id: str = input('Admin ID: ')
-                    self.admin_crud.delete_admin(admin_id)
-                    self.printer.success('Admin deletado com sucesso!')
-                    self.manage_admin()
+                    admin: tuple = self.admin_crud.select_by_id(admin_id)
+
+                    person_id: str = admin[1]
+                    my_person_id: str = self.token.person_id_from_token(token)
+
+                    if person_id == my_person_id:
+                        self.terminal.clear()
+
+                        self.printer.warning('CUIDADO!', timer=False)
+
+                        self.printer.generic(
+                            'Você está tentando deletar sua própria conta.'
+                        )
+                        self.printer.generic(
+                            'Isso resultará na perda permanente do seu acesso ao sistema e o logout automático.'
+                        )
+                        self.printer.generic(
+                            'Por favor, confirme se realmente deseja proceder com esta ação.'
+                        )
+
+                        confirm_options = ['Sim']
+                        option = self.choose_an_option(
+                            confirm_options,
+                            text='Realmente deseja deletar sua própria conta?',
+                            cancel=True)
+
+                        if option and option == 1:
+                            self.admin_crud.delete_admin(admin_id)
+                            self.printer.success('Admin deletado com sucesso!')
+
+                            self.logout()
+                            self.manager.home_view.start()
+
+                        else:
+                            self.terminal.clear()
+                            self.printer.success('Operação cancelada!')
+                            self.manage_admin()
 
                 except Exception as e:
                     self.printer.error(f'Erro ao criar sala: {e}')
@@ -73,22 +106,55 @@ class PersonView(BaseView):
         def create_admin():
             while True:
                 try:
-                    person_id: str = input('Person ID: ')
+                    self.terminal.clear()
+                    self.printer.generic(
+                        text='Preencha os campos ou digite "q" para cancelar',
+                        line=True)
+
+                    person_data: dict = self.inputs.input_person()
+
+                    if not person_data:
+                        self.terminal.clear()
+                        self.printer.success('Operação cancelada!')
+                        self.manage_admin()
+
+                    person_id: str = self.person_crud.insert_person(
+                        person_data)
+
                     self.admin_crud.insert_admin(person_id)
                     self.printer.success('Admin criado com sucesso!')
                     self.manage_admin()
 
+                except ValidationError as e:
+                    erro = e.errors()[0]
+                    message: str = erro['msg']
+                    self.printer.error(message[13:])
+
                 except Exception as e:
                     self.printer.error(f'Erro ao criar admin: {e}')
-                    self.manage_admin()
 
         def put_admin():
             try:
                 old_data = {}
                 data = {}
 
-                admin_id = input('Admin ID: ')
+                self.terminal.clear()
+                self.printer.generic(
+                    'Digite o Admin ID, ou "q" para cancelar', line=True)
+                admin_id: str = input('Admin ID: ').strip().lower()
+
+                if admin_id == 'q':
+                    self.manage_admin()
+
                 admin = self.admin_crud.select_by_id(admin_id)
+
+                if not admin:
+                    self.terminal.clear()
+                    self.printer.error(
+                        'Nenhum admin identificado, tente novamente')
+                    self.terminal.clear()
+
+                    self.manage_admin()
 
                 person = self.person_crud.select_by_id(admin[1])
 
@@ -269,105 +335,6 @@ class PersonView(BaseView):
                 1: create_client,
                 2: get_all_clients,
                 3: del_client,
-                4: self.start,
-            }
-
-            try:
-                self.terminal.clear()
-                option: int = self.choose_an_option(manage_options)
-                self.execute_option(manage_actions, option)
-
-            except Exception as e:
-                self.printer.error(e)
-
-    def manage_person(self):
-        def get_all_persons():
-            while True:
-                try:
-                    self.terminal.clear()
-                    header = [
-                        'PERSON ID',
-                        'NAME',
-                        'EMAIL',
-                        'PASSWORD'
-                    ]
-                    admin_list: list = self.person_crud.select_all_persons()
-                    self.printer.display_table(header, admin_list)
-                    self.manage_admin()
-
-                except Exception as e:
-                    self.terminal.clear()
-                    self.printer.error(f'Erro ao mostrar admins {e}')
-                    self.manage_admin()
-
-        def del_person():
-            while True:
-                try:
-                    self.terminal.clear()
-                    self.printer.generic(
-                        text='Preencha os campos ou digite "q" para cancelar',
-                        line=True)
-
-                    person_id: str = input('Person ID: ')
-
-                    if person_id.lower() == 'q':
-                        break
-
-                    confirm_delete: str = self.person_crud.delete_person(
-                        person_id)
-
-                    if person_id == confirm_delete:
-                        self.terminal.clear()
-                        self.printer.success('Pessoa deletado com sucesso!')
-                        self.terminal.clear()
-
-                    self.manage_person()
-
-                except Exception as e:
-                    self.printer.error(f'Erro ao deletar pessoa: {e}')
-                    self.manage_person()
-
-        def create_person():
-            while True:
-                try:
-                    self.terminal.clear()
-                    self.printer.generic(
-                        text='Preencha os campos ou digite deixe em branco para cancelar',
-                        line=True)
-
-                    person_data: dict = self.inputs.input_person()
-
-                    if any(value == '' for value in person_data.values()):
-                        break
-
-                    person_id: str = self.person_crud.insert_person(
-                        person_data)
-
-                    self.client_crud.insert_client(person_id)
-                    self.printer.success('Admin criado com sucesso!')
-                    self.manage_client()
-
-                except ValidationError as e:
-                    erro = e.errors()[0]
-                    message: str = erro['msg']
-                    self.printer.error(message[13:])
-
-                except Exception as e:
-                    self.printer.error(f'Erro ao criar cliente: {e}')
-
-        while True:
-
-            manage_options: list = [
-                'Criar nova pessoa',
-                'Listar pessoas',
-                'Deletar pessoa',
-                'Voltar'
-            ]
-
-            manage_actions = {
-                1: create_person,
-                2: get_all_persons,
-                3: del_person,
                 4: self.start,
             }
 
