@@ -16,22 +16,28 @@ class PurchaseView(BaseView):
         while True:
             try:
                 chosen_movie: tuple = self.choose_movie()
+                self.terminal.clear()
                 if not chosen_movie:
                     break
 
                 chosen_movie_id: str = chosen_movie[0]
                 session: tuple = self.choose_session(chosen_movie_id)
+                self.terminal.clear()
                 if not session:
                     break
 
                 chosen_room_id: str = session[1]
                 seat: tuple = self.choose_seat(chosen_room_id)
+                self.terminal.clear()
                 if not seat:
                     break
 
                 ticket: tuple = self.process_ticket(seat, session, person_id)
+                self.terminal.clear()
                 if not ticket:
                     break
+
+                self.terminal.clear()
                 self.printer.success(
                     'COMPRA EFEITUADA COM SUCESSO, VOLTE SEMPRE!')
 
@@ -45,6 +51,7 @@ class PurchaseView(BaseView):
             self.manager.client_view.start()
 
     def choose_movie(self):
+        self.terminal.clear()
         movies: list = self.session_crud.select_all_session_with_movies()
         movies_names = [movie[6] for movie in movies]
 
@@ -63,6 +70,7 @@ class PurchaseView(BaseView):
         return movie
 
     def choose_session(self, movie_id):
+        self.terminal.clear()
         sessions: list = self.session_crud.select_sessions_by_movie_id_with_room_details(
             movie_id)
 
@@ -78,16 +86,19 @@ class PurchaseView(BaseView):
         )
 
         if not option:
+            self.terminal.clear()
             return
 
         chosen_session_id = sessions_id[option - 1]
         session: tuple = self.session_crud.select_session_by_id(
             chosen_session_id)
 
+        self.terminal.clear()
         return session
 
     def choose_seat(self, room_id):
         while True:
+            self.terminal.clear()
             seats: list = self.seat_crud.select_seats_by_room_id(room_id)
             seat_matrix: list = self.printer.create_seat_matrix(seats)
             self.printer.print_seat_matrix(seat_matrix)
@@ -96,12 +107,15 @@ class PurchaseView(BaseView):
                 'Escolha um assento pelo código (ou digite "q" para voltar): ')
 
             if seat_code.lower() == 'q':
+                self.terminal.clear()
                 return None
 
             if validate_seat_choice(seats, seat_code):
                 seat: tuple = self.seat_crud.select_seat_by_room_id_and_seat_code(
                     room_id,
                     seat_code)
+
+                self.terminal.clear()
                 return seat
 
             self.terminal.clear()
@@ -111,7 +125,7 @@ class PurchaseView(BaseView):
             self.terminal.clear()
 
     def process_ticket(self, seat: tuple, session: tuple, person_id: str):
-
+        self.terminal.clear()
         seat_code: str = seat[2]
         session_time: str = session[4]
         movie_name: str = self.movie_crud.select_movie_by_id(session[2])[1]
@@ -129,6 +143,7 @@ class PurchaseView(BaseView):
         )
 
         if not option:
+            self.terminal.clear()
             return
 
         data: dict = {}
@@ -138,4 +153,6 @@ class PurchaseView(BaseView):
 
         ticket_id: str = self.ticket_crud.insert_ticket(data)
         ticket: tuple = self.ticket_crud.select_ticket_by_id(ticket_id)
+
+        self.terminal.clear()
         return ticket

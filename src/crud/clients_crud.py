@@ -1,7 +1,9 @@
 from src.queries.clients_queries import (
     INSERT_CLIENT,
     SELECT_ALL_CLIENTS,
-    DELETE_CLIENT
+    DELETE_CLIENT,
+    SELECT_CLIENT_BY_ID,
+    UPDATE_PERSON_CLIENT_BY_CLIENT_ID
 )
 from typing import Any, Dict, List
 from src.crud.base_crud import BaseCrud
@@ -54,3 +56,42 @@ class ClientsCrud(BaseCrud):
 
         except Exception as e:
             return e
+
+    def update_client(self, client_id: str, data: dict) -> None:
+        try:
+            self.logger.info(
+                'TENTANDO ATUALIZAR DADOS DE PERSONS QUE SÃO ADMINS BASEADO NO client_id')
+
+            data_list: List[str] = [
+                data.get('name', None),
+                data.get('email', None),
+                data.get('password', None),
+                admin_id
+            ]
+
+            self.conn.connect()
+            self.conn.cursor.execute(
+                UPDATE_PERSON_CLIENT_BY_CLIENT_ID,
+                data_list
+            )
+
+            self.conn.connection.commit()
+            self.conn.close()
+
+            self.logger.info(
+                'DADOS DE PERSONS QUE SÃO ADMINS ATUALIZADOS NO BANCO DE DADOS')
+
+        except Exception as e:
+            self.logger.warning(
+                'EXCEÇÃO AO TENTAR ATUALIZAR DADOS DE PERSONS QUE SÃO ADMINS')
+            raise e
+
+    def select_by_id(self, client_id: str) -> tuple:
+        try:
+            self.conn.connect()
+            self.conn.cursor.execute(SELECT_CLIENT_BY_ID, [client_id])
+            client: tuple = self.conn.cursor.fetchone()
+            return client
+
+        except Exception as e:
+            raise e

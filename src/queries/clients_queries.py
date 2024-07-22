@@ -41,3 +41,14 @@ FROM
 JOIN 
     persons p ON p.person_id = c.person_id
 """
+
+UPDATE_PERSON_CLIENT_BY_CLIENT_ID = """
+UPDATE 
+    persons
+SET 
+    name = ?,
+    email = ?,
+    password = ?
+WHERE 
+    person_id = (SELECT person_id FROM admins WHERE admin_id = ?);
+"""

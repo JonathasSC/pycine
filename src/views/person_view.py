@@ -134,91 +134,91 @@ class PersonView(BaseView):
                     self.printer.error(f'Erro ao criar admin: {e}')
 
         def put_admin():
-            try:
-                old_data = {}
-                data = {}
+            while True:
+                try:
+                    old_data = {}
+                    data = {}
 
-                self.terminal.clear()
-                self.printer.generic(
-                    'Digite o Admin ID, ou "q" para cancelar', line=True)
-                admin_id: str = input('Admin ID: ').strip().lower()
+                    self.terminal.clear()
+                    self.printer.generic(
+                        'Digite o Admin ID, ou "q" para cancelar', line=True)
+                    admin_id: str = input('Admin ID: ').strip().lower()
 
-                if admin_id == 'q':
+                    if admin_id == 'q':
+                        self.manage_admin()
+
+                    admin = self.admin_crud.select_by_id(admin_id)
+
+                    if not admin:
+                        self.terminal.clear()
+                        self.printer.error(
+                            'Nenhum admin identificado, tente novamente')
+                        self.terminal.clear()
+                        put_admin()
+
+                    person = self.person_crud.select_by_id(admin[1])
+
+                    old_data['name'] = person[1]
+                    old_data['email'] = person[2]
+                    old_data['password'] = person[3]
+
+                    name = input(
+                        'Nome (deixe em branco para manter o atual): ').strip()
+                    email = input(
+                        'Email (deixe em branco para manter o atual): ').strip()
+                    password = input(
+                        'Senha (deixe em branco para manter a atual): ').strip()
+
+                    while email and not exists_email(email):
+                        self.terminal.clear()
+                        self.printer.error('Esse email já está em uso')
+                        self.terminal.clear()
+
+                        email = input('Email: ').strip()
+
+                    while password and not password_validator(password):
+                        self.terminal.clear()
+                        self.printer.password_params()
+                        self.terminal.clear()
+
+                        password = input('Senha: ').strip()
+
+                    if not name:
+                        data['name'] = old_data['name']
+                    else:
+                        data['name'] = name
+
+                    if not email:
+                        data['email'] = old_data['email']
+                    else:
+                        data['email'] = email
+
+                    if not password:
+                        data['password'] = old_data['password']
+                    else:
+                        data['password'] = self.hash.generate_hash(
+                            password
+                        )
+
+                    if data:
+                        self.admin_crud.update_admin(admin_id, data)
+                        self.printer.success('Admin atualizado com sucesso!')
+                    else:
+                        self.printer.info(
+                            'Nenhum dado fornecido para atualização.')
+
+                except ValueError as e:
+                    self.terminal.clear()
+                    self.printer.error(f'{e}')
+                    self.terminal.clear()
+                    self.put_admin()
+
+                except Exception as e:
+                    self.printer.error(f'Erro ao atualizar admin: {e}')
+                    self.put_admin()
+
+                finally:
                     self.manage_admin()
-
-                admin = self.admin_crud.select_by_id(admin_id)
-
-                if not admin:
-                    self.terminal.clear()
-                    self.printer.error(
-                        'Nenhum admin identificado, tente novamente')
-                    self.terminal.clear()
-
-                    self.manage_admin()
-
-                person = self.person_crud.select_by_id(admin[1])
-
-                old_data['name'] = person[1]
-                old_data['email'] = person[2]
-                old_data['password'] = person[3]
-
-                name = input(
-                    'Nome (deixe em branco para manter o atual): ').strip()
-                email = input(
-                    'Email (deixe em branco para manter o atual): ').strip()
-                password = input(
-                    'Senha (deixe em branco para manter a atual): ').strip()
-
-                while email and not exists_email(email):
-                    self.terminal.clear()
-                    self.printer.error('Esse email já está em uso')
-                    self.terminal.clear()
-
-                    email = input('Email: ').strip()
-
-                while password and not password_validator(password):
-                    self.terminal.clear()
-                    self.printer.password_params()
-                    self.terminal.clear()
-
-                    password = input('Senha: ').strip()
-
-                if not name:
-                    data['name'] = old_data['name']
-                else:
-                    data['name'] = name
-
-                if not email:
-                    data['email'] = old_data['email']
-                else:
-                    data['email'] = email
-
-                if not password:
-                    data['password'] = old_data['password']
-                else:
-                    data['password'] = self.hash.generate_hash(
-                        password
-                    )
-
-                if data:
-                    self.admin_crud.update_admin(admin_id, data)
-                    self.printer.success('Admin atualizado com sucesso!')
-                else:
-                    self.printer.info(
-                        'Nenhum dado fornecido para atualização.')
-
-            except ValueError as e:
-                self.terminal.clear()
-                self.printer.error(f'{e}')
-                self.terminal.clear()
-                self.put_admin()
-
-            except Exception as e:
-                self.printer.error(f'Erro ao atualizar admin: {e}')
-                self.put_admin()
-
-            finally:
-                self.manage_admin()
 
         while True:
 
@@ -322,12 +322,100 @@ class PersonView(BaseView):
                 except Exception as e:
                     self.printer.error(f'Erro ao criar cliente: {e}')
 
+        def put_client():
+            while True:
+                try:
+                    old_data = {}
+                    data = {}
+
+                    self.terminal.clear()
+                    self.printer.generic(
+                        'Digite o Client ID, ou "q" para cancelar', line=True)
+                    client_id: str = input('Client ID: ').strip().lower()
+
+                    if client_id == 'q':
+                        self.manage_client()
+
+                    client: tuple = self.client_crud.select_by_id(admin_id)
+
+                    if not admin:
+                        self.terminal.clear()
+                        self.printer.error(
+                            'Nenhum admin identificado, tente novamente')
+                        self.terminal.clear()
+                        put_client()
+
+                    person = self.person_crud.select_by_id(admin[1])
+
+                    old_data['name'] = person[1]
+                    old_data['email'] = person[2]
+                    old_data['password'] = person[3]
+
+                    name = input(
+                        'Nome (deixe em branco para manter o atual): ').strip()
+                    email = input(
+                        'Email (deixe em branco para manter o atual): ').strip()
+                    password = input(
+                        'Senha (deixe em branco para manter a atual): ').strip()
+
+                    while email and not exists_email(email):
+                        self.terminal.clear()
+                        self.printer.error('Esse email já está em uso')
+                        self.terminal.clear()
+
+                        email = input('Email: ').strip()
+
+                    while password and not password_validator(password):
+                        self.terminal.clear()
+                        self.printer.password_params()
+                        self.terminal.clear()
+
+                        password = input('Senha: ').strip()
+
+                    if not name:
+                        data['name'] = old_data['name']
+                    else:
+                        data['name'] = name
+
+                    if not email:
+                        data['email'] = old_data['email']
+                    else:
+                        data['email'] = email
+
+                    if not password:
+                        data['password'] = old_data['password']
+                    else:
+                        data['password'] = self.hash.generate_hash(
+                            password
+                        )
+
+                    if data:
+                        self.client_crud.update_client(admin_id, data)
+                        self.printer.success('Admin atualizado com sucesso!')
+                    else:
+                        self.printer.info(
+                            'Nenhum dado fornecido para atualização.')
+
+                except ValueError as e:
+                    self.terminal.clear()
+                    self.printer.error(f'{e}')
+                    self.terminal.clear()
+                    self.put_admin()
+
+                except Exception as e:
+                    self.printer.error(f'Erro ao atualizar admin: {e}')
+                    self.put_admin()
+
+                finally:
+                    self.manage_admin()
+
         while True:
 
             manage_options: list = [
                 'Criar novo cliente',
                 'Listar clientes',
                 'Deletar cliente',
+                'Atualizar cliente',
                 'Voltar'
             ]
 
@@ -335,7 +423,8 @@ class PersonView(BaseView):
                 1: create_client,
                 2: get_all_clients,
                 3: del_client,
-                4: self.start,
+                4: put_client,
+                5: self.start,
             }
 
             try:
