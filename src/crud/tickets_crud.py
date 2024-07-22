@@ -4,7 +4,11 @@ from src.crud.base_crud import BaseCrud
 from src.database.conn import Connection
 
 from src.schemas.ticket_schemas import TicketCreate
-from src.queries.tickets_queries import INSERT_TICKET, SELECT_TICKETS_BY_PERSON_ID
+from src.queries.tickets_queries import (
+    INSERT_TICKET,
+    SELECT_TICKETS_BY_PERSON_ID,
+    SELECT_TICKETS_BY_ID
+)
 
 
 class TicketsCrud(BaseCrud):
@@ -25,6 +29,17 @@ class TicketsCrud(BaseCrud):
             self.conn.close()
 
             return ticket_id
+
+        except Exception as e:
+            raise e
+
+    def select_ticket_by_id(self, ticket_id):
+        try:
+            self.conn.connect()
+            self.conn.cursor.execute(SELECT_TICKETS_BY_ID, [ticket_id])
+            ticket: tuple = self.conn.cursor.fetchone()
+            self.conn.close()
+            return ticket
 
         except Exception as e:
             raise e

@@ -22,3 +22,12 @@ def exists_email(email: str):
     if person_exists:
         return False
     return True
+
+
+def validate_seat_choice(seats, chosen_seat):
+    for seat in seats:
+        if seat[2] == chosen_seat:
+            if seat[5] == 'available':
+                return seat[5]
+            return None
+    return None

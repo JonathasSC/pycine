@@ -11,7 +11,7 @@ from src.queries.sessions_queries import (
     INSERT_SESSION,
     UPDATE_SESSION,
     DELETE_SESSION,
-    SELECT_SESSIONS_WITH_ROOM_DETAILS,
+    SELECT_SESSIONS_BY_MOVIE_ID_WITH_ROOM_DETAILS,
     SELECT_ALL_SESSIONS_WITH_MOVIES,
     DELETE_ALL_SESSIONS,
 )
@@ -39,7 +39,7 @@ class SessionsCrud(BaseCrud):
         try:
             self.conn.connect()
             self.conn.cursor.execute(SELECT_SESSIONS_BY_MOVIE_ID, [movie_id])
-            session_list: List[Dict[str, Any]] = self.conn.cursor.fetchone()
+            session_list: List[Dict[str, Any]] = self.conn.cursor.fetchall()
             self.conn.close()
 
             return session_list
@@ -101,11 +101,11 @@ class SessionsCrud(BaseCrud):
         except Exception as e:
             raise e
 
-    def select_sessions_with_room_details(self, movie_id: str) -> List[Dict[str, Any]]:
+    def select_sessions_by_movie_id_with_room_details(self, movie_id: str) -> List[Dict[str, Any]]:
         try:
             self.conn.connect()
             self.conn.cursor.execute(
-                SELECT_SESSIONS_WITH_ROOM_DETAILS,
+                SELECT_SESSIONS_BY_MOVIE_ID_WITH_ROOM_DETAILS,
                 [movie_id]
             )
 

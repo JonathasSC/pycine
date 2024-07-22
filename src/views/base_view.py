@@ -11,6 +11,7 @@ from src.utils.exceptions import ExceptionsHandlers
 
 from src.crud.seats_crud import SeatsCrud
 from src.crud.rooms_crud import RoomsCrud
+from src.crud.movies_crud import MoviesCrud
 from src.crud.admins_crud import AdminsCrud
 from src.crud.clients_crud import ClientsCrud
 from src.crud.persons_crud import PersonsCrud
@@ -27,6 +28,7 @@ class BaseView:
         self.seat_crud: SeatsCrud = SeatsCrud()
         self.room_crud: RoomsCrud = RoomsCrud()
         self.admin_crud: AdminsCrud = AdminsCrud()
+        self.movie_crud: MoviesCrud = MoviesCrud()
         self.client_crud: ClientsCrud = ClientsCrud()
         self.person_crud: PersonsCrud = PersonsCrud()
         self.ticket_crud: TicketsCrud = TicketsCrud()
@@ -58,9 +60,14 @@ class BaseView:
                 option: int = int(input('Digite uma opção: '))
 
                 if cancel and option == 0:
+                    self.terminal.clear()
+                    self.printer.warning("Cancelando..")
+                    self.terminal.clear()
                     return None
-                if 0 < option <= len(options) + 1:
+
+                if 0 < option <= len(options):
                     return option
+
                 else:
                     self.terminal.clear()
                     self.printer.error("Opção inválida, Tente novamente.")

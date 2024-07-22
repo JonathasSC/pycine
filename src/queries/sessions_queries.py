@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS sessions (
 );
 """
 
-SELECT_SESSIONS_WITH_ROOM_DETAILS = '''
+SELECT_SESSIONS_BY_MOVIE_ID_WITH_ROOM_DETAILS = '''
 SELECT 
     s.price,
     s.start_time,
@@ -32,11 +32,15 @@ WHERE
     s.movie_id = ?;
 '''
 
+# SELECT_ALL_SESSIONS_WITH_MOVIES = '''
+# SELECT * FROM sessions s
+# JOIN movies m ON s.movie_id = m.movie_id;
+# '''
+
 SELECT_ALL_SESSIONS_WITH_MOVIES = '''
 SELECT * FROM sessions s
 JOIN movies m ON s.movie_id = m.movie_id;
 '''
-
 
 SELECT_ALL_SESSIONS = """
 SELECT session_id, price, room_id, movie_id, start_time
@@ -45,8 +49,7 @@ FROM sessions;
 
 
 SELECT_SESSIONS_BY_MOVIE_ID = """
-SELECT session_id, price, room_id, movie_id, start_time
-FROM sessions WHERE movie_id = ?;
+SELECT * FROM sessions WHERE movie_id = ?;
 """
 
 SELECT_SESSIONS_BY_ID = """

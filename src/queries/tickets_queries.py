@@ -21,3 +21,7 @@ VALUES (?, ?, ?, ?)
 SELECT_TICKETS_BY_PERSON_ID = """
 SELECT * FROM tickets WHERE person_id = ?
 """
+
+SELECT_TICKETS_BY_ID = """
+SELECT * FROM tickets WHERE ticket_id = ?
+"""

@@ -1,7 +1,9 @@
 from src.crud.base_crud import BaseCrud
 from src.database.conn import Connection
 from src.queries.seats_queries import (
-    SELECT_SEATS_BY_ROOM_ID, SELECT_SEAT_BY_ID, SELECT_SEATS_BY_ROOM_ID_SEAT_CODE,
+    SELECT_SEATS_BY_ROOM_ID,
+    SELECT_SEAT_BY_ID,
+    SELECT_SEATS_BY_ROOM_ID_SEAT_CODE,
     UPDATE_SEAT_STATE)
 from typing import Optional
 
