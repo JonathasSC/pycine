@@ -1,6 +1,13 @@
-from typing import Any, Dict, List, Optional, Union
 from src.crud.base_crud import BaseCrud
 from src.database.conn import Connection
+
+from typing import (
+    Any,
+    Dict, 
+    List, 
+    Optional,
+    Union
+)
 
 
 from src.queries.persons_queries import (
@@ -51,9 +58,11 @@ class PersonsCrud(BaseCrud):
 
             person_email: str = data_dict.email
             person_unhashed_password: str = data_dict.password
-
+            
+            self.conn.connect()
             self.conn.cursor.execute(SELECT_BY_EMAIL, [person_email])
             person: Optional[tuple] = self.conn.cursor.fetchone()
+            self.conn.close()
 
             if person:
                 person_hashed_password: str = person[3]
@@ -114,7 +123,7 @@ class PersonsCrud(BaseCrud):
         except Exception as e:
             raise e
 
-    def get_person_role(self, person_id: str):
+    def get_person_role(self, person_id: str) -> Optional[str]:
         try:
             self.conn.cursor.execute(SELECT_IS_ADMIN, [person_id])
             if self.conn.cursor.fetchone():

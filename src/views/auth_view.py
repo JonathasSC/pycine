@@ -31,40 +31,7 @@ class AuthView(BaseView):
         self.token_manager: Token = Token()
         self.terminal: Terminal = Terminal()
 
-        self.admin_view: AdminView = AdminView(self.manager)
-        self.client_view: ClientView = ClientView(self.manager)
-
         self.handlers: ExceptionsHandlers = ExceptionsHandlers()
-
-        self.list_options: list = ['Login', 'Register', 'Sair']
-
-    def start(self):
-        while True:
-            try:
-                if self.admins_crud.get_count_admin() == 0:
-                    self.terminal.clear()
-                    self.printer.generic('Crie o primeiro admin:', line=True)
-                    self.create_admin()
-
-                self.terminal.clear()
-                self.printer.generic('Pycine: cinema pelo terminal', line=True)
-                option: int = self.choose_an_option(self.list_options)
-
-                match option:
-                    case 1:
-                        self.login()
-                    case 2:
-                        self.register()
-                    case 3:
-                        self.exit()
-                        return
-                    case _:
-                        self.invalid_option()
-                        self.start()
-
-            except Exception as e:
-                self.printer.error(
-                    f'Erro ao iniciar tela de autenticação: {e}')
 
     def login(self):
         token = self.token_manager.load_token()
@@ -126,14 +93,13 @@ class AuthView(BaseView):
                     )
 
                     self.printer.line(len(erro['msg'][12:]), color='red')
-                sleep(5)
 
             except Exception as e:
                 self.terminal.clear()
                 self.printer.error(f'Erro ao registrar-se: {str(e)}')
-
+                
             else:
                 self.terminal.clear()
                 self.printer.success('Registro realizado com sucesso!')
-                self.start()
+                self.manager.start()
                 break

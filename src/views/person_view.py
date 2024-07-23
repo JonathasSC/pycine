@@ -336,16 +336,16 @@ class PersonView(BaseView):
                     if client_id == 'q':
                         self.manage_client()
 
-                    client: tuple = self.client_crud.select_by_id(admin_id)
+                    client: tuple = self.client_crud.select_by_id(client_id)
 
-                    if not admin:
+                    if not client:
                         self.terminal.clear()
                         self.printer.error(
                             'Nenhum admin identificado, tente novamente')
                         self.terminal.clear()
                         put_client()
 
-                    person = self.person_crud.select_by_id(admin[1])
+                    person = self.person_crud.select_by_id(client[1])
 
                     old_data['name'] = person[1]
                     old_data['email'] = person[2]
@@ -390,7 +390,7 @@ class PersonView(BaseView):
                         )
 
                     if data:
-                        self.client_crud.update_client(admin_id, data)
+                        self.client_crud.update_client(client_id, data)
                         self.printer.success('Admin atualizado com sucesso!')
                     else:
                         self.printer.info(

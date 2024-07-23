@@ -19,60 +19,62 @@ class ClientView(BaseView):
         self.tickets_crud: TicketsCrud = TicketsCrud()
         self.session_crud: SessionsCrud = SessionsCrud()
 
-        self.list_options: list = [
-            'Ver filmes em exibição',
-            'Ver meus tickets',
-            'Comprar ingresso',
-            'Logout',
-            'Fechar'
-        ]
 
-    def start(self, is_admin: bool = False):
+    def start(self):
         while True:
             self.logger.info('INICIANDO LOOP DE CLIENT VIEW')
             token: str = self.token.load_token()
             person_role: str = self.token.get_role_from_token(token)
+            self.terminal.clear()
+            try:
+                if person_role == 'admin':
+                    list_options = [
+                        'Ver filmes em exibição',
+                        'Ver meus tickets',
+                        'Comprar ingresso',
+                        'Voltar',
+                    ]
+                    
+                    option = self.choose_an_option(list_options)
+                    self.handle_admin_options(option)
+                    break
 
-            if person_role:
-                try:
-                    self.terminal.clear()
-                    self.update_options(is_admin)
-                    option: int = self.choose_an_option(self.list_options)
+                elif person_role == 'client':
+                    list_options = [
+                        'Ver filmes em exibição',
+                        'Ver meus tickets',
+                        'Comprar ingresso',
+                        'Logout',
+                        'Fechar'
+                    ]
 
-                    if person_role == 'admin':
-                        self.handle_admin_options(option)
+                    option = self.choose_an_option(list_options)
+                    if not self.handle_client_options(option):
                         break
-                    elif person_role == 'client':
-                        self.logger.info('INICIANDO HANDLE DE CLIENT VIEW')
-                        self.handle_client_options(option)
-                        break
+                    
+                
+            except Exception as e:
+                self.printer.error(f'Erro ao iniciar tela publica: {e}')
 
-                except Exception as e:
-                    self.printer.error(f'Erro ao iniciar tela publica: {e}')
-
-    def update_options(self, is_admin: bool):
-        if is_admin and 'Voltar' not in self.list_options:
-            self.list_options.append('Voltar')
-            self.list_options.remove('Fechar')
-            self.list_options.remove('Logout')
+    def update_options(self):
+        self.list_options.append('Voltar')
+        self.list_options.remove('Fechar')
+        self.list_options.remove('Logout')
 
     def handle_admin_options(self, option: int):
-        if option == 1:
-            self.list_movies_in_playing()
-
-        elif option == 2:
-            self.show_my_tickets()
-            self.start()
-
-        elif option == 3:
-            self.manager.purchase_view.start()
-
-        elif option == 4:
-            self.manager.admin_view.start()
-
-        else:
-            self.invalid_option()
-
+        match option:
+            case 1:
+                self.list_movies_in_playing()
+            case 2:
+                self.show_my_tickets()
+            case 3:
+                self.manager.purchase_view.start()
+            case 4:
+                self.manager.admin_view.start()
+            case _:
+                self.invalid_option()
+                self.start()
+     
     def handle_client_options(self, option):
         match option:
             case 1:
@@ -80,15 +82,13 @@ class ClientView(BaseView):
             case 2:
                 self.show_my_tickets()
             case 3:
-                self.logger.info('INICIANDO PURCHASE VIEW')
                 self.manager.purchase_view.start()
             case 4:
                 self.logout()
                 self.manager.home_view.start()
             case 5:
                 if self.close():
-                    return
-                self.start()
+                    return False
             case _:
                 self.invalid_option()
                 self.start()

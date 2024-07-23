@@ -4,6 +4,7 @@ from src.crud.admins_crud import AdminsCrud
 from src.crud.persons_crud import PersonsCrud
 
 # from src.views.home_view import HomeView
+from time import sleep
 from src.views.room_view import RoomView
 from src.views.movie_view import MovieView
 from src.views.person_view import PersonView
@@ -16,17 +17,10 @@ class AdminView(BaseView):
         super().__init__()
 
         self.manager = manager
-        self.back_view = None
-
+        
         self.movies_crud: MoviesCrud = MoviesCrud()
         self.admins_crud: AdminsCrud = AdminsCrud()
         self.person_crud: PersonsCrud = PersonsCrud()
-
-        self.room_view: RoomView = RoomView(self.manager)
-        self.movie_view: MovieView = MovieView(self.manager)
-        self.client_view: ClientView = ClientView(self.manager)
-        self.person_view: PersonView = PersonView(self.manager)
-        self.session_view: SessionView = SessionView(self.manager)
 
         self.list_options: list = [
             'Fluxo publico',
@@ -36,29 +30,31 @@ class AdminView(BaseView):
         ]
 
     def start(self):
-        self.logger.info('START ADMIN VIEW')
         while True:
             try:
                 self.terminal.clear()
                 option: int = self.choose_an_option(
-                    self.list_options, text='Escolha o que gerenciar')
+                    self.list_options, 
+                    text='Escolha o que gerenciar')
 
-                if option == 1:
-                    self.manager.client_view.start(True)
-
-                elif option == 2:
-                    self.admin_flow()
-
-                elif option == 3:
-                    self.logout()
-                    self.manager.home_view.start()
-
-                elif option == 4:
-                    if self.close():
+                match option:
+                    case 1:
+                        self.terminal.clear()
+                        self.manager.client_view.start()
                         break
-
-                else:
-                    self.invalid_option()
+                    case 2:
+                        self.terminal.clear()
+                        self.manager.admin_view.admin_flow()
+                        break
+                    case 3:
+                        self.logout()
+                        self.manager.home_view.start()
+                    case 4:
+                        if self.close():
+                            break 
+                    case _:
+                        self.invalid_option()
+                        self.start()
 
             except Exception as e:
                 self.printer.error(f'Erro ao iniciar tela de admin: {e}')
@@ -74,21 +70,23 @@ class AdminView(BaseView):
             'Voltar',
         ]
 
-        admin_actions = {
-            1: self.person_view.start,
-            2: self.movie_view.start,
-            3: self.room_view.start,
-            4: self.session_view.start,
-            5: self.start
-        }
-
         try:
             self.terminal.clear()
             option: int = self.choose_an_option(admin_options)
-            if option in admin_actions:
-                admin_actions[option]()
-            else:
-                self.invalid_option()
+            match option:
+                case 1:
+                    self.manager.person_view.start()
+                case 2:
+                    self.manager.movie_view.start()
+                case 3:
+                    self.manager.room_view.start()
+                case 4:
+                    self.manager.session_view.start()
+                case 5:
+                    self.manager.admin_view.start()
+                case _:
+                    self.invalid_option()
+                    self.start()
 
         except Exception as e:
             self.printer.error(e)
