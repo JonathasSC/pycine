@@ -12,8 +12,6 @@ from src.crud.admins_crud import AdminsCrud
 from src.crud.persons_crud import PersonsCrud
 from src.crud.clients_crud import ClientsCrud
 from src.views.base_view import BaseView
-from src.views.admin_view import AdminView
-from src.views.client_view import ClientView
 
 
 class AuthView(BaseView):
@@ -97,7 +95,7 @@ class AuthView(BaseView):
             except Exception as e:
                 self.terminal.clear()
                 self.printer.error(f'Erro ao registrar-se: {str(e)}')
-                
+
             else:
                 self.terminal.clear()
                 self.printer.success('Registro realizado com sucesso!')
