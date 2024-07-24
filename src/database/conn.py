@@ -44,7 +44,7 @@ class Connection:
 
         self.logger.info('DELETANDO DADOS')
 
-    def create_database(self):
+    def create_tables(self):
         self.connect()
 
         self.logger.info('CRIANDO TABELAS DE USUARIOS')

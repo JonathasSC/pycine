@@ -112,3 +112,14 @@ class Populate:
         letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H']
         number = random.randint(1, 99)
         return random.choice(letters) + str(number)
+
+    def populate_all(self):
+        self.populate_persons()
+        self.populate_clients()
+        self.populate_admins()
+
+        self.populate_rooms()
+        self.populate_movies()
+        self.populate_sessions()
+
+

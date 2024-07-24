@@ -158,7 +158,7 @@ class ClientView(BaseView):
                 print(f'Erro ao mostrar filmes {e}')
 
             finally:
-                self.manager.start()
+                self.manager.client_view.start()
 
     def display_movies(self, movies_list):
         headers: list = ['NAME', 'GENRE', 'DURATION', 'SYNOPSIS']

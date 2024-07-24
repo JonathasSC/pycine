@@ -9,13 +9,15 @@ class MovieView(BaseView):
         self.list_options: list = [
             'Adicionar novo filme',
             'Ver lista de filmes',
+            'Deletar filme',
             'Voltar',
         ]
 
         self.option_actions = {
             1: self.create_movie,
             2: self.list_movies,
-            3: self.manager.admin_view.admin_flow
+            3: self.del_movie,
+            4: self.manager.admin_view.admin_flow
         }
 
     def start(self):
@@ -79,3 +81,29 @@ class MovieView(BaseView):
             except Exception as e:
                 self.printer.error(f'Erro ao mostrar filmes: {e}')
                 self.start()
+
+    def del_movie(self):
+        while True:
+            try:
+                self.terminal.clear()
+                self.printer.generic(
+                    text='Preencha os campos ou digite "q" para cancelar',
+                    line=True)
+
+                movie_id: str = input('Movie ID: ')
+
+                if movie_id.lower() == 'q':
+                    break
+
+                confirm_movie_id: str = self.movie_crud.delete_movie(movie_id)
+
+                if movie_id == confirm_movie_id:
+                    self.terminal.clear()
+                    self.printer.success('Filme deletado com sucesso!')
+                    self.terminal.clear()
+
+            except Exception as e:
+                self.printer.error(f'Erro ao deletar filme: {e}')
+
+            finally:
+                self.manager.movie_view.start()

@@ -4,7 +4,7 @@ from src.queries.movies_queries import (
     INSERT_MOVIE,
     DELETE_ALL_MOVIES,
     SELECT_MOVIE_BY_ID,
-    SELECT_MOVIE_BY_NAME,
+    DELETE_MOVIE,
 )
 from src.database.conn import Connection
 from src.schemas.movie_schemas import MovieCreate
@@ -71,9 +71,23 @@ class MoviesCrud(BaseCrud):
 
     def delete_all_movies(self):
         try:
+            self.conn.connect()
             self.conn.cursor.execute(DELETE_ALL_MOVIES)
             self.conn.connection.commit()
+            self.conn.close()
             return True
 
         except Exception as e:
             raise e
+
+    def delete_movie(self, movie_id: str):
+        try:
+            self.conn.connect()
+            self.conn.cursor.execute(DELETE_MOVIE, [movie_id])
+            self.conn.connection.commit()
+            self.conn.close()
+
+            return movie_id
+        except Exception as e:
+            self.printer.error(f'Erro ao deletar filme: {e}')
+            return None
