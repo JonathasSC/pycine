@@ -6,7 +6,7 @@ from src.utils.inputs import Inputs
 from src.utils.hashing import Hashing
 from src.utils.printer import Printer
 from src.utils.terminal import Terminal
-from src.utils.exceptions import ExceptionsHandlers
+from src.utils.handlers import Handlers
 
 
 from src.crud.seats_crud import SeatsCrud
@@ -34,10 +34,10 @@ class BaseView:
         self.ticket_crud: TicketsCrud = TicketsCrud()
         self.session_crud: SessionsCrud = SessionsCrud()
 
-        self.handlers: ExceptionsHandlers = ExceptionsHandlers()
-        self.logger: Logger = Logger()
         self.token: Token = Token()
+        self.logger: Logger = Logger()
         self.hash: Hashing = Hashing()
+        self.handlers: Handlers = Handlers()
 
     def logout(self):
         self.terminal.clear()
@@ -82,7 +82,7 @@ class BaseView:
                     "Entrada inválida. Por favor, digite um número.")
                 self.terminal.clear()
 
-    def execute_option(self, 
+    def execute_option(self,
                        options: dict,
                        option: int):
         action = options.get(option, self.invalid_option)
@@ -121,7 +121,7 @@ class BaseView:
         self.terminal.clear()
 
         confirm_options = ['Sim', 'Não']
-        
+
         option = self.choose_an_option(
             confirm_options,
             text='Realmente deseja sair?')

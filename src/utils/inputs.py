@@ -68,9 +68,20 @@ class Inputs:
         movie_data: dict = {}
 
         movie_data['name'] = input('Nome: ')
+        if movie_data['name'] == 'q':
+            return None
+
         movie_data['genre'] = input('Genre: ')
+        if movie_data['genre'] == 'q':
+            return None
+
         movie_data['duration'] = input('Duration: ')
+        if movie_data['duration'] == 'q':
+            return None
+
         movie_data['synopsis'] = input('Synopsis: ')
+        if movie_data['synopsis'] == 'q':
+            return None
 
         return movie_data
 

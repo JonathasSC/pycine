@@ -1,26 +1,10 @@
 from src.views.base_view import BaseView
-from src.crud.movies_crud import MoviesCrud
-from src.crud.admins_crud import AdminsCrud
-from src.crud.persons_crud import PersonsCrud
-
-# from src.views.home_view import HomeView
-from time import sleep
-from src.views.room_view import RoomView
-from src.views.movie_view import MovieView
-from src.views.person_view import PersonView
-from src.views.client_view import ClientView
-from src.views.session_view import SessionView
 
 
 class AdminView(BaseView):
     def __init__(self, manager):
         super().__init__()
-
         self.manager = manager
-        
-        self.movies_crud: MoviesCrud = MoviesCrud()
-        self.admins_crud: AdminsCrud = AdminsCrud()
-        self.person_crud: PersonsCrud = PersonsCrud()
 
         self.list_options: list = [
             'Fluxo publico',
@@ -34,7 +18,7 @@ class AdminView(BaseView):
             try:
                 self.terminal.clear()
                 option: int = self.choose_an_option(
-                    self.list_options, 
+                    self.list_options,
                     text='Escolha o que gerenciar')
 
                 match option:
@@ -51,7 +35,7 @@ class AdminView(BaseView):
                         self.manager.home_view.start()
                     case 4:
                         if self.close():
-                            break 
+                            break
                     case _:
                         self.invalid_option()
                         self.start()

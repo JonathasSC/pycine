@@ -1,7 +1,7 @@
 from src.queries.clients_queries import (
     INSERT_CLIENT,
-    SELECT_ALL_CLIENTS,
     DELETE_CLIENT,
+    SELECT_ALL_CLIENTS,
     SELECT_CLIENT_BY_ID,
     UPDATE_PERSON_CLIENT_BY_CLIENT_ID
 )
@@ -66,7 +66,7 @@ class ClientsCrud(BaseCrud):
                 data.get('name', None),
                 data.get('email', None),
                 data.get('password', None),
-                admin_id
+                client_id
             ]
 
             self.conn.connect()

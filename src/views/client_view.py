@@ -19,7 +19,6 @@ class ClientView(BaseView):
         self.tickets_crud: TicketsCrud = TicketsCrud()
         self.session_crud: SessionsCrud = SessionsCrud()
 
-
     def start(self):
         while True:
             self.logger.info('INICIANDO LOOP DE CLIENT VIEW')
@@ -34,7 +33,7 @@ class ClientView(BaseView):
                         'Comprar ingresso',
                         'Voltar',
                     ]
-                    
+
                     option = self.choose_an_option(list_options)
                     self.handle_admin_options(option)
                     break
@@ -51,8 +50,7 @@ class ClientView(BaseView):
                     option = self.choose_an_option(list_options)
                     if not self.handle_client_options(option):
                         break
-                    
-                
+
             except Exception as e:
                 self.printer.error(f'Erro ao iniciar tela publica: {e}')
 
@@ -74,7 +72,7 @@ class ClientView(BaseView):
             case _:
                 self.invalid_option()
                 self.start()
-     
+
     def handle_client_options(self, option):
         match option:
             case 1:
@@ -103,28 +101,38 @@ class ClientView(BaseView):
             tickets_list = self.tickets_crud.select_tickets_by_person_id(
                 person_id)
 
-            formated_list = []
-            for ticket in tickets_list:
-                seat_id = ticket[1]
-                session_id = ticket[3]
+            if tickets_list:
+                formated_list = []
+                for ticket in tickets_list:
+                    seat_id = ticket[1]
+                    session_id = ticket[3]
 
-                seat = self.seats_crud.select_seat_by_id(seat_id)
-                seat_code = seat[2]
+                    seat = self.seats_crud.select_seat_by_id(seat_id)
+                    seat_code = seat[2]
 
-                session = self.session_crud.select_session_by_id(session_id)
-                movie_id = session[2]
-                start_time = session[4]
-                movie = self.movies_crud.select_movie_by_id(movie_id)
-                movie_title = movie[1]
+                    session = self.session_crud.select_session_by_id(
+                        session_id)
+                    movie_id = session[2]
+                    start_time = session[4]
+                    movie = self.movies_crud.select_movie_by_id(movie_id)
+                    movie_title = movie[1]
 
-                formated_list.append([seat_code, movie_title, start_time])
+                    formated_list.append([seat_code, movie_title, start_time])
 
-            self.printer.display_table(
-                headers=header, table_data=formated_list)
-            self.start()
+                self.printer.display_table(
+                    headers=header,
+                    table_data=formated_list
+                )
+
+                self.start()
+            else:
+                self.handlers.handle_no_tickets()
 
         except Exception as e:
             self.printer.error(f'Erro ao mostrar os tickets: {e}')
+
+        finally:
+            self.manager.start()
 
     def prepare_ticket_data(self, seat_id, session_id):
         token = self.token.load_token()
@@ -142,13 +150,15 @@ class ClientView(BaseView):
             try:
                 movies_list = self.session_crud.select_all_session_with_movies()
                 if not movies_list:
-                    self.handle_no_sessions_available()
-                    return
+                    self.handlers.handle_no_sessions_available()
+                else:
+                    self.display_movies(movies_list)
 
-                self.display_movies(movies_list)
             except Exception as e:
                 print(f'Erro ao mostrar filmes {e}')
-            break
+
+            finally:
+                self.manager.start()
 
     def display_movies(self, movies_list):
         headers: list = ['NAME', 'GENRE', 'DURATION', 'SYNOPSIS']
@@ -157,7 +167,6 @@ class ClientView(BaseView):
         self.printer.generic(
             text='Filmes em cartaz',
             line=True
-
         )
 
         movies_compacted = [
@@ -166,13 +175,3 @@ class ClientView(BaseView):
 
         self.printer.display_table(headers, movies_compacted)
         self.start()
-
-    def handle_no_movies_available(self):
-        self.terminal.clear()
-        self.printer.generic("Nenhum filme em exibição no momento", line=True)
-        self.printer.generic("Voltando para o início", timer=True)
-        self.start()
-
-    def handle_no_sessions_available(self):
-        self.terminal.clear()
-        self.printer.warning("Nenhuma sessão disponível.")

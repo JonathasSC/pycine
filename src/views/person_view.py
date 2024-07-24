@@ -341,7 +341,7 @@ class PersonView(BaseView):
                     if not client:
                         self.terminal.clear()
                         self.printer.error(
-                            'Nenhum admin identificado, tente novamente')
+                            'Nenhum cliente identificado, tente novamente')
                         self.terminal.clear()
                         put_client()
 
@@ -391,7 +391,7 @@ class PersonView(BaseView):
 
                     if data:
                         self.client_crud.update_client(client_id, data)
-                        self.printer.success('Admin atualizado com sucesso!')
+                        self.printer.success('Cliente atualizado com sucesso!')
                     else:
                         self.printer.info(
                             'Nenhum dado fornecido para atualização.')
@@ -403,11 +403,11 @@ class PersonView(BaseView):
                     self.put_admin()
 
                 except Exception as e:
-                    self.printer.error(f'Erro ao atualizar admin: {e}')
-                    self.put_admin()
+                    self.printer.error(f'Erro ao atualizar cliente: {e}')
+                    self.put_client()
 
                 finally:
-                    self.manage_admin()
+                    self.manage_client()
 
         while True:
 
