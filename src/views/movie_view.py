@@ -1,12 +1,9 @@
 from src.views.base_view import BaseView
-from src.crud.movies_crud import MoviesCrud
 
 
 class MovieView(BaseView):
     def __init__(self, manager):
         super().__init__()
-        self.movies_crud: MoviesCrud = MoviesCrud()
-        self.before_view = None
         self.manager = manager
 
         self.list_options: list = [
@@ -18,16 +15,8 @@ class MovieView(BaseView):
         self.option_actions = {
             1: self.create_movie,
             2: self.list_movies,
-            3: self.back_to_admin
+            3: self.manager.admin_view.admin_flow
         }
-
-    def set_back_view(self, view):
-        self.before_view = view
-
-    def back_to_admin(self):
-        if self.before_view:
-            self.before_view.start()
-        self.printer.error('AdminView não definida')
 
     def start(self):
         while True:
@@ -45,22 +34,37 @@ class MovieView(BaseView):
         while True:
             try:
                 self.terminal.clear()
-                self.printer.generic('Enter new movie fields', line=True)
+                self.printer.generic(
+                    text='Preencha os campos (ou digite "q" para cancelar)',
+                    line=True
+                )
+
                 movie_data: dict = self.inputs.input_movie()
-                self.movies_crud.insert_movie(movie_data)
+
+                if not movie_data:
+                    self.terminal.clear()
+                    self.printer.success('Operação cancelada!')
+                    self.manager.movie_view.start()
+
+                self.movie_crud.insert_movie(movie_data)
                 self.printer.success('Filme adicionado com sucesso!')
-                self.start()
+                self.manager.movie_view.start()
+
+            except ValidationError as e:
+                erro = e.errors()[0]
+                message: str = erro['msg']
+                self.printer.error(message[13:])
 
             except Exception as e:
                 self.printer.error(f'Erro ao criar filme: {e}')
-                self.start()
+                self.manager.movie_view.start()
 
     def list_movies(self):
         while True:
             try:
                 self.terminal.clear()
                 header = ['ID', 'NAME', 'GENRE', 'DURATION', 'SYNOPSIS']
-                movies_list: list = self.movies_crud.select_all_movies()
+                movies_list: list = self.movie_crud.select_all_movies()
                 movies_formated: list = [[
                     movie[0],
                     movie[1],
