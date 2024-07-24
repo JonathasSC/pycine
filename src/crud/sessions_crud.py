@@ -96,7 +96,7 @@ class SessionsCrud(BaseCrud):
             self.conn.connection.commit()
             self.conn.close()
 
-            return True
+            return session_id
 
         except Exception as e:
             raise e

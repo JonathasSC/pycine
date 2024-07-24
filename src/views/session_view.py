@@ -12,6 +12,7 @@ class SessionView(BaseView):
         self.list_options: list = [
             'Adicionar nova sessão',
             'Ver lista de sessões',
+            'Deletar sessão',
             'Voltar'
         ]
 
@@ -58,6 +59,10 @@ class SessionView(BaseView):
                     self.start()
 
                 elif option == 3:
+                    self.del_session()
+                    self.start()
+
+                elif option == 4:
                     self.manager.admin_view.admin_flow()
 
                 else:
@@ -82,3 +87,31 @@ class SessionView(BaseView):
             except Exception as e:
                 self.printer.error(f'Erro ao criar sessão: {e}')
                 break
+
+    def del_session(self):
+        while True:
+            try:
+                self.terminal.clear()
+                self.printer.generic(
+                    text='Preencha os campos ou digite "q" para cancelar',
+                    line=True)
+
+                session_id: str = input('Session ID: ')
+
+                if session_id.lower() == 'q':
+                    break
+
+                confirm_session_id: str = self.session_crud.delete_session(
+                    session_id)
+
+                if session_id == confirm_session_id:
+                    self.terminal.clear()
+                    self.printer.success(
+                        'Sessão deletada com sucesso!', timer=True)
+                    self.terminal.clear()
+
+            except Exception as e:
+                self.printer.error(f'Erro ao deletar filme: {e}')
+
+            finally:
+                self.manager.session_view.start()
