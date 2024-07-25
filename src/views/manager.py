@@ -21,5 +21,5 @@ class Manager:
         self.session_view = SessionView(self)
         self.purchase_view = PurchaseView(self)
 
-    def start(self):
+    def start(self) -> None:
         self.home_view.start()

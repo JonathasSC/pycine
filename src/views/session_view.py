@@ -16,7 +16,7 @@ class SessionView(BaseView):
             'Voltar'
         ]
 
-    def list_sessions(self):
+    def list_sessions(self) -> None:
         while True:
             try:
                 self.terminal.clear()
@@ -74,7 +74,7 @@ class SessionView(BaseView):
             except Exception as e:
                 self.printer.error(f'Erro ao iniciar tela de salas: {e}')
 
-    def crt_session(self):
+    def crt_session(self) -> None:
         while True:
             try:
                 self.terminal.clear()
@@ -88,7 +88,7 @@ class SessionView(BaseView):
                 self.printer.error(f'Erro ao criar sessão: {e}')
                 break
 
-    def del_session(self):
+    def del_session(self) -> None:
         while True:
             try:
                 self.terminal.clear()

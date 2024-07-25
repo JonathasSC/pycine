@@ -11,11 +11,11 @@ class Logger:
             level=logging.INFO
         )
 
-    def info(self, text: str):
+    def info(self, text: str) -> None:
         self.logger.info(text)
 
-    def error(self, text: str):
+    def error(self, text: str) -> None:
         self.logger.error(text)
 
-    def warning(self, text: str):
+    def warning(self, text: str) -> None:
         self.logger.warning(text)

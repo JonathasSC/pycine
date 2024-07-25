@@ -63,7 +63,7 @@ class Printer:
                       table_data: list,
                       page: int = 1,
                       per_page: int = 10):
-                      
+
         total_pages = (len(table_data) + per_page - 1) // per_page
 
         while True:
@@ -110,7 +110,7 @@ class Printer:
 
             return user_input
 
-    def display_movies(self, movies_list):
+    def display_movies(self, movies_list) -> None:
         headers: list = ['NAME', 'GENRE', 'DURATION', 'SYNOPSIS']
 
         self.terminal.clear()
@@ -127,7 +127,7 @@ class Printer:
         self.printer.display_table(headers, movies_compacted)
         self.start()
 
-    def create_seat_matrix(self, seats):
+    def create_seat_matrix(self, seats) -> list:
         max_row = max(seat[3] for seat in seats) + 1
         max_col = max(seat[4] for seat in seats) + 1
 
@@ -153,14 +153,14 @@ class Printer:
 
         return seat_matrix
 
-    def print_seat_matrix(self, seat_matrix):
+    def print_seat_matrix(self, seat_matrix) -> None:
         self.terminal.clear()
         print(' Tela '.center(len(seat_matrix[0]) * 5, '-'))
 
         for row in seat_matrix:
             print(" ".join(row))
 
-    def password_params(self):
+    def password_params(self) -> None:
         self.error('A senha deve conter: ', timer=False)
 
         self.error(

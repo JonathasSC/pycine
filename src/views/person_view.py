@@ -35,7 +35,7 @@ class PersonView(BaseView):
                 self.printer.error(e, timer=True)
 
     def manage_admin(self):
-        def get_admins():
+        def get_admins() -> None:
             while True:
                 try:
                     self.terminal.clear()
@@ -55,7 +55,7 @@ class PersonView(BaseView):
                     self.printer.error(f'Erro ao mostrar admins {e}')
                     self.manage_admin()
 
-        def del_admin():
+        def del_admin() -> None:
             while True:
                 try:
                     token: str = self.token.load_token()
@@ -103,7 +103,7 @@ class PersonView(BaseView):
                     self.printer.error(f'Erro ao criar sala: {e}')
                     self.manage_admin()
 
-        def crt_admin():
+        def crt_admin() -> None:
             while True:
                 try:
                     self.terminal.clear()
@@ -133,7 +133,7 @@ class PersonView(BaseView):
                 except Exception as e:
                     self.printer.error(f'Erro ao criar admin: {e}')
 
-        def put_admin():
+        def put_admin() -> None:
             while True:
                 try:
                     old_data = {}
@@ -246,8 +246,8 @@ class PersonView(BaseView):
             except Exception as e:
                 self.printer.error(e)
 
-    def manage_client(self):
-        def get_all_clients():
+    def manage_client(self) -> None:
+        def get_all_clients() -> None:
             while True:
                 try:
                     self.terminal.clear()
@@ -267,7 +267,7 @@ class PersonView(BaseView):
                     self.printer.error(f'Erro ao mostrar admins {e}')
                     self.manage_admin()
 
-        def del_client():
+        def del_client() -> None:
             while True:
                 try:
                     self.terminal.clear()
@@ -294,7 +294,7 @@ class PersonView(BaseView):
                     self.printer.error(f'Erro ao deletar cliente: {e}')
                     self.manage_client()
 
-        def crt_client():
+        def crt_client() -> None:
             while True:
                 try:
                     self.terminal.clear()
@@ -322,7 +322,7 @@ class PersonView(BaseView):
                 except Exception as e:
                     self.printer.error(f'Erro ao criar cliente: {e}')
 
-        def put_client():
+        def put_client() -> None:
             while True:
                 try:
                     old_data = {}
@@ -435,7 +435,7 @@ class PersonView(BaseView):
             except Exception as e:
                 self.printer.error(e)
 
-    def close(self):
+    def close(self) -> None:
         self.terminal.clear()
         self.printer.generic("Deseja realmente sair?", line=True)
 

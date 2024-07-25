@@ -12,7 +12,7 @@ class HomeView(BaseView):
             'Sair'
         ]
 
-    def start(self):
+    def start(self) -> None:
         while True:
             try:
                 if self.admin_crud.get_count_admin() == 0:

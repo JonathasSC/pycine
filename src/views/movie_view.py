@@ -14,7 +14,7 @@ class MovieView(BaseView):
             'Voltar',
         ]
 
-    def start(self):
+    def start(self) -> None:
         while True:
             try:
                 self.terminal.clear()
@@ -41,7 +41,7 @@ class MovieView(BaseView):
                 self.printer.error(f'Erro ao iniciar movie view {e}')
                 self.exit()
 
-    def crt_movie(self):
+    def crt_movie(self) -> None:
         while True:
             try:
                 self.terminal.clear()
@@ -70,7 +70,7 @@ class MovieView(BaseView):
                 self.printer.error(f'Erro ao criar filme: {e}')
                 self.manager.movie_view.start()
 
-    def get_movies(self):
+    def get_movies(self) -> None:
         while True:
             try:
                 self.terminal.clear()
@@ -91,7 +91,7 @@ class MovieView(BaseView):
                 self.printer.error(f'Erro ao mostrar filmes: {e}')
                 self.start()
 
-    def del_movie(self):
+    def del_movie(self) -> None:
         while True:
             try:
                 self.terminal.clear()
@@ -117,7 +117,7 @@ class MovieView(BaseView):
             finally:
                 self.manager.movie_view.start()
 
-    def put_movie(self):
+    def put_movie(self) -> None:
         while True:
             try:
                 old_data: dict = {}

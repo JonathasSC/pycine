@@ -1,7 +1,7 @@
 from src.utils.printer import Printer
 from src.utils.terminal import Terminal
 import getpass
-
+from typing import Optional, Dict
 from src.utils.validators import password_validator
 
 
@@ -10,7 +10,7 @@ class Inputs:
         self.printer: Printer = Printer()
         self.terminal: Terminal = Terminal()
 
-    def input_login(self):
+    def input_login(self) -> Dict[str, str]:
         person_data: dict = {}
 
         person_data['email'] = input('Email: ')
@@ -18,7 +18,7 @@ class Inputs:
 
         return person_data
 
-    def input_person(self):
+    def input_person(self) -> Optional[Dict[str, str]]:
         person_data: dict = {}
 
         person_data['name'] = input('Nome: ')
@@ -35,7 +35,7 @@ class Inputs:
 
         return person_data
 
-    def input_register(self):
+    def input_register(self) -> Dict[str, str]:
         person_data: dict = {}
 
         person_data['name'] = input('Nome: ')
@@ -44,7 +44,7 @@ class Inputs:
 
         return person_data
 
-    def input_password(self):
+    def input_password(self) -> Dict[str, str]:
         while True:
             password = getpass.getpass('Senha (ela está ocultada): ')
             confirm_password: str = getpass.getpass('Confirme a senha: ')
@@ -64,7 +64,7 @@ class Inputs:
             else:
                 return password
 
-    def input_movie(self):
+    def input_movie(self) -> Dict[str, str]:
         movie_data: dict = {}
 
         movie_data['name'] = input('Nome: ')

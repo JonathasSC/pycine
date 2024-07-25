@@ -121,5 +121,3 @@ class Populate:
         self.populate_rooms()
         self.populate_movies()
         self.populate_sessions()
-
-

@@ -13,7 +13,7 @@ class AdminView(BaseView):
             'Sair',
         ]
 
-    def start(self):
+    def start(self) -> None:
         while True:
             try:
                 self.terminal.clear()
@@ -43,7 +43,7 @@ class AdminView(BaseView):
             except Exception as e:
                 self.printer.error(f'Erro ao iniciar tela de admin: {e}')
 
-    def admin_flow(self):
+    def admin_flow(self) -> None:
         self.logger.info('START ADMIN FLOW')
 
         admin_options: list = [

@@ -39,20 +39,20 @@ class BaseView:
         self.hash: Hashing = Hashing()
         self.handlers: Handlers = Handlers()
 
-    def logout(self):
+    def logout(self) -> None:
         self.terminal.clear()
         self.printer.generic('Saindo...', line=True, timer=True)
         self.token.delete_token()
         self.terminal.clear()
 
-    def start(self):
+    def start(self) -> None:
         raise NotImplementedError(
             "Subclasses should implement start() method.")
 
     def choose_an_option(self,
                          options: list,
                          text: str = 'Escolha uma opção',
-                         cancel: bool = False):
+                         cancel: bool = False) -> Optional[str]:
         while True:
             try:
                 self.printer.generic(text, line=True)
@@ -84,21 +84,21 @@ class BaseView:
 
     def execute_option(self,
                        options: dict,
-                       option: int):
+                       option: int) -> None:
         action = options.get(option, self.invalid_option)
         action()
 
-    def invalid_option(self):
+    def invalid_option(self) -> None:
         self.terminal.clear()
         self.printer.error('Opção inválida, tente novamente')
         self.terminal.clear()
 
-    def invalid_value(self):
+    def invalid_value(self) -> None:
         self.terminal.clear()
         self.printer.error('Valor inválido, tente novamente')
         self.terminal.clear()
 
-    def create_admin(self):
+    def create_admin(self) -> None:
         while True:
             try:
                 person_data: dict = self.inputs.input_person()
@@ -117,7 +117,7 @@ class BaseView:
             except Exception as e:
                 self.printer.error(f'Erro ao criar admin: {str(e)}')
 
-    def close(self):
+    def close(self) -> bool:
         self.terminal.clear()
 
         confirm_options = ['Sim', 'Não']

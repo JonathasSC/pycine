@@ -5,6 +5,7 @@ from src.crud.sessions_crud import SessionsCrud
 from src.crud.rooms_crud import RoomsCrud
 from src.crud.seats_crud import SeatsCrud
 from src.crud.tickets_crud import TicketsCrud
+from typing import Dict
 
 
 class ClientView(BaseView):
@@ -134,18 +135,7 @@ class ClientView(BaseView):
         finally:
             self.manager.start()
 
-    def prepare_ticket_data(self, seat_id, session_id):
-        token = self.token.load_token()
-        person_id = self.token.person_id_from_token(token)
-        room_id = self.seats_crud.get_seat_by_id(seat_id)
-        return {
-            'session_id': session_id,
-            'person_id': person_id,
-            'seat_id': seat_id,
-            'room_id': room_id
-        }
-
-    def list_movies_in_playing(self):
+    def list_movies_in_playing(self) -> None:
         while True:
             try:
                 movies_list = self.session_crud.select_all_session_with_movies()
@@ -160,7 +150,7 @@ class ClientView(BaseView):
             finally:
                 self.manager.client_view.start()
 
-    def display_movies(self, movies_list):
+    def display_movies(self, movies_list) -> None:
         headers: list = ['NAME', 'GENRE', 'DURATION', 'SYNOPSIS']
 
         self.terminal.clear()

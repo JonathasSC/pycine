@@ -1,5 +1,6 @@
 from src.views.base_view import BaseView
 from src.utils.validators import validate_seat_choice
+from typing import Optional
 
 
 class PurchaseView(BaseView):
@@ -50,7 +51,7 @@ class PurchaseView(BaseView):
         elif person_role == 'admin':
             self.manager.client_view.start()
 
-    def choose_movie(self):
+    def choose_movie(self) -> Optional[tuple]:
         self.terminal.clear()
         movies: list = self.session_crud.select_all_session_with_movies()
         movies_names = [movie[6] for movie in movies]
@@ -69,7 +70,7 @@ class PurchaseView(BaseView):
 
         return movie
 
-    def choose_session(self, movie_id):
+    def choose_session(self, movie_id) -> Optional[tuple]:
         self.terminal.clear()
         sessions: list = self.session_crud.select_sessions_by_movie_id_with_room_details(
             movie_id)
@@ -96,7 +97,7 @@ class PurchaseView(BaseView):
         self.terminal.clear()
         return session
 
-    def choose_seat(self, room_id):
+    def choose_seat(self, room_id) -> Optional[tuple]:
         while True:
             self.terminal.clear()
             seats: list = self.seat_crud.select_seats_by_room_id(room_id)
@@ -124,7 +125,11 @@ class PurchaseView(BaseView):
                 timer=True)
             self.terminal.clear()
 
-    def process_ticket(self, seat: tuple, session: tuple, person_id: str):
+    def process_ticket(self,
+                       seat: tuple,
+                       session: tuple,
+                       person_id: str) -> Optional[tuple]:
+
         self.terminal.clear()
         seat_code: str = seat[2]
         session_time: str = session[4]

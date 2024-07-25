@@ -34,7 +34,7 @@ class AdminsCrud(BaseCrud):
         except Exception as e:
             raise e
 
-    def insert_admin(self, person_id: str) -> None:
+    def insert_admin(self, person_id: str) -> str:
         try:
             data: dict = {}
             admin_id: str = self.uuid.smaller_uuid()
@@ -56,7 +56,7 @@ class AdminsCrud(BaseCrud):
         except Exception as e:
             raise e
 
-    def delete_admin(self, admin_id: str) -> bool:
+    def delete_admin(self, admin_id: str) -> Optional[str]:
         try:
             self.conn.connect()
             self.conn.cursor.execute(SELECT_ADMIN_BY_ID, [admin_id])
@@ -71,13 +71,12 @@ class AdminsCrud(BaseCrud):
 
             self.conn.connection.commit()
             self.conn.close()
+            self.logger.info('ADMIN E PESSOA ASSOCIADA DELETADOS')
+            return admin_id
 
         except Exception as e:
             self.logger.warning('EXCEÇÃO AO TENTAR DELETAR ADMIN')
             raise e
-
-        self.logger.info('ADMIN E PESSOA ASSOCIADA DELETADOS')
-        return True
 
     def select_all_admins(self) -> list:
         try:
@@ -86,12 +85,12 @@ class AdminsCrud(BaseCrud):
             admin_list: list = self.conn.cursor.fetchall()
             self.conn.close()
 
+            self.logger.info('ADMINS LISTADOS')
+            return admin_list
+
         except Exception as e:
             self.logger.warning('EXCESSÃO TENTAR LISTAR ADMIN')
             raise e
-
-        self.logger.info('ADMINS LISTADOS')
-        return admin_list
 
     def get_count_admin(self) -> int:
         try:
@@ -138,7 +137,7 @@ class AdminsCrud(BaseCrud):
                 'EXCEÇÃO AO TENTAR ATUALIZAR DADOS DE PERSONS QUE SÃO ADMINS')
             raise e
 
-    def delete_all_admins(self):
+    def delete_all_admins(self) -> None:
         self.conn.connect()
         self.conn.cursor.execute(DELETE_ALL_ADMINS)
         self.conn.connection.commit()

@@ -3,7 +3,7 @@ from src.queries.persons_queries import SELECT_BY_EMAIL
 from src.database.conn import Connection
 
 
-def password_validator(senha: str):
+def password_validator(senha: str) -> bool:
     padrao = r'^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()-_+=])[A-Za-z\d!@#$%^&*()-_+=]{8,}$'
 
     if re.match(padrao, senha):
@@ -11,7 +11,7 @@ def password_validator(senha: str):
     return False
 
 
-def exists_email(email: str):
+def exists_email(email: str) -> bool:
     conn: Connection = Connection(auto_connect=False)
 
     conn.connect()

@@ -21,7 +21,7 @@ class Connection:
         if auto_connect:
             self.connect()
 
-    def connect(self):
+    def connect(self) -> None:
         self.connection = sqlite3.connect(self.db_name)
         self.cursor = self.connection.cursor()
 
@@ -31,7 +31,7 @@ class Connection:
             self.logger.info('FECHANDO CONEXAO COM BANCO DE DADOS')
         self.connection = None
 
-    def delete_data(self):
+    def delete_data(self) -> None:
         self.connect()
 
         self.cursor.execute(DELETE_ALL_SESSIONS)
@@ -44,7 +44,7 @@ class Connection:
 
         self.logger.info('DELETANDO DADOS')
 
-    def create_tables(self):
+    def create_tables(self) -> None:
         self.connect()
 
         self.logger.info('CRIANDO TABELAS DE USUARIOS')

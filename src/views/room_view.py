@@ -19,7 +19,7 @@ class RoomView(BaseView):
     def set_before_view(self, view):
         self.before_view = view
 
-    def start(self):
+    def start(self) -> None:
         while True:
             try:
                 self.terminal.clear()
@@ -41,7 +41,7 @@ class RoomView(BaseView):
             except Exception as e:
                 self.printer.error(f'Erro ao iniciar tela de salas: {e}')
 
-    def crt_room(self):
+    def crt_room(self) -> None:
         while True:
             try:
                 self.terminal.clear()
@@ -61,7 +61,7 @@ class RoomView(BaseView):
 
         self.start()
 
-    def crt_room_with_seats(self):
+    def crt_room_with_seats(self) -> None:
         while True:
             try:
                 self.terminal.clear()
@@ -82,7 +82,7 @@ class RoomView(BaseView):
 
         self.start()
 
-    def get_rooms(self):
+    def get_rooms(self) -> None:
         while True:
             try:
                 self.terminal.clear()
@@ -98,7 +98,7 @@ class RoomView(BaseView):
 
         self.start()
 
-    def put_room(self):
+    def put_room(self) -> None:
         while True:
             try:
                 self.terminal.clear()

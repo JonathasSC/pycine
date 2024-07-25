@@ -6,7 +6,7 @@ class Terminal:
     def __init__(self) -> None:
         self.system_name: str = platform.system()
 
-    def clear(self):
+    def clear(self) -> None:
         try:
             if self.system_name == 'Windows':
                 os.system("cls")
