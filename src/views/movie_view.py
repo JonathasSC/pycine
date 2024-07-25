@@ -14,14 +14,6 @@ class MovieView(BaseView):
             'Voltar',
         ]
 
-        self.option_actions = {
-            1: self.create_movie,
-            2: self.get_movies,
-            3: self.del_movie,
-            4: self.put_movie,
-            5: self.manager.admin_view.admin_flow
-        }
-
     def start(self):
         while True:
             try:
@@ -30,7 +22,7 @@ class MovieView(BaseView):
 
                 match option:
                     case 1:
-                        self.create_movie()
+                        self.crt_movie()
                     case 2:
                         self.get_movies()
                     case 3:
@@ -49,7 +41,7 @@ class MovieView(BaseView):
                 self.printer.error(f'Erro ao iniciar movie view {e}')
                 self.exit()
 
-    def create_movie(self):
+    def crt_movie(self):
         while True:
             try:
                 self.terminal.clear()

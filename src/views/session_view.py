@@ -51,7 +51,7 @@ class SessionView(BaseView):
                     self.list_options, text='Escolha o que gerenciar')
 
                 if option == 1:
-                    self.create_session()
+                    self.crt_session()
                     self.start()
 
                 elif option == 2:
@@ -74,7 +74,7 @@ class SessionView(BaseView):
             except Exception as e:
                 self.printer.error(f'Erro ao iniciar tela de salas: {e}')
 
-    def create_session(self):
+    def crt_session(self):
         while True:
             try:
                 self.terminal.clear()

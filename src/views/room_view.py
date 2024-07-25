@@ -27,11 +27,11 @@ class RoomView(BaseView):
 
                 match option:
                     case 1:
-                        self.create_room()
+                        self.crt_room()
                     case 2:
-                        self.create_room_with_seats()
+                        self.crt_room_with_seats()
                     case 3:
-                        self.list_rooms()
+                        self.get_rooms()
                     case 4:
                         self.manager.admin_view.admin_flow()
                     case _:
@@ -41,7 +41,7 @@ class RoomView(BaseView):
             except Exception as e:
                 self.printer.error(f'Erro ao iniciar tela de salas: {e}')
 
-    def create_room(self):
+    def crt_room(self):
         while True:
             try:
                 self.terminal.clear()
@@ -61,7 +61,7 @@ class RoomView(BaseView):
 
         self.start()
 
-    def create_room_with_seats(self):
+    def crt_room_with_seats(self):
         while True:
             try:
                 self.terminal.clear()
@@ -82,7 +82,7 @@ class RoomView(BaseView):
 
         self.start()
 
-    def list_rooms(self):
+    def get_rooms(self):
         while True:
             try:
                 self.terminal.clear()

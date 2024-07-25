@@ -35,7 +35,7 @@ class PersonView(BaseView):
                 self.printer.error(e, timer=True)
 
     def manage_admin(self):
-        def get_all_admins():
+        def get_admins():
             while True:
                 try:
                     self.terminal.clear()
@@ -103,7 +103,7 @@ class PersonView(BaseView):
                     self.printer.error(f'Erro ao criar sala: {e}')
                     self.manage_admin()
 
-        def create_admin():
+        def crt_admin():
             while True:
                 try:
                     self.terminal.clear()
@@ -231,8 +231,8 @@ class PersonView(BaseView):
             ]
 
             manage_actions = {
-                1: create_admin,
-                2: get_all_admins,
+                1: crt_admin,
+                2: get_admins,
                 3: del_admin,
                 4: put_admin,
                 5: self.start,
@@ -294,7 +294,7 @@ class PersonView(BaseView):
                     self.printer.error(f'Erro ao deletar cliente: {e}')
                     self.manage_client()
 
-        def create_client():
+        def crt_client():
             while True:
                 try:
                     self.terminal.clear()
@@ -420,7 +420,7 @@ class PersonView(BaseView):
             ]
 
             manage_actions = {
-                1: create_client,
+                1: crt_client,
                 2: get_all_clients,
                 3: del_client,
                 4: put_client,
