@@ -5,9 +5,10 @@ from src.queries.movies_queries import (
     DELETE_ALL_MOVIES,
     SELECT_MOVIE_BY_ID,
     DELETE_MOVIE,
+    UPDATE_MOVIE
 )
 from src.database.conn import Connection
-from src.schemas.movie_schemas import MovieCreate
+from src.schemas.movie_schemas import MovieCreate, MovieUpdate
 from typing import List, Dict, Any
 
 
@@ -91,3 +92,27 @@ class MoviesCrud(BaseCrud):
         except Exception as e:
             self.printer.error(f'Erro ao deletar filme: {e}')
             return None
+
+    def update_movie(self,
+                     movie_id: str,
+                     data: Dict[str, str]):
+        try:
+            data_dict: Dict[str, Any] = dict(MovieUpdate(**data))
+
+            data_list: List[str] = [
+                data_dict.get('name', None),
+                data_dict.get('genre', None),
+                data_dict.get('duration', None),
+                data_dict.get('synopsis', None),
+                movie_id
+            ]
+
+            self.conn.connect()
+            self.conn.cursor.execute(UPDATE_MOVIE, data_list)
+            self.conn.connection.commit()
+            self.conn.close()
+
+            return movie_id
+
+        except Exception as e:
+            raise e
