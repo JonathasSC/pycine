@@ -226,7 +226,7 @@ class PersonView(BaseView):
                 'Criar novo admin',
                 'Listar admins',
                 'Deletar admin',
-                'Update admin',
+                'Atualizar admin',
                 'Voltar'
             ]
 
