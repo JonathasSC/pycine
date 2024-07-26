@@ -18,6 +18,8 @@ from src.crud.persons_crud import PersonsCrud
 from src.crud.tickets_crud import TicketsCrud
 from src.crud.sessions_crud import SessionsCrud
 
+from typing import Optional
+
 
 class BaseView:
     def __init__(self):

@@ -1,4 +1,5 @@
 from src.views.base_view import BaseView
+from pydantic import ValidationError
 
 
 class MovieView(BaseView):
