@@ -16,7 +16,7 @@ from src.crud.base_crud import BaseCrud
 from src.database.conn import Connection
 
 from src.schemas.admin_schemas import AdminCreate
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 
 class AdminsCrud(BaseCrud):
