@@ -63,7 +63,7 @@ VALUES (?, ?, ?, ?, ?);
 
 UPDATE_SESSION = """
 UPDATE sessions
-SET price = ?, room_id = ?, movie_id = ?, start_time = ?
+SET room_id = ?, movie_id = ?, price = ?, start_time = ?
 WHERE session_id = ?;
 """
 

@@ -111,9 +111,20 @@ class Inputs:
         session_data: dict = {}
 
         session_data['price'] = input('Price: ')
+        if session_data['price'] == 'q':
+            return None
+
         session_data['room_id'] = input('Room ID: ')
+        if session_data['room_id'] == 'q':
+            return None
+
         session_data['movie_id'] = input('Movie ID: ')
+        if session_data['movie_id'] == 'q':
+            return None
+
         session_data['start_time'] = input('Start time: ')
+        if session_data['start_time'] == 'q':
+            return None
 
         return session_data
 

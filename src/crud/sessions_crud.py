@@ -2,7 +2,7 @@ from typing import List, Dict, Any, Optional
 
 from src.crud.base_crud import BaseCrud
 from src.database.conn import Connection
-from src.schemas.session_schemas import SessionCreate
+from src.schemas.session_schemas import SessionCreate, SessionUpdate
 
 from src.queries.sessions_queries import (
     SELECT_SESSIONS_BY_MOVIE_ID,
@@ -74,17 +74,24 @@ class SessionsCrud(BaseCrud):
         except Exception as e:
             raise e
 
-    def update_session(self, data: Dict[str, Any]) -> bool:
+    def update_session(self, session_id: str, session_data: Dict[str, Any]) -> bool:
         try:
-            session_data: Dict[str, Any] = dict(SessionCreate(**data))
-            data_list: List[Any] = list(session_data.values())
+            data_dict: Dict[str, Any] = dict(SessionUpdate(**session_data))
+
+            data_list: List[any] = [
+                session_data.get('room_id', None),
+                session_data.get('movie_id', None),
+                session_data.get('price', None),
+                session_data.get('start_time', None),
+                session_id
+            ]
 
             self.conn.connect()
             self.conn.cursor.execute(UPDATE_SESSION, data_list)
             self.conn.connection.commit()
             self.conn.close()
 
-            return True
+            return session_id
 
         except Exception as e:
             raise e
