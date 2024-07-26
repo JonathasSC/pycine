@@ -4,6 +4,7 @@ from src.queries.movies_queries import (
     INSERT_MOVIE,
     DELETE_ALL_MOVIES,
     SELECT_MOVIE_BY_ID,
+    SELECT_MOVIE_BY_NAME,
     DELETE_MOVIE,
     UPDATE_MOVIE
 )
@@ -93,9 +94,7 @@ class MoviesCrud(BaseCrud):
             self.printer.error(f'Erro ao deletar filme: {e}')
             return None
 
-    def update_movie(self,
-                     movie_id: str,
-                     data: Dict[str, str]):
+    def update_movie(self, movie_id: str, data: Dict[str, str]):
         try:
             data_dict: Dict[str, Any] = dict(MovieUpdate(**data))
 
