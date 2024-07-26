@@ -148,12 +148,6 @@ class MovieView(BaseView):
                 old_data['duration'] = movie[3]
                 old_data['synopsis'] = movie[4]
 
-                from time import sleep
-
-                print(movie)
-
-                sleep(4)
-
                 name: str = input(
                     'Nome (deixe em branco para manter o atual): ').strip()
                 genre: str = input(
@@ -185,7 +179,7 @@ class MovieView(BaseView):
 
                 if new_data:
                     self.movie_crud.update_movie(movie_id, new_data)
-                    self.printer.success('Admin atualizado com sucesso!')
+                    self.printer.success('Filme atualizado com sucesso!')
                 else:
                     self.printer.info(
                         'Nenhum dado fornecido para atualização.')

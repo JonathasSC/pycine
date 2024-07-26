@@ -2,7 +2,7 @@ from typing import List, Dict, Any
 
 from src.crud.base_crud import BaseCrud
 from src.database.conn import Connection
-from src.schemas.room_schemas import RoomCreate
+from src.schemas.room_schemas import RoomCreate, RoomUpdate
 
 
 from src.queries.rooms_queries import (
@@ -39,7 +39,7 @@ class RoomsCrud(BaseCrud):
         try:
             room_id: str = self.uuid.smaller_uuid()
             data['room_id'] = room_id
-            data_dict: Dict[str, Any] = dict(RoomCreate(**data))
+            data_dict: Dict[str, Any] = dict(RoomUpdate(**data))
             data_list: List[Any] = list(data_dict.values())
 
             self.conn.cursor.execute(INSERT_ROOM, data_list)
@@ -79,13 +79,26 @@ class RoomsCrud(BaseCrud):
         except Exception as e:
             raise e
 
-    def update_room(self, data: Dict[str, Any]):
+    def update_room(self,
+                    room_id: str,
+                    data: Dict[str, Any]):
         try:
-            data_dict: Dict[str, Any] = dict(RoomCreate(**data))
-            data_list: List[Any] = list(data_dict.values())
+            data_dict: Dict[str, Any] = dict(RoomUpdate(**data))
+
+            data_list: List[str] = [
+                data_dict.get('name', None),
+                data_dict.get('rows', None),
+                data_dict.get('columns', None),
+                data_dict.get('type', None),
+                room_id
+            ]
+
+            self.conn.connect()
             self.conn.cursor.execute(UPDATE_ROOM, data_list)
             self.conn.connection.commit()
-            return True
+            self.conn.close()
+
+            return room_id
 
         except Exception as e:
             raise e

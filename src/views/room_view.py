@@ -13,6 +13,7 @@ class RoomView(BaseView):
             'Adicionar nova sala',
             'Adicionar nova sala com assentos',
             'Ver lista de salas',
+            'Atualizar salas',
             'Voltar'
         ]
 
@@ -33,6 +34,8 @@ class RoomView(BaseView):
                     case 3:
                         self.get_rooms()
                     case 4:
+                        self.put_room()
+                    case 5:
                         self.manager.admin_view.admin_flow()
                     case _:
                         self.invalid_option()
@@ -101,13 +104,76 @@ class RoomView(BaseView):
     def put_room(self) -> None:
         while True:
             try:
+                old_data: dict = {}
+                new_data: dict = {}
+
                 self.terminal.clear()
                 self.printer.generic(
-                    'Coloque os novos campos da sala', line=True)
-                room_data: dict = self.inputs.input_room()
-                room_data['room_id'] = input('Room id: ')
+                    text='Digite o Room ID, ou "q" para cancelar',
+                    line=True
+                )
+
+                room_id: str = input('Room ID: ').strip().lower()
+
+                if room_id == 'q':
+                    self.manager.room_view.put_room()
+
+                room: tuple = self.room_crud.select_by_room_id(room_id)
+
+                if not room:
+                    self.printer.error(
+                        text='Nenhuma sala identificada, tente novamente')
+                    self.terminal.clear()
+                    self.manager.room_view.put_room()
+
+                old_data['name'] = room[1]
+                old_data['rows'] = room[2]
+                old_data['columns'] = room[3]
+                old_data['type'] = room[4]
+
+                name: str = input(
+                    'Nome (deixe em branco para manter o atual): ').strip()
+                rows: int = input(
+                    'Rows (deixe em branco para manter o atual): ').strip()
+                columns: int = input(
+                    'Colunas (deixe em branco para manter a atual): ').strip()
+                _type: str = input(
+                    'Type (deixe em branco para manter a atual): ').strip()
+
+                if not name:
+                    new_data['name'] = old_data['name']
+                else:
+                    new_data['name'] = name
+
+                if not rows:
+                    new_data['rows'] = old_data['rows']
+                else:
+                    new_data['rows'] = rows
+
+                if not columns:
+                    new_data['columns'] = old_data['columns']
+                else:
+                    new_data['columns'] = columns
+
+                if not _type:
+                    new_data['type'] = old_data['type']
+                else:
+                    new_data['type'] = _type
+
+                if new_data:
+                    self.room_crud.update_room(room_id, new_data)
+                    self.printer.success('Sala atualizado com sucesso!')
+                else:
+                    self.printer.info(
+                        'Nenhum dado fornecido para atualização.')
+
+            except ValueError as e:
+                self.terminal.clear()
+                self.printer.error(f'{e}')
+                self.terminal.clear()
 
             except Exception as e:
-                self.terminal.clear()
-                self.printer.error(f'Erro ao atualizar sala {e}')
-                break
+                self.printer.error(f'Erro ao atualizar sala: {e}')
+
+            finally:
+                self.manager.room_view.start()
