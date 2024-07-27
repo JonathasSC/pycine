@@ -1,5 +1,6 @@
 from src.views.base_view import BaseView
 from src.crud.sessions_crud import SessionsCrud
+from pydantic import ValidationError
 
 
 class SessionView(BaseView):
