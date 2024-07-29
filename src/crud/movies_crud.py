@@ -16,7 +16,6 @@ from typing import List, Dict, Any, Optional
 class MoviesCrud(BaseCrud):
     def __init__(self, conn: Connection = None):
         super().__init__(conn)
-        self.conn: Connection = Connection(auto_connect=False)
 
     def select_movie_by_id(self, movie_id) -> Optional[tuple]:
         try:

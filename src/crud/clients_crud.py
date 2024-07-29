@@ -14,7 +14,6 @@ from src.schemas.client_schemas import ClientCreate
 class ClientsCrud(BaseCrud):
     def __init__(self, conn: Connection = None):
         super().__init__(conn)
-        self.conn: Connection = Connection(auto_connect=False)
 
     def insert_client(self, person_id: str) -> Optional[str]:
         try:
@@ -52,6 +51,8 @@ class ClientsCrud(BaseCrud):
             self.conn.connect()
             self.conn.cursor.execute(DELETE_CLIENT, [client_id])
             self.conn.connection.commit()
+            self.conn.close()
+
             return client_id
 
         except Exception as e:
@@ -99,6 +100,8 @@ class ClientsCrud(BaseCrud):
             self.conn.connect()
             self.conn.cursor.execute(SELECT_CLIENT_BY_ID, [client_id])
             client: tuple = self.conn.cursor.fetchone()
+            self.conn.close()
+
             return client
 
         except Exception as e:

@@ -11,7 +11,6 @@ from typing import Optional
 class SeatsCrud(BaseCrud):
     def __init__(self, conn: Connection = None):
         super().__init__(conn)
-        self.conn: Connection = Connection(auto_connect=False)
 
     def update_seat_state(self, seat_id, state) -> Optional[str]:
         try:

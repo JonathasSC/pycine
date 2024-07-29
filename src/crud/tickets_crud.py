@@ -14,7 +14,6 @@ from src.queries.tickets_queries import (
 class TicketsCrud(BaseCrud):
     def __init__(self, conn: Connection = None):
         super().__init__(conn)
-        self.conn: Connection = Connection(auto_connect=False)
 
     def insert_ticket(self, data: Dict[str, Any]) -> Optional[str]:
         try:

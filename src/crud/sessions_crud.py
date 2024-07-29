@@ -20,7 +20,6 @@ from src.queries.sessions_queries import (
 class SessionsCrud(BaseCrud):
     def __init__(self, conn: Connection = None):
         super().__init__(conn)
-        self.conn: Connection = Connection(auto_connect=False)
 
     def select_session_by_id(self, session_id):
         try:
