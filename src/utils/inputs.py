@@ -86,26 +86,34 @@ class Inputs:
         return movie_data
 
     def input_room(self):
-        room_data = {}
+        room_data: dict = {}
 
-        room_data['name'] = input('Nome: ').strip()
+        room_data['name'] = input('Name: ')
+        if room_data['name'] == 'q':
+            return None
+
         room_data['rows'] = int(input('Rows: '))
+        if room_data['rows'] == 'q':
+            return None
+
         room_data['columns'] = int(input('Columns: '))
+        if room_data['columns'] == 'q':
+            return None
 
         valid_types = ['normal', 'dubbed', 'subtitled', 'vip']
-
         self.terminal.clear()
-        room_option: int = self.choose_an_option(
+
+        option: int = self.choose_an_option(
             valid_types,
             'Escolha o tipo da sala:',
             cancel=True
         )
 
-        if room_option:
-            room_data['type'] = valid_types[room_option - 1]
-            return room_data
+        if option == 0:
+            return None
 
-        return None
+        room_data['type'] = valid_types[option - 1]
+        return room_data
 
     def input_session(self):
         session_data: dict = {}
@@ -128,7 +136,12 @@ class Inputs:
 
         return session_data
 
-    def choose_an_option(self, options: list, text: str = 'Escolha uma opção', cancel: bool = False, clear: bool = True):
+    def choose_an_option(self,
+                         options: list,
+                         text: str = 'Escolha uma opção',
+                         cancel: bool = False,
+                         clear: bool = True):
+
         while True:
             if clear:
                 self.terminal.clear()

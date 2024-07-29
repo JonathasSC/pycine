@@ -40,9 +40,10 @@ class RoomsCrud(BaseCrud):
         try:
             room_id: str = self.uuid.smaller_uuid()
             data['room_id'] = room_id
-            data_dict: Dict[str, Any] = dict(RoomUpdate(**data))
+            data_dict: Dict[str, Any] = dict(RoomCreate(**data))
             data_list: List[Any] = list(data_dict.values())
 
+            self.conn.connect()
             self.conn.cursor.execute(INSERT_ROOM, data_list)
 
             rows = data['rows']
@@ -60,6 +61,8 @@ class RoomsCrud(BaseCrud):
                     )
 
             self.conn.connection.commit()
+            self.conn.close()
+
             return room_id
 
         except Exception as e:
@@ -73,8 +76,11 @@ class RoomsCrud(BaseCrud):
             data_dict: Dict[str, Any] = dict(RoomCreate(**data))
             data_list: List[Any] = list(data_dict.values())
 
+            self.conn.connect()
             self.conn.cursor.execute(INSERT_ROOM, data_list)
             self.conn.connection.commit()
+            self.conn.close()
+
             return room_id
 
         except Exception as e:

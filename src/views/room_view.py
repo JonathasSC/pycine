@@ -1,5 +1,6 @@
 from src.views.base_view import BaseView
 from src.crud.rooms_crud import RoomsCrud
+from pydantic import ValidationError
 
 
 class RoomView(BaseView):
@@ -11,7 +12,6 @@ class RoomView(BaseView):
 
         self.list_options: list = [
             'Adicionar nova sala',
-            'Adicionar nova sala com assentos',
             'Ver lista de salas',
             'Atualizar salas',
             'Voltar'
@@ -30,12 +30,10 @@ class RoomView(BaseView):
                     case 1:
                         self.crt_room()
                     case 2:
-                        self.crt_room_with_seats()
-                    case 3:
                         self.get_rooms()
-                    case 4:
+                    case 3:
                         self.put_room()
-                    case 5:
+                    case 4:
                         self.manager.admin_view.admin_flow()
                     case _:
                         self.invalid_option()
@@ -49,41 +47,39 @@ class RoomView(BaseView):
             try:
                 self.terminal.clear()
                 self.printer.generic(
-                    'Coloque os campos de uma nova sala',
-                    line=True
-                )
+                    text='Preencha os campos ou digite "q" para cancelar',
+                    line=True)
 
                 room_data: dict = self.inputs.input_room()
-                self.rooms_crud.insert_room(room_data)
-                self.printer.success('Sala adicionada com sucesso!')
-                break
 
-            except Exception as e:
-                self.printer.error(f'Erro ao criar sala: {e}')
-                break
-
-        self.start()
-
-    def crt_room_with_seats(self) -> None:
-        while True:
-            try:
-                self.terminal.clear()
-                self.printer.generic(
-                    'Coloque os campos de uma nova sala',
-                    line=True
-                )
-                room_data: dict = self.inputs.input_room()
-                if room_data:
-                    self.rooms_crud.insert_room_with_seats(room_data)
-                    self.printer.success('Sala adicionada com sucesso!')
+                if not room_data:
+                    self.terminal.clear()
+                    self.printer.warning('Cancelando...')
                     break
 
-                self.start()
-            except Exception as e:
-                self.printer.error(f'Erro ao criar sala: {e}')
+                auto_seat = ['Sim', 'Não']
+                option: int = self.choose_an_option(
+                    auto_seat,
+                    'Deseja criar cadeiras automaticamente? ',
+                )
+
+                if option == 1:
+                    self.room_crud.insert_room_with_seats(room_data)
+                else:
+                    self.room_crud.insert_room(room_data)
+
+                self.printer.success('Sala criada com sucesso!')
                 break
 
-        self.start()
+            except ValidationError as e:
+                erro = e.errors()[0]
+                message: str = erro['msg']
+                self.printer.error(message[13:])
+
+            except Exception as e:
+                self.printer.error(f'Erro ao criar sala: {e}')
+
+        self.manager.room_view.start()
 
     def get_rooms(self) -> None:
         while True:
@@ -116,7 +112,7 @@ class RoomView(BaseView):
                 room_id: str = input('Room ID: ').strip().lower()
 
                 if room_id == 'q':
-                    self.manager.room_view.put_room()
+                    break
 
                 room: tuple = self.room_crud.select_by_room_id(room_id)
 
@@ -175,5 +171,4 @@ class RoomView(BaseView):
             except Exception as e:
                 self.printer.error(f'Erro ao atualizar sala: {e}')
 
-            finally:
-                self.manager.room_view.start()
+            self.manager.room_view.start()
