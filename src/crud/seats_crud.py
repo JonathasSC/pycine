@@ -2,15 +2,68 @@ from src.crud.base_crud import BaseCrud
 from src.database.conn import Connection
 from src.queries.seats_queries import (
     SELECT_SEATS_BY_ROOM_ID,
+    CREATE_SEATS_TABLE,
     SELECT_SEAT_BY_ID,
     SELECT_SEATS_BY_ROOM_ID_SEAT_CODE,
-    UPDATE_SEAT_STATE)
+    UPDATE_SEAT_STATE,
+    INSERT_SEAT)
 from typing import Optional
+from time import sleep
+
+from src.schemas.seat_schemas import SeatCreate
 
 
 class SeatsCrud(BaseCrud):
     def __init__(self, conn: Connection = None):
         super().__init__(conn)
+
+    def insert_seat(self, data) -> Optional[str]:
+        try:
+            seat_id: str = self.uuid.smaller_uuid()
+
+            data['seat_id'] = seat_id
+            seat_dict: Dict[str, Any] = dict(SeatCreate(**data))
+
+            data_list: List[any] = [
+                seat_dict.get('seat_id', None),
+                seat_dict.get('room_id', None),
+                seat_dict.get('seat_code', None),
+                seat_dict.get('row', None),
+                seat_dict.get('col', None),
+                seat_dict.get('state', None),
+            ]
+
+            self.conn.connect()
+            self.conn.cursor.execute(INSERT_SEAT, data_list)
+            self.conn.connection.commit()
+            self.conn.close()
+
+            return seat_id
+
+        except Exception as e:
+            raise e
+
+    def insert_seats_by_room_id(self, room: tuple):
+        try:
+            room_id = room[0]
+            rows = room[2]
+            columns = room[3]
+
+            for row in range(1, rows + 1):
+                row_letter = chr(64 + row)
+                for col in range(1, columns + 1):
+                    seat_data: dict = {}
+
+                    seat_data['room_id'] = room_id
+                    seat_data['seat_code'] = f"{row_letter}{col}"
+                    seat_data['row'] = row
+                    seat_data['col'] = col
+                    seat_data['state'] = 'available'
+
+                    self.insert_seat(seat_data)
+
+        except Exception as e:
+            raise e
 
     def update_seat_state(self, seat_id, state) -> Optional[str]:
         try:

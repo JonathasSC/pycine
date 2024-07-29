@@ -14,6 +14,7 @@ from src.queries.rooms_queries import (
 )
 
 from src.queries.seats_queries import INSERT_SEAT
+from src.crud.seats_crud import SeatsCrud
 
 
 class RoomsCrud(BaseCrud):
@@ -30,43 +31,13 @@ class RoomsCrud(BaseCrud):
 
     def select_by_room_id(self, room_id) -> Optional[tuple]:
         try:
+            self.conn.connect()
             self.conn.cursor.execute(SELECT_ROOM_BY_ID, [room_id])
             room: list = self.conn.cursor.fetchone()
-            return room
-        except Exception as e:
-            raise e
-
-    def insert_room_with_seats(self, data: Dict[str, Any]) -> Optional[str]:
-        try:
-            room_id: str = self.uuid.smaller_uuid()
-            data['room_id'] = room_id
-            data_dict: Dict[str, Any] = dict(RoomCreate(**data))
-            data_list: List[Any] = list(data_dict.values())
-
-            self.conn.connect()
-            self.conn.cursor.execute(INSERT_ROOM, data_list)
-
-            rows = data['rows']
-            columns = data['columns']
-
-            for row in range(1, rows + 1):
-                row_letter = chr(64 + row)
-                for col in range(1, columns + 1):
-                    seat_code = f"{row_letter}{col}"
-                    seat_id = self.uuid.smaller_uuid()
-                    seat_state = 'available'
-                    self.conn.cursor.execute(
-                        INSERT_SEAT,
-                        (seat_id, room_id, seat_code, row, col, seat_state)
-                    )
-
-            self.conn.connection.commit()
             self.conn.close()
 
-            return room_id
-
+            return room
         except Exception as e:
-            self.conn.connection.rollback()
             raise e
 
     def insert_room(self, data: Dict[str, Any]) -> Optional[str]:

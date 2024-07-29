@@ -10,7 +10,6 @@ CREATE TABLE IF NOT EXISTS seats (
 );
 """
 
-
 DELETE_SEATS_TABLE = """
 DROP TABLE IF EXISTS seats;
 """

@@ -15,8 +15,9 @@ class SeatBase(BaseModel):
 
 class SeatCreate(SeatBase):
     room_id: str
-    line: str
-    column: str
+    seat_code: str
+    row: int
+    col: int
     state: Literal['reserved', 'sold', 'available']
 
     @field_validator('room_id')
@@ -26,16 +27,23 @@ class SeatCreate(SeatBase):
 
         return value
 
-    @field_validator('line')
-    def validate_line(cls, value: str):
+    @field_validator('seat_code')
+    def validate_room_id(cls, value: str):
         if not value.strip():
+            raise ValueError('Seat Code must not be empty.')
+
+        return value
+
+    @field_validator('row')
+    def validate_line(cls, value: str):
+        if not value:
             raise ValueError('Line must not be empty.')
 
         return value
 
-    @field_validator('column')
+    @field_validator('col')
     def validate_column(cls, value: str):
-        if not value.strip():
+        if not value:
             raise ValueError('Column must not be empty.')
 
         return value

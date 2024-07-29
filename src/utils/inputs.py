@@ -85,6 +85,10 @@ class Inputs:
 
         return movie_data
 
+    def input_seat(self):
+        ticket_data: dict = {}
+        ticket_data['Room ID'] = input('')
+
     def input_room(self):
         room_data: dict = {}
 

@@ -1,13 +1,10 @@
 from src.views.base_view import BaseView
-from src.crud.rooms_crud import RoomsCrud
 from pydantic import ValidationError
 
 
 class RoomView(BaseView):
     def __init__(self, manager):
         super().__init__()
-        self.rooms_crud: RoomsCrud = RoomsCrud()
-        self.before_view = None
         self.manager = manager
 
         self.list_options: list = [
@@ -16,9 +13,6 @@ class RoomView(BaseView):
             'Atualizar salas',
             'Voltar'
         ]
-
-    def set_before_view(self, view) -> None:
-        self.before_view = view
 
     def start(self) -> None:
         while True:
@@ -64,7 +58,9 @@ class RoomView(BaseView):
                 )
 
                 if option == 1:
-                    self.room_crud.insert_room_with_seats(room_data)
+                    room_id: str = self.room_crud.insert_room(room_data)
+                    room: tuple = self.room_crud.select_by_room_id(room_id)
+                    self.seat_crud.insert_seats_by_room_id(room)
                 else:
                     self.room_crud.insert_room(room_data)
 
