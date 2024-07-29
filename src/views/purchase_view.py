@@ -9,7 +9,7 @@ class PurchaseView(BaseView):
         super().__init__()
         self.manager = manager
 
-    def start(self):
+    def start(self) -> None:
         token: str = self.token.load_token()
         person_role: str = self.token.get_role_from_token(token)
         person_id: str = self.token.person_id_from_token(token)

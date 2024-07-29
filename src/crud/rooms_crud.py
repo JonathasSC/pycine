@@ -1,4 +1,4 @@
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Optional
 
 from src.crud.base_crud import BaseCrud
 from src.database.conn import Connection
@@ -12,6 +12,7 @@ from src.queries.rooms_queries import (
     DELETE_ALL_ROOMS,
     SELECT_ROOM_BY_ID,
 )
+
 from src.queries.seats_queries import INSERT_SEAT
 
 
@@ -27,7 +28,7 @@ class RoomsCrud(BaseCrud):
         except Exception as e:
             raise e
 
-    def select_by_room_id(self, room_id) -> list:
+    def select_by_room_id(self, room_id) -> Optional[tuple]:
         try:
             self.conn.cursor.execute(SELECT_ROOM_BY_ID, [room_id])
             room: list = self.conn.cursor.fetchone()
@@ -35,7 +36,7 @@ class RoomsCrud(BaseCrud):
         except Exception as e:
             raise e
 
-    def insert_room_with_seats(self, data: Dict[str, Any]) -> bool:
+    def insert_room_with_seats(self, data: Dict[str, Any]) -> Optional[str]:
         try:
             room_id: str = self.uuid.smaller_uuid()
             data['room_id'] = room_id
@@ -65,7 +66,7 @@ class RoomsCrud(BaseCrud):
             self.conn.connection.rollback()
             raise e
 
-    def insert_room(self, data: Dict[str, Any]):
+    def insert_room(self, data: Dict[str, Any]) -> Optional[str]:
         try:
             room_id: str = self.uuid.smaller_uuid()
             data['room_id'] = room_id
@@ -81,7 +82,7 @@ class RoomsCrud(BaseCrud):
 
     def update_room(self,
                     room_id: str,
-                    data: Dict[str, Any]):
+                    data: Dict[str, Any]) -> Optional[str]:
         try:
             data_dict: Dict[str, Any] = dict(RoomUpdate(**data))
 
@@ -103,7 +104,7 @@ class RoomsCrud(BaseCrud):
         except Exception as e:
             raise e
 
-    def delete_all_rooms(self):
+    def delete_all_rooms(self) -> Optional[bool]:
         try:
             self.conn.cursor.execute(DELETE_ALL_ROOMS)
             self.conn.connection.commit()

@@ -5,7 +5,7 @@ from src.queries.clients_queries import (
     SELECT_CLIENT_BY_ID,
     UPDATE_PERSON_CLIENT_BY_CLIENT_ID
 )
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional, Tuple
 from src.crud.base_crud import BaseCrud
 from src.database.conn import Connection
 from src.schemas.client_schemas import ClientCreate
@@ -16,7 +16,7 @@ class ClientsCrud(BaseCrud):
         super().__init__(conn)
         self.conn: Connection = Connection(auto_connect=False)
 
-    def insert_client(self, person_id: str) -> bool:
+    def insert_client(self, person_id: str) -> Optional[str]:
         try:
             data: dict = {}
             client_id: str = self.uuid.smaller_uuid()
@@ -36,7 +36,7 @@ class ClientsCrud(BaseCrud):
         except Exception as e:
             return e
 
-    def select_all_clients(self):
+    def select_all_clients(self) -> Optional[List[Tuple[str]]]:
         try:
             self.conn.connect()
             self.conn.cursor.execute(SELECT_ALL_CLIENTS)
@@ -57,7 +57,7 @@ class ClientsCrud(BaseCrud):
         except Exception as e:
             return e
 
-    def update_client(self, client_id: str, data: dict) -> None:
+    def update_client(self, client_id: str, data: dict) -> Optional[Tuple[str]]:
         try:
             self.logger.info(
                 'TENTANDO ATUALIZAR DADOS DE PERSONS QUE SÃO ADMINS BASEADO NO client_id')
@@ -76,10 +76,18 @@ class ClientsCrud(BaseCrud):
             )
 
             self.conn.connection.commit()
+            self.conn.cursor.execute(
+                SELECT_CLIENT_BY_ID(client_id)
+            )
+
+            client: tuple = self.conn.cursor.fetchone()
+
             self.conn.close()
 
             self.logger.info(
                 'DADOS DE PERSONS QUE SÃO ADMINS ATUALIZADOS NO BANCO DE DADOS')
+
+            return client
 
         except Exception as e:
             self.logger.warning(

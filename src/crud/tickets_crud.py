@@ -1,4 +1,4 @@
-from typing import Dict, Any, List
+from typing import Dict, Any, List, Optional, Tuple
 
 from src.crud.base_crud import BaseCrud
 from src.database.conn import Connection
@@ -16,7 +16,7 @@ class TicketsCrud(BaseCrud):
         super().__init__(conn)
         self.conn: Connection = Connection(auto_connect=False)
 
-    def insert_ticket(self, data: Dict[str, Any]) -> bool:
+    def insert_ticket(self, data: Dict[str, Any]) -> Optional[str]:
         try:
             ticket_id: str = self.uuid.smaller_uuid()
             data['ticket_id'] = ticket_id
@@ -33,7 +33,7 @@ class TicketsCrud(BaseCrud):
         except Exception as e:
             raise e
 
-    def select_ticket_by_id(self, ticket_id):
+    def select_ticket_by_id(self, ticket_id) -> Optional[tuple]:
         try:
             self.conn.connect()
             self.conn.cursor.execute(SELECT_TICKETS_BY_ID, [ticket_id])
@@ -44,7 +44,7 @@ class TicketsCrud(BaseCrud):
         except Exception as e:
             raise e
 
-    def select_tickets_by_person_id(self, person_id):
+    def select_tickets_by_person_id(self, person_id) -> Optional[List[Tuple[str]]]:
         try:
             self.conn.connect()
             self.conn.cursor.execute(SELECT_TICKETS_BY_PERSON_ID, [person_id])

@@ -3,8 +3,8 @@ from src.database.conn import Connection
 
 from typing import (
     Any,
-    Dict, 
-    List, 
+    Dict,
+    List,
     Optional,
     Union
 )
@@ -52,13 +52,13 @@ class PersonsCrud(BaseCrud):
         except Exception as e:
             raise e
 
-    def select_by_credentials(self, data: Dict[str, str]) -> Union[tuple, None]:
+    def select_by_credentials(self, data: Dict[str, str]) -> Optional[tuple]:
         try:
             data_dict: PersonLogin = PersonLogin(**data)
 
             person_email: str = data_dict.email
             person_unhashed_password: str = data_dict.password
-            
+
             self.conn.connect()
             self.conn.cursor.execute(SELECT_BY_EMAIL, [person_email])
             person: Optional[tuple] = self.conn.cursor.fetchone()

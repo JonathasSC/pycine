@@ -17,7 +17,7 @@ class RoomView(BaseView):
             'Voltar'
         ]
 
-    def set_before_view(self, view):
+    def set_before_view(self, view) -> None:
         self.before_view = view
 
     def start(self) -> None:

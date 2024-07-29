@@ -1,4 +1,3 @@
-from time import sleep
 from typing import Optional
 from pydantic import ValidationError
 from src.views.base_view import BaseView

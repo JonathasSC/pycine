@@ -1,4 +1,4 @@
-from typing import List, Dict, Any, Optional
+from typing import List, Dict, Any, Optional, Tuple
 
 from src.crud.base_crud import BaseCrud
 from src.database.conn import Connection
@@ -15,8 +15,6 @@ from src.queries.sessions_queries import (
     SELECT_ALL_SESSIONS_WITH_MOVIES,
     DELETE_ALL_SESSIONS,
 )
-
-from typing import Tuple, Optional, Any
 
 
 class SessionsCrud(BaseCrud):
@@ -46,7 +44,7 @@ class SessionsCrud(BaseCrud):
         except Exception as e:
             raise e
 
-    def select_all_sessions(self) -> List[Dict[str, Any]]:
+    def select_all_sessions(self) -> Optional[List[Tuple[str]]]:
         try:
             self.conn.connect()
             self.conn.cursor.execute(SELECT_ALL_SESSIONS)
@@ -57,7 +55,7 @@ class SessionsCrud(BaseCrud):
         except Exception as e:
             raise e
 
-    def insert_session(self, data: Dict[str, Any]) -> bool:
+    def insert_session(self, data: Dict[str, Any]) -> Optional[str]:
         try:
             session_id: str = self.uuid.smaller_uuid()
             data['session_id'] = session_id
@@ -74,15 +72,15 @@ class SessionsCrud(BaseCrud):
         except Exception as e:
             raise e
 
-    def update_session(self, session_id: str, session_data: Dict[str, Any]) -> bool:
+    def update_session(self, session_id: str, session_data: Dict[str, Any]) -> Optional[str]:
         try:
             data_dict: Dict[str, Any] = dict(SessionUpdate(**session_data))
 
             data_list: List[any] = [
-                session_data.get('room_id', None),
-                session_data.get('movie_id', None),
-                session_data.get('price', None),
-                session_data.get('start_time', None),
+                data_dict.get('room_id', None),
+                data_dict.get('movie_id', None),
+                data_dict.get('price', None),
+                data_dict.get('start_time', None),
                 session_id
             ]
 
@@ -96,7 +94,7 @@ class SessionsCrud(BaseCrud):
         except Exception as e:
             raise e
 
-    def delete_session(self, session_id: str) -> bool:
+    def delete_session(self, session_id: str) -> Optional[str]:
         try:
             self.conn.connect()
             self.conn.cursor.execute(DELETE_SESSION, (session_id,))
@@ -108,7 +106,7 @@ class SessionsCrud(BaseCrud):
         except Exception as e:
             raise e
 
-    def select_sessions_by_movie_id_with_room_details(self, movie_id: str) -> List[Dict[str, Any]]:
+    def select_sessions_by_movie_id_with_room_details(self, movie_id: str) -> Optional[List[Tuple[str]]]:
         try:
             self.conn.connect()
             self.conn.cursor.execute(
@@ -123,7 +121,7 @@ class SessionsCrud(BaseCrud):
         except Exception as e:
             raise e
 
-    def select_all_session_with_movies(self):
+    def select_all_session_with_movies(self) -> Optional[List[Tuple[str]]]:
         try:
             self.conn.connect()
             self.conn.cursor.execute(SELECT_ALL_SESSIONS_WITH_MOVIES)
@@ -135,7 +133,7 @@ class SessionsCrud(BaseCrud):
         except Exception as e:
             raise e
 
-    def delete_all_sessions(self):
+    def delete_all_sessions(self) -> Optional[bool]:
         try:
             self.conn.connect()
             self.conn.cursor.execute(DELETE_ALL_SESSIONS)

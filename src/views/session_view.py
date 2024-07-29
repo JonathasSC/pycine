@@ -45,7 +45,7 @@ class SessionView(BaseView):
                 self.printer.error(f'Erro ao iniciar sessões: {e}')
                 self.start()
 
-    def start(self):
+    def start(self) -> None:
         while True:
             try:
                 self.terminal.clear()

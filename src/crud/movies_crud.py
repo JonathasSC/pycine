@@ -10,7 +10,7 @@ from src.queries.movies_queries import (
 )
 from src.database.conn import Connection
 from src.schemas.movie_schemas import MovieCreate, MovieUpdate
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Optional
 
 
 class MoviesCrud(BaseCrud):
@@ -18,7 +18,7 @@ class MoviesCrud(BaseCrud):
         super().__init__(conn)
         self.conn: Connection = Connection(auto_connect=False)
 
-    def select_movie_by_id(self, movie_id) -> tuple:
+    def select_movie_by_id(self, movie_id) -> Optional[tuple]:
         try:
             self.conn.connect()
             self.conn.cursor.execute(SELECT_MOVIE_BY_ID, [movie_id])
@@ -31,7 +31,7 @@ class MoviesCrud(BaseCrud):
         except Exception as e:
             raise e
 
-    def select_movie_by_name(self, movie_name):
+    def select_movie_by_name(self, movie_name) -> Optional[tuple]:
         try:
             self.conn.connect()
             self.conn.cursor.execute(SELECT_MOVIE_BY_NAME, [movie_name])
@@ -42,7 +42,7 @@ class MoviesCrud(BaseCrud):
         except Exception as e:
             raise e
 
-    def select_all_movies(self) -> list:
+    def select_all_movies(self) -> Optional[list]:
         try:
             self.conn.connect()
             self.conn.cursor.execute(SELECT_ALL_MOVIES)
@@ -54,7 +54,7 @@ class MoviesCrud(BaseCrud):
         except Exception as e:
             raise e
 
-    def insert_movie(self, data: Dict[str, Any]):
+    def insert_movie(self, data: Dict[str, Any]) -> Optional[str]:
         try:
             movie_id: str = self.uuid.smaller_uuid()
             data['movie_id'] = movie_id
@@ -71,7 +71,7 @@ class MoviesCrud(BaseCrud):
         except Exception as e:
             raise e
 
-    def delete_all_movies(self):
+    def delete_all_movies(self) -> Optional[bool]:
         try:
             self.conn.connect()
             self.conn.cursor.execute(DELETE_ALL_MOVIES)
@@ -82,7 +82,7 @@ class MoviesCrud(BaseCrud):
         except Exception as e:
             raise e
 
-    def delete_movie(self, movie_id: str):
+    def delete_movie(self, movie_id: str) -> Optional[str]:
         try:
             self.conn.connect()
             self.conn.cursor.execute(DELETE_MOVIE, [movie_id])
@@ -94,7 +94,7 @@ class MoviesCrud(BaseCrud):
             self.printer.error(f'Erro ao deletar filme: {e}')
             return None
 
-    def update_movie(self, movie_id: str, data: Dict[str, str]):
+    def update_movie(self, movie_id: str, data: Dict[str, str]) -> Optional[str]:
         try:
             data_dict: Dict[str, Any] = dict(MovieUpdate(**data))
 

@@ -5,7 +5,7 @@ from src.crud.sessions_crud import SessionsCrud
 from src.crud.rooms_crud import RoomsCrud
 from src.crud.seats_crud import SeatsCrud
 from src.crud.tickets_crud import TicketsCrud
-from typing import Dict
+from typing import Optional
 
 
 class ClientView(BaseView):
@@ -20,7 +20,7 @@ class ClientView(BaseView):
         self.tickets_crud: TicketsCrud = TicketsCrud()
         self.session_crud: SessionsCrud = SessionsCrud()
 
-    def start(self):
+    def start(self) -> None:
         while True:
             self.logger.info('INICIANDO LOOP DE CLIENT VIEW')
             token: str = self.token.load_token()
@@ -60,7 +60,7 @@ class ClientView(BaseView):
         self.list_options.remove('Fechar')
         self.list_options.remove('Logout')
 
-    def handle_admin_options(self, option: int):
+    def handle_admin_options(self, option: int) -> None:
         match option:
             case 1:
                 self.list_movies_in_playing()
@@ -74,7 +74,7 @@ class ClientView(BaseView):
                 self.invalid_option()
                 self.start()
 
-    def handle_client_options(self, option):
+    def handle_client_options(self, option) -> Optional[bool]:
         match option:
             case 1:
                 self.list_movies_in_playing()
@@ -92,7 +92,7 @@ class ClientView(BaseView):
                 self.invalid_option()
                 self.start()
 
-    def show_my_tickets(self):
+    def show_my_tickets(self) -> None:
         header = ['SEAT', 'MOVIE', 'TIME']
 
         token = self.token.load_token()

@@ -100,7 +100,7 @@ class BaseView:
         self.printer.error('Valor inválido, tente novamente')
         self.terminal.clear()
 
-    def create_admin(self) -> None:
+    def crt_admin(self) -> None:
         while True:
             try:
                 person_data: dict = self.inputs.input_person()

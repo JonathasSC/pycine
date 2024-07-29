@@ -230,18 +230,22 @@ class PersonView(BaseView):
                 'Voltar'
             ]
 
-            manage_actions = {
-                1: crt_admin,
-                2: get_admins,
-                3: del_admin,
-                4: put_admin,
-                5: self.start,
-            }
-
             try:
                 self.terminal.clear()
                 option: int = self.choose_an_option(manage_options)
-                self.execute_option(manage_actions, option)
+
+                match option:
+                    case 1:
+                        crt_admin()
+                    case 2:
+                        get_admins()
+                    case 3:
+                        del_admin()
+                    case 4:
+                        put_admin()
+                    case _:
+                        self.invalid_option()
+                        self.start()
 
             except Exception as e:
                 self.printer.error(e)
@@ -419,18 +423,22 @@ class PersonView(BaseView):
                 'Voltar'
             ]
 
-            manage_actions = {
-                1: crt_client,
-                2: get_all_clients,
-                3: del_client,
-                4: put_client,
-                5: self.start,
-            }
-
             try:
                 self.terminal.clear()
                 option: int = self.choose_an_option(manage_options)
-                self.execute_option(manage_actions, option)
+
+                match option:
+                    case 1:
+                        crt_client()
+                    case 2:
+                        get_all_clients()
+                    case 3:
+                        del_client()
+                    case 4:
+                        put_client()
+                    case _:
+                        self.invalid_option()
+                        self.start()
 
             except Exception as e:
                 self.printer.error(e)
