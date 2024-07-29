@@ -243,9 +243,11 @@ class PersonView(BaseView):
                         del_admin()
                     case 4:
                         put_admin()
+                    case 5:
+                        self.manager.person_view.start()
                     case _:
                         self.invalid_option()
-                        self.start()
+                        self.manager.person_view.start()
 
             except Exception as e:
                 self.printer.error(e)
@@ -436,9 +438,11 @@ class PersonView(BaseView):
                         del_client()
                     case 4:
                         put_client()
+                    case 5:
+                        self.manager.person_view.start()
                     case _:
                         self.invalid_option()
-                        self.start()
+                        self.manager.person_view.start()
 
             except Exception as e:
                 self.printer.error(e)
