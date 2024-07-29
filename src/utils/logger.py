@@ -1,4 +1,5 @@
 import logging
+import os
 
 
 class Logger:
@@ -6,9 +7,15 @@ class Logger:
         self.logger = logging.getLogger(__name__)
         self.level = logging.INFO
 
+        log_directory = 'logs'
+        log_filename = 'system.log'
+
+        os.makedirs(log_directory, exist_ok=True)
+
         logging.basicConfig(
-            filename='logs/system.log',
-            level=logging.INFO
+            filename=os.path.join(log_directory, log_filename),
+            level=logging.INFO,
+            format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
         )
 
     def info(self, text: str) -> None:
