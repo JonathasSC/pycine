@@ -2,23 +2,32 @@ from src.crud.base_crud import BaseCrud
 from src.database.conn import Connection
 from src.queries.seats_queries import (
     SELECT_SEATS_BY_ROOM_ID,
-    CREATE_SEATS_TABLE,
     SELECT_SEAT_BY_ID,
     SELECT_SEATS_BY_ROOM_ID_SEAT_CODE,
+    SELECT_COUNT_SEATS_BY_ROOM_ID,
     UPDATE_SEAT_STATE,
     INSERT_SEAT)
-from typing import Optional
-from time import sleep
 
+from typing import Optional, Dict, List, Any
 from src.schemas.seat_schemas import SeatCreate
+from src.utils.counters import room_dimensions
 
 
 class SeatsCrud(BaseCrud):
     def __init__(self, conn: Connection = None):
         super().__init__(conn)
+        self.room_dimensions = room_dimensions
 
     def insert_seat(self, data) -> Optional[str]:
         try:
+            room_id: str = data['room_id']
+            seats_count = self.count_seats_by_room_id(room_id)
+            room_dimensions: int = self.room_dimensions(room_id)
+
+            if room_dimensions <= seats_count:
+                raise ValueError(
+                    'A sala já atingiu a capacidade máxima')
+
             seat_id: str = self.uuid.smaller_uuid()
 
             data['seat_id'] = seat_id
@@ -43,7 +52,17 @@ class SeatsCrud(BaseCrud):
         except Exception as e:
             raise e
 
-    def insert_seats_by_room_id(self, room: tuple):
+    def count_seats_by_room_id(self, room_id: str):
+        try:
+            self.conn.connect()
+            self.conn.cursor.execute(SELECT_COUNT_SEATS_BY_ROOM_ID, [room_id])
+            seats_count: int = self.conn.cursor.fetchone()[0]
+
+            return seats_count
+        except Exception as e:
+            raise e
+
+    def insert_seats_by_room(self, room: tuple):
         try:
             room_id = room[0]
             rows = room[2]
