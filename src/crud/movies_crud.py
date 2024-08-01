@@ -83,12 +83,15 @@ class MoviesCrud(BaseCrud):
 
     def delete_movie(self, movie_id: str) -> Optional[str]:
         try:
-            self.conn.connect()
-            self.conn.cursor.execute(DELETE_MOVIE, [movie_id])
-            self.conn.connection.commit()
-            self.conn.close()
+            if self.select_movie_by_id(movie_id):
+                self.conn.connect()
+                self.conn.cursor.execute(DELETE_MOVIE, [movie_id])
+                self.conn.connection.commit()
+                self.conn.close()
 
-            return movie_id
+                return movie_id
+            raise ValueError('Nenhum filme com esse ID foi encontrado')
+
         except Exception as e:
             self.printer.error(f'Erro ao deletar filme: {e}')
             return None
