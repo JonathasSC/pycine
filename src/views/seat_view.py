@@ -54,7 +54,7 @@ class SeatView(BaseView):
                 )
 
                 if auto_create_seats == 1:
-                    room: tuple = self.room_crud.select_by_room_id(room_id)
+                    room: tuple = self.room_crud.select_room_by_id(room_id)
                     self.seat_crud.insert_seats_by_room(room)
                     self.printer.success('Cadeiras criadas com sucesso!')
                     break
