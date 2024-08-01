@@ -7,8 +7,11 @@ class AuthView(BaseView):
     def __init__(self, manager):
         super().__init__()
         self.manager = manager
+        self.logger.info('FLUXO DE AUTENTICAÇÃO')
 
     def login(self) -> Optional[str]:
+        self.logger.info('AREA DE LOGIN')
+
         token = self.token.load_token()
         if token:
             user_role = self.token.get_role_from_token(token)
@@ -45,6 +48,8 @@ class AuthView(BaseView):
                 self.printer.error(f'Erro ao fazer login: {e}')
 
     def register(self) -> None:
+        self.logger.info('AREA DE REGISTRO')
+
         while True:
             self.terminal.clear()
             self.printer.generic('Crie sua conta agora!', line=True)

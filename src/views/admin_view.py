@@ -14,6 +14,8 @@ class AdminView(BaseView):
         ]
 
     def start(self) -> None:
+        self.logger.info('FLUXO DE ADMINISTRADOR')
+
         while True:
             try:
                 self.terminal.clear()
@@ -44,7 +46,7 @@ class AdminView(BaseView):
                 self.printer.error(f'Erro ao iniciar tela de admin: {e}')
 
     def admin_flow(self) -> None:
-        self.logger.info('START ADMIN FLOW')
+        self.logger.info('OPÇÕES DE ADMINISTRADOR')
 
         admin_options: list = [
             'Gerenciar pessoas',

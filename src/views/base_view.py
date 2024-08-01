@@ -42,10 +42,9 @@ class BaseView:
         self.handlers: Handlers = Handlers()
 
     def logout(self) -> None:
-        self.terminal.clear()
-        self.printer.generic('Saindo...', line=True, timer=True)
+        self.printer.generic('Saindo...', line=True, timer=True, clear=True)
         self.token.delete_token()
-        self.terminal.clear()
+        self.logger.info('FAZENDO LOGOUT')
 
     def start(self) -> None:
         raise NotImplementedError(
