@@ -13,10 +13,39 @@ class SessionView(BaseView):
         self.list_options: list = [
             'Adicionar nova sessão',
             'Ver lista de sessões',
+            'Ver sessão',
             'Deletar sessão',
             'Atualizar sessão',
             'Voltar'
         ]
+
+    def start(self) -> None:
+        while True:
+            try:
+                self.terminal.clear()
+                option: int = self.choose_an_option(
+                    self.list_options, text='Escolha o que gerenciar')
+
+                match option:
+                    case 1:
+                        self.crt_session()
+                    case 2:
+                        self.get_sessions()
+                    case 3:
+                        self.get_session()
+                    case 4:
+                        self.del_session()
+                    case 5:
+                        self.put_session()
+                    case 6:
+                        self.manager.admin_view.admin_flow()
+                    case _:
+                        self.invalid_option()
+                        self.start()
+                break
+
+            except Exception as e:
+                self.printer.error(f'Erro ao iniciar tela de salas: {e}')
 
     def get_sessions(self) -> None:
         while True:
@@ -45,32 +74,6 @@ class SessionView(BaseView):
                 self.printer.error(f'Erro ao iniciar sessões: {e}')
                 self.start()
 
-    def start(self) -> None:
-        while True:
-            try:
-                self.terminal.clear()
-                option: int = self.choose_an_option(
-                    self.list_options, text='Escolha o que gerenciar')
-
-                match option:
-                    case 1:
-                        self.crt_session()
-                    case 2:
-                        self.get_sessions()
-                    case 3:
-                        self.del_session()
-                    case 4:
-                        self.put_session()
-                    case 5:
-                        self.manager.admin_view.admin_flow()
-                    case _:
-                        self.invalid_option()
-                        self.start()
-                break
-
-            except Exception as e:
-                self.printer.error(f'Erro ao iniciar tela de salas: {e}')
-
     def crt_session(self) -> None:
         while True:
             try:
@@ -90,6 +93,44 @@ class SessionView(BaseView):
 
                 self.session_crud.insert_session(session_data)
                 self.printer.success('Sessão adicionada com sucesso!')
+
+            except ValidationError as e:
+                erro = e.errors()[0]
+                message: str = erro['msg']
+                self.printer.error(message[13:])
+
+            except Exception as e:
+                self.printer.error(f'Erro ao criar sessão: {e}')
+
+            finally:
+                self.manager.session_view.start()
+
+    def get_session(self) -> None:
+        while True:
+            try:
+                self.terminal.clear()
+                self.printer.generic(
+                    text='Preencha os campos ou digite "q" para cancelar',
+                    line=True)
+
+                session_id: str = input('Session ID: ')
+
+                if session_id.lower() == 'q':
+                    break
+
+                session: tuple = [self.session_crud.select_session_by_id(
+                    session_id)]
+
+                header = [
+                    'SESSION ID',
+                    'ROOM ID',
+                    'MOVIE ID',
+                    'PRICE',
+                    'START TIME'
+                ]
+
+                self.printer.display_table(header, session)
+                self.start()
 
             except ValidationError as e:
                 erro = e.errors()[0]
