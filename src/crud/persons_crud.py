@@ -27,6 +27,7 @@ from pydantic import ValidationError
 class PersonsCrud(BaseCrud):
     def __init__(self, conn: Connection = None):
         super().__init__(conn)
+        self.logger.info('INSTANCIA PERSONS CRUD CRIADA')
 
     def insert_person(self, data: Dict[str, Any]) -> bool:
         try:
@@ -98,6 +99,7 @@ class PersonsCrud(BaseCrud):
             self.conn.cursor.execute(SELECT_PERSON_BY_ID, [person_id])
             person: Optional[tuple] = self.conn.cursor.fetchone()
             self.conn.close()
+
             return person
 
         except Exception as e:

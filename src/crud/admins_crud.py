@@ -22,6 +22,7 @@ from typing import Any, Dict, List, Optional
 class AdminsCrud(BaseCrud):
     def __init__(self, conn: Connection = None):
         super().__init__(conn)
+        self.logger.info('INSTANCIA ADMIN CRUD CRIADA')
 
     def select_by_id(self, admin_id: str) -> tuple:
         try:

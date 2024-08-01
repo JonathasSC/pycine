@@ -16,6 +16,7 @@ from typing import List, Dict, Any, Optional
 class MoviesCrud(BaseCrud):
     def __init__(self, conn: Connection = None):
         super().__init__(conn)
+        self.logger.info('INSTANCIA MOVIES CRUD CRIADA')
 
     def select_movie_by_id(self, movie_id) -> Optional[tuple]:
         try:
@@ -37,6 +38,7 @@ class MoviesCrud(BaseCrud):
             movie: tuple = self.conn.cursor.fetchone()
             self.conn.close()
 
+            self.logger.info('INSERINDO FILME POR NOME')
             return movie
         except Exception as e:
             raise e
@@ -65,6 +67,7 @@ class MoviesCrud(BaseCrud):
             self.conn.connection.commit()
             self.conn.close()
 
+            self.logger.info('INSERINDO FILME')
             return movie_id
 
         except Exception as e:
@@ -76,6 +79,8 @@ class MoviesCrud(BaseCrud):
             self.conn.cursor.execute(DELETE_ALL_MOVIES)
             self.conn.connection.commit()
             self.conn.close()
+
+            self.logger.info('DELETANDO TODOS OS FILMES')
             return True
 
         except Exception as e:
@@ -89,6 +94,7 @@ class MoviesCrud(BaseCrud):
                 self.conn.connection.commit()
                 self.conn.close()
 
+                self.logger.info('DELETANDO FILME POR ID')
                 return movie_id
             raise ValueError('Nenhum filme com esse ID foi encontrado')
 
@@ -112,6 +118,7 @@ class MoviesCrud(BaseCrud):
             self.conn.connection.commit()
             self.conn.close()
 
+            self.logger.info('ATUALIZANDO FILME POR ID')
             return movie_id
 
         except Exception as e:

@@ -15,6 +15,7 @@ from src.schemas.seat_schemas import SeatCreate
 class SeatsCrud(BaseCrud):
     def __init__(self, conn: Connection = None):
         super().__init__(conn)
+        self.logger.info('INSTANCIA SEATS CRUD CRIADA')
 
     def insert_seat(self, data) -> Optional[str]:
         try:
@@ -48,7 +49,8 @@ class SeatsCrud(BaseCrud):
             self.conn.connect()
             self.conn.cursor.execute(SELECT_COUNT_SEATS_BY_ROOM_ID, [room_id])
             seats_count: int = self.conn.cursor.fetchone()[0]
-
+            self.logger.info(
+                'PESQUISANDO QUANTIDADES DE ASSENTOS POR ID DE SALA')
             return seats_count
         except Exception as e:
             raise e

@@ -17,12 +17,19 @@ from src.queries.rooms_queries import (
 class RoomsCrud(BaseCrud):
     def __init__(self, conn: Connection = None):
         super().__init__(conn)
+        self.logger.info('INSTANCIA PERSONS CRUD CRIADA')
+
 
     def select_all_rooms(self) -> list:
         try:
+            self.conn.connect()
             self.conn.cursor.execute(SELECT_ALL_ROOMS)
             room_list: list = self.conn.cursor.fetchall()
+            self.conn.close()
+
+            self.logger.info('SELECIONANDO TODAS AS SALAS')
             return room_list
+
         except Exception as e:
             raise e
 
@@ -33,6 +40,7 @@ class RoomsCrud(BaseCrud):
             room: list = self.conn.cursor.fetchone()
             self.conn.close()
 
+            self.logger.info('SELECIONANDO SALA POR ID')
             return room
         except Exception as e:
             raise e
@@ -49,6 +57,7 @@ class RoomsCrud(BaseCrud):
             self.conn.connection.commit()
             self.conn.close()
 
+            self.logger.info('INSERINDO SALA')
             return room_id
 
         except Exception as e:
@@ -73,6 +82,7 @@ class RoomsCrud(BaseCrud):
             self.conn.connection.commit()
             self.conn.close()
 
+            self.logger.info('ATUALIZANDO SALA')
             return room_id
 
         except Exception as e:
@@ -80,8 +90,12 @@ class RoomsCrud(BaseCrud):
 
     def delete_all_rooms(self) -> Optional[bool]:
         try:
+            self.conn.connect()
             self.conn.cursor.execute(DELETE_ALL_ROOMS)
             self.conn.connection.commit()
+            self.conn.close()
+
+            self.logger.info('DELETANDO TODAS AS SALAS')
             return True
 
         except Exception as e:
@@ -95,7 +109,9 @@ class RoomsCrud(BaseCrud):
                 self.conn.connection.commit()
                 self.conn.close()
 
+                self.logger.info('DELETANDO SALA POR ID')
                 return room_id
+
             raise ValueError('Nenhuma sala com esse ID foi encontrado')
 
         except Exception as e:

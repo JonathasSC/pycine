@@ -20,6 +20,7 @@ from src.queries.sessions_queries import (
 class SessionsCrud(BaseCrud):
     def __init__(self, conn: Connection = None):
         super().__init__(conn)
+        self.logger.info('INSTANCIA SESSIONS CRUD CRIADA')
 
     def select_session_by_id(self, session_id):
         try:
@@ -28,6 +29,7 @@ class SessionsCrud(BaseCrud):
             session_list: tuple = self.conn.cursor.fetchone()
             self.conn.close()
 
+            self.logger.info('SELECIONANDO SESSÃO')
             return session_list
         except Exception as e:
             raise e
@@ -39,6 +41,7 @@ class SessionsCrud(BaseCrud):
             session_list: List[Dict[str, Any]] = self.conn.cursor.fetchall()
             self.conn.close()
 
+            self.logger.info('SELECIONANDO TODAS AS SESSÕES POR MOVIE ID')
             return session_list
         except Exception as e:
             raise e
@@ -50,7 +53,9 @@ class SessionsCrud(BaseCrud):
             session_list: List[Dict[str, Any]] = self.conn.cursor.fetchall()
             self.conn.close()
 
+            self.logger.info('SELECIONANDO TODAS AS SESSÕES')
             return session_list
+
         except Exception as e:
             raise e
 
@@ -66,6 +71,7 @@ class SessionsCrud(BaseCrud):
             self.conn.connection.commit()
             self.conn.close()
 
+            self.logger.info('INSERINDO SESSÃO')
             return session_id
 
         except Exception as e:
@@ -88,6 +94,7 @@ class SessionsCrud(BaseCrud):
             self.conn.connection.commit()
             self.conn.close()
 
+            self.logger.info('ATUALIZANDO SESSÃO')
             return session_id
 
         except Exception as e:
@@ -100,6 +107,7 @@ class SessionsCrud(BaseCrud):
             self.conn.connection.commit()
             self.conn.close()
 
+            self.logger.info('DELETANDO SESSÃO')
             return session_id
 
         except Exception as e:
@@ -115,6 +123,8 @@ class SessionsCrud(BaseCrud):
 
             session_list: List[Dict[str, Any]] = self.conn.cursor.fetchall()
             self.conn.close()
+
+            self.logger.info('SELECIONADO SESSÃO PELO ID COM DETALHES DA SALA')
             return session_list
 
         except Exception as e:
@@ -127,6 +137,7 @@ class SessionsCrud(BaseCrud):
             session_list: List[Dict[str, Any]] = self.conn.cursor.fetchall()
             self.conn.close()
 
+            self.logger.info('SELECIONADO LISTA DE SESSÕES')
             return session_list
 
         except Exception as e:
@@ -138,6 +149,7 @@ class SessionsCrud(BaseCrud):
             self.conn.cursor.execute(DELETE_ALL_SESSIONS)
             self.conn.connection.commit()
             self.conn.close()
+            self.logger.info('DELETANDO TODAS AS SESSÕES')
 
             return True
 

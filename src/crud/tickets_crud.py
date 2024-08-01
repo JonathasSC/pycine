@@ -14,6 +14,7 @@ from src.queries.tickets_queries import (
 class TicketsCrud(BaseCrud):
     def __init__(self, conn: Connection = None):
         super().__init__(conn)
+        self.logger.info('INSTANCIA TICKETS CRUD CRIADA')
 
     def insert_ticket(self, data: Dict[str, Any]) -> Optional[str]:
         try:
@@ -27,6 +28,7 @@ class TicketsCrud(BaseCrud):
             self.conn.connection.commit()
             self.conn.close()
 
+            self.logger.info('INSERIDO TICKET')
             return ticket_id
 
         except Exception as e:
@@ -38,6 +40,8 @@ class TicketsCrud(BaseCrud):
             self.conn.cursor.execute(SELECT_TICKETS_BY_ID, [ticket_id])
             ticket: tuple = self.conn.cursor.fetchone()
             self.conn.close()
+
+            self.logger.info('SELECIONADO TICKET POR ID')
             return ticket
 
         except Exception as e:
@@ -50,6 +54,7 @@ class TicketsCrud(BaseCrud):
             tickets_list: list = self.conn.cursor.fetchall()
             self.conn.close()
 
+            self.logger.info('SELECIONADO TICKETS POR PERSON ID')
             return tickets_list
 
         except Exception as e:

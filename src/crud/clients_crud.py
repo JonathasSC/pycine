@@ -14,6 +14,7 @@ from src.schemas.client_schemas import ClientCreate
 class ClientsCrud(BaseCrud):
     def __init__(self, conn: Connection = None):
         super().__init__(conn)
+        self.logger.info('INSTANCIA CLIENTS CRUD CRIADA')
 
     def insert_client(self, person_id: str) -> Optional[str]:
         try:
@@ -30,6 +31,7 @@ class ClientsCrud(BaseCrud):
             self.conn.connection.commit()
             self.conn.close()
 
+            self.logger.info('INSERINDO CLIENTE')
             return client_id
 
         except Exception as e:
@@ -41,6 +43,8 @@ class ClientsCrud(BaseCrud):
             self.conn.cursor.execute(SELECT_ALL_CLIENTS)
             client_list: list = self.conn.cursor.fetchall()
             self.conn.close()
+
+            self.logger.info('SELECIONANDO TODOS OS CLIENTES')
             return client_list
 
         except Exception as e:
@@ -53,6 +57,7 @@ class ClientsCrud(BaseCrud):
             self.conn.connection.commit()
             self.conn.close()
 
+            self.logger.info('DELETANDO CLIENTE POR ID')
             return client_id
 
         except Exception as e:
@@ -60,9 +65,6 @@ class ClientsCrud(BaseCrud):
 
     def update_client(self, client_id: str, data: dict) -> Optional[Tuple[str]]:
         try:
-            self.logger.info(
-                'TENTANDO ATUALIZAR DADOS DE PERSONS QUE SÃO ADMINS BASEADO NO client_id')
-
             data_list: List[str] = [
                 data.get('name', None),
                 data.get('email', None),
@@ -82,17 +84,12 @@ class ClientsCrud(BaseCrud):
             )
 
             client: tuple = self.conn.cursor.fetchone()
-
             self.conn.close()
 
-            self.logger.info(
-                'DADOS DE PERSONS QUE SÃO ADMINS ATUALIZADOS NO BANCO DE DADOS')
-
+            self.logger.info('ATUALIZANDO CLIENT POR ID')
             return client
 
         except Exception as e:
-            self.logger.warning(
-                'EXCEÇÃO AO TENTAR ATUALIZAR DADOS DE PERSONS QUE SÃO ADMINS')
             raise e
 
     def select_by_id(self, client_id: str) -> tuple:
@@ -102,6 +99,7 @@ class ClientsCrud(BaseCrud):
             client: tuple = self.conn.cursor.fetchone()
             self.conn.close()
 
+            self.logger.info('SELECIONANDO CLIENTE POR ID')
             return client
 
         except Exception as e:
