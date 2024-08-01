@@ -33,6 +33,10 @@ SELECT_SEATS_BY_ROOM_ID_ = """
 SELECT * FROM seats WHERE room_id = ?;
 """
 
+SELECT_COUNT_SEATS_BY_ROOM_ID = """
+SELECT COUNT(*) FROM seats WHERE room_id = ?;
+"""
+
 SELECT_SEATS_BY_ROOM_ID_SEAT_CODE = """
 SELECT * FROM seats WHERE room_id = ? AND seat_code = ?;
 """

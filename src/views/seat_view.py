@@ -7,9 +7,7 @@ class SeatView(BaseView):
         self.manager = manager
 
         self.list_options: list = [
-            'Adicionar novo ticket',
-            'Ver lista de tickets',
-            'Atualizar tickets',
+            'Adicionar nova cadeira',
             'Voltar'
         ]
 
@@ -21,12 +19,8 @@ class SeatView(BaseView):
 
                 match option:
                     case 1:
-                        self.crt_tickets()
+                        self.crt_seat()
                     case 2:
-                        self.get_ticketss()
-                    case 3:
-                        self.put_tickets()
-                    case 4:
                         self.manager.admin_view.admin_flow()
                     case _:
                         self.invalid_option()
@@ -46,9 +40,9 @@ class SeatView(BaseView):
                     text='Preencha os campos ou digite "q" para cancelar',
                     line=True)
 
-                seat_data['room_id']: str = input('Room ID')
+                room_id: str = input('Room ID: ')
 
-                if seat_data['room_id'] in 'Qq':
+                if room_id in 'Qq':
                     self.terminal.clear()
                     self.printer.warning('Cancelando...')
                     break
@@ -60,7 +54,10 @@ class SeatView(BaseView):
                 )
 
                 if auto_create_seats == 1:
-                    pass
+                    room: tuple = self.room_crud.select_by_room_id(room_id)
+                    self.seat_crud.insert_seats_by_room(room)
+                    self.printer.success('Cadeiras criadas com sucesso!')
+                    break
 
                 elif auto_create_seats == 2:
                     valid_states: list = [
@@ -69,15 +66,15 @@ class SeatView(BaseView):
                         'reserved'
                     ]
 
-                    seat_data['seat_code']: str = input('Seat Code')
+                    seat_data['seat_code'] = input('Seat Code: ')
                     if seat_data['seat_code'] in 'Qq':
                         break
 
-                    seat_data['row']: int = int(input('Row'))
+                    seat_data['row'] = int(input('Row: '))
                     if seat_data['row'] in 'Qq':
                         break
 
-                    seat_data['col']: str = int(input('Col'))
+                    seat_data['col'] = int(input('Col: '))
                     if seat_data['col'] in 'Qq':
                         break
 
@@ -90,7 +87,7 @@ class SeatView(BaseView):
                     if not state_option:
                         break
 
-                    seat_data['state']: str = seat_data[state_option - 1]
+                    seat_data['state'] = seat_data[state_option - 1]
                     self.seat_crud.insert_seat(seat_data)
                     break
 
@@ -99,5 +96,12 @@ class SeatView(BaseView):
                     self.printer.warning('Cancelando...')
                     break
 
+            except ValueError as e:
+                self.printer.error(
+                    text=f'{e}',
+                    clear=True)
+
             except Exception as e:
-                self.printer.error(f'Erro ao iniciar tela de cadeiras: {e}')
+                self.printer.error(
+                    text=f'Erro ao iniciar tela de cadeiras: {e}',
+                    clear=True)

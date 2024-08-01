@@ -51,6 +51,7 @@ class AdminView(BaseView):
             'Gerenciar filmes',
             'Gerenciar salas',
             'Gerenciar sessões',
+            'Gerenciar cadeiras',
             'Voltar',
         ]
 
@@ -67,6 +68,8 @@ class AdminView(BaseView):
                 case 4:
                     self.manager.session_view.start()
                 case 5:
+                    self.manager.seat_view.start()
+                case 6:
                     self.manager.admin_view.start()
                 case _:
                     self.invalid_option()
