@@ -4,7 +4,6 @@ from src.crud.base_crud import BaseCrud
 from src.database.conn import Connection
 from src.schemas.room_schemas import RoomCreate, RoomUpdate
 
-
 from src.queries.rooms_queries import (
     SELECT_ALL_ROOMS,
     INSERT_ROOM,
@@ -12,9 +11,6 @@ from src.queries.rooms_queries import (
     DELETE_ALL_ROOMS,
     SELECT_ROOM_BY_ID,
 )
-
-from src.queries.seats_queries import INSERT_SEAT
-from src.crud.seats_crud import SeatsCrud
 
 
 class RoomsCrud(BaseCrud):
