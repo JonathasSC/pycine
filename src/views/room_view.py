@@ -11,6 +11,7 @@ class RoomView(BaseView):
             'Adicionar nova sala',
             'Ver lista de salas',
             'Atualizar salas',
+            'Deletar sala',
             'Voltar'
         ]
 
@@ -28,6 +29,8 @@ class RoomView(BaseView):
                     case 3:
                         self.put_room()
                     case 4:
+                        self.del_room()
+                    case 5:
                         self.manager.admin_view.admin_flow()
                     case _:
                         self.invalid_option()
@@ -59,7 +62,7 @@ class RoomView(BaseView):
 
                 if option == 1:
                     room_id: str = self.room_crud.insert_room(room_data)
-                    room: tuple = self.room_crud.select_by_room_id(room_id)
+                    room: tuple = self.room_crud.select_room_by_id(room_id)
                     self.seat_crud.insert_seats_by_room(room)
                 else:
                     self.room_crud.insert_room(room_data)
@@ -110,7 +113,7 @@ class RoomView(BaseView):
                 if room_id == 'q':
                     break
 
-                room: tuple = self.room_crud.select_by_room_id(room_id)
+                room: tuple = self.room_crud.select_room_by_id(room_id)
 
                 if not room:
                     self.printer.error(
@@ -168,3 +171,30 @@ class RoomView(BaseView):
                 self.printer.error(f'Erro ao atualizar sala: {e}')
 
             self.manager.room_view.start()
+
+    def del_room(self) -> None:
+        while True:
+            try:
+                self.terminal.clear()
+                self.printer.generic(
+                    text='Preencha os campos ou digite "q" para cancelar',
+                    line=True)
+
+                room_id: str = input('Room ID: ').strip()
+
+                if room_id.lower() == 'q':
+                    break
+
+                confirm_room_id: str = self.room_crud.delete_room_by_id(
+                    room_id)
+
+                if room_id == confirm_room_id:
+                    self.printer.success(
+                        text='Filme deletado com sucesso!',
+                        clear=True)
+
+            except Exception as e:
+                self.printer.error(f'Erro ao deletar filme: {e}')
+
+            finally:
+                self.manager.room_view.start()

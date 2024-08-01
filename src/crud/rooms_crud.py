@@ -8,6 +8,7 @@ from src.queries.rooms_queries import (
     SELECT_ALL_ROOMS,
     INSERT_ROOM,
     UPDATE_ROOM,
+    DELETE_ROOM,
     DELETE_ALL_ROOMS,
     SELECT_ROOM_BY_ID,
 )
@@ -25,7 +26,7 @@ class RoomsCrud(BaseCrud):
         except Exception as e:
             raise e
 
-    def select_by_room_id(self, room_id) -> Optional[tuple]:
+    def select_room_by_id(self, room_id) -> Optional[tuple]:
         try:
             self.conn.connect()
             self.conn.cursor.execute(SELECT_ROOM_BY_ID, [room_id])
@@ -85,3 +86,18 @@ class RoomsCrud(BaseCrud):
 
         except Exception as e:
             raise e
+
+    def delete_room_by_id(self, room_id: str) -> Optional[str]:
+        try:
+            if self.select_room_by_id(room_id):
+                self.conn.connect()
+                self.conn.cursor.execute(DELETE_ROOM, [room_id])
+                self.conn.connection.commit()
+                self.conn.close()
+
+                return room_id
+            raise ValueError('Nenhum filme com esse ID foi encontrado')
+
+        except Exception as e:
+            self.printer.error(f'Erro ao deletar filme: {e}')
+            return None
