@@ -60,7 +60,7 @@ class RoomView(BaseView):
                 if option == 1:
                     room_id: str = self.room_crud.insert_room(room_data)
                     room: tuple = self.room_crud.select_by_room_id(room_id)
-                    self.seat_crud.insert_seats_by_room_id(room)
+                    self.seat_crud.insert_seats_by_room(room)
                 else:
                     self.room_crud.insert_room(room_data)
 
