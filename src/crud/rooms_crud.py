@@ -96,8 +96,7 @@ class RoomsCrud(BaseCrud):
                 self.conn.close()
 
                 return room_id
-            raise ValueError('Nenhum filme com esse ID foi encontrado')
+            raise ValueError('Nenhuma sala com esse ID foi encontrado')
 
         except Exception as e:
-            self.printer.error(f'Erro ao deletar filme: {e}')
-            return None
+            raise e

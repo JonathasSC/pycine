@@ -65,24 +65,21 @@ class BaseView:
                 option: int = int(input('Digite uma opção: '))
 
                 if cancel and option == 0:
-                    self.terminal.clear()
-                    self.printer.warning("Cancelando..")
-                    self.terminal.clear()
+                    self.printer.warning(text='Cancelando...', clear=True)
                     return None
 
                 if 0 < option <= len(options):
                     return option
 
                 else:
-                    self.terminal.clear()
-                    self.printer.error("Opção inválida, Tente novamente.")
-                    self.terminal.clear()
+                    self.printer.error(
+                        text="Opção inválida, Tente novamente.",
+                        clear=True)
 
             except ValueError:
-                self.terminal.clear()
                 self.printer.error(
-                    "Entrada inválida. Por favor, digite um número.")
-                self.terminal.clear()
+                    text="Entrada inválida. Por favor, digite um número.",
+                    clear=True)
 
     def execute_option(self,
                        options: dict,

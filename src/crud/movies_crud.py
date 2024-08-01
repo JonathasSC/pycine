@@ -93,8 +93,7 @@ class MoviesCrud(BaseCrud):
             raise ValueError('Nenhum filme com esse ID foi encontrado')
 
         except Exception as e:
-            self.printer.error(f'Erro ao deletar filme: {e}')
-            return None
+            raise e
 
     def update_movie(self, movie_id: str, data: Dict[str, str]) -> Optional[str]:
         try:

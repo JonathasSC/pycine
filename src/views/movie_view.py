@@ -108,9 +108,12 @@ class MovieView(BaseView):
                 confirm_movie_id: str = self.movie_crud.delete_movie(movie_id)
 
                 if movie_id == confirm_movie_id:
-                    self.terminal.clear()
-                    self.printer.success('Filme deletado com sucesso!')
-                    self.terminal.clear()
+                    self.printer.success(
+                        text='Filme deletado com sucesso!',
+                        clear=True)
+
+            except ValueError as e:
+                self.printer.error(f'{e}')
 
             except Exception as e:
                 self.printer.error(f'Erro ao deletar filme: {e}')
@@ -185,12 +188,10 @@ class MovieView(BaseView):
                         'Nenhum dado fornecido para atualização.')
 
             except ValueError as e:
-                self.terminal.clear()
-                self.printer.error(f'{e}')
-                self.terminal.clear()
+                self.printer.error(f'{e}', clear=True)
 
             except Exception as e:
-                self.printer.error(f'Erro ao atualizar filme: {e}')
+                self.printer.error(f'Erro ao atualizar filme: {e}', clear=True)
 
             finally:
                 self.manager.movie_view.start()

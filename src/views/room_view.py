@@ -50,8 +50,7 @@ class RoomView(BaseView):
                 room_data: dict = self.inputs.input_room()
 
                 if not room_data:
-                    self.terminal.clear()
-                    self.printer.warning('Cancelando...')
+                    self.printer.warning(text='Cancelando...', clear=True)
                     break
 
                 auto_seat = ['Sim', 'Não']
@@ -193,8 +192,16 @@ class RoomView(BaseView):
                         text='Filme deletado com sucesso!',
                         clear=True)
 
+            except ValueError as e:
+                self.printer.error(text=f'{e}',
+                                   clear=True)
+                self.manager.room_view.del_room()
+
             except Exception as e:
-                self.printer.error(f'Erro ao deletar filme: {e}')
+                self.printer.error(text=f'Erro ao deletar filme: {e}',
+                                   clear=True)
+
+                self.manager.room_view.del_room()
 
             finally:
                 self.manager.room_view.start()
