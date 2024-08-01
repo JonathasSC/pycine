@@ -10,24 +10,15 @@ from src.queries.seats_queries import (
 
 from typing import Optional, Dict, List, Any
 from src.schemas.seat_schemas import SeatCreate
-from src.utils.counters import room_dimensions
 
 
 class SeatsCrud(BaseCrud):
     def __init__(self, conn: Connection = None):
         super().__init__(conn)
-        self.room_dimensions = room_dimensions
 
     def insert_seat(self, data) -> Optional[str]:
         try:
             room_id: str = data['room_id']
-            seats_count = self.count_seats_by_room_id(room_id)
-            room_dimensions: int = self.room_dimensions(room_id)
-
-            if room_dimensions <= seats_count:
-                raise ValueError(
-                    'A sala já atingiu a capacidade máxima')
-
             seat_id: str = self.uuid.smaller_uuid()
 
             data['seat_id'] = seat_id
