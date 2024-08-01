@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS seats (
     row INTEGER,
     col INTEGER,
     state TEXT CHECK (state IN ('reserved', 'sold', 'available')),
-    FOREIGN KEY (room_id) REFERENCES rooms(room_id)
+    FOREIGN KEY (room_id) REFERENCES rooms(room_id) ON DELETE CASCADE
 );
 """
 

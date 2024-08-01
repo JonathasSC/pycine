@@ -32,11 +32,6 @@ WHERE
     s.movie_id = ?;
 '''
 
-# SELECT_ALL_SESSIONS_WITH_MOVIES = '''
-# SELECT * FROM sessions s
-# JOIN movies m ON s.movie_id = m.movie_id;
-# '''
-
 SELECT_ALL_SESSIONS_WITH_MOVIES = '''
 SELECT * FROM sessions s
 JOIN movies m ON s.movie_id = m.movie_id;
