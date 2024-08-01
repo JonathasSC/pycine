@@ -1,10 +1,12 @@
 from src.views.base_view import BaseView
+from src.utils.counters import maximum_room_capacity
 
 
 class SeatView(BaseView):
     def __init__(self, manager):
         super().__init__()
         self.manager = manager
+        self.maximum_room_capacity = maximum_room_capacity
 
         self.list_options: list = [
             'Adicionar nova cadeira',
@@ -43,11 +45,20 @@ class SeatView(BaseView):
                 room_id: str = input('Room ID: ')
 
                 if room_id in 'Qq':
-                    self.terminal.clear()
-                    self.printer.warning('Cancelando...')
+                    self.printer.warning(text='Cancelando...', clear=True)
                     break
 
+                if not self.room_crud.select_room_by_id(room_id):
+                    self.printer.warning(
+                        text='Nenhuma sala com esse ID foi encontrada.',
+                        clear=True)
+                    continue
+
+                if self.maximum_room_capacity(room_id):
+                    raise ValueError('A sala já atingiu a capacidade máxima')
+
                 options: list = ['Sim', 'Não']
+
                 auto_create_seats: str = self.choose_an_option(
                     options=options,
                     text='Deseja criar cadeiras para essa sala automaticamente?'
@@ -92,8 +103,7 @@ class SeatView(BaseView):
                     break
 
                 if not seat_data:
-                    self.terminal.clear()
-                    self.printer.warning('Cancelando...')
+                    self.printer.warning(text='Cancelando...', clear=True)
                     break
 
             except ValueError as e:
