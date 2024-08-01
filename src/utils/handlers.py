@@ -15,11 +15,11 @@ class Handlers:
         self.terminal.clear()
 
     def handle_no_sessions_available(self) -> None:
-        self.terminal.clear()
-        self.printer.warning("Nenhuma sessão disponível.")
-        self.terminal.clear()
+        self.printer.warning(
+            text="Nenhuma sessão disponível.",
+            clear=True)
 
     def handle_no_tickets(self) -> None:
-        self.terminal.clear()
-        self.printer.warning("Nenhum ticket comprado até o momento.")
-        self.terminal.clear()
+        self.printer.warning(
+            text="Nenhum ticket comprado até o momento.",
+            clear=True)

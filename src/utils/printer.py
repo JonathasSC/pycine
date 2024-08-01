@@ -13,7 +13,11 @@ class Printer:
                 text: str,
                 color: str = 'white',
                 line: bool = False,
-                timer: bool = False):
+                timer: bool = False,
+                clear: bool = False):
+
+        if clear:
+            self.terminal.clear()
 
         if line:
             self.line(size=len(text) + 8, color=color)
@@ -27,6 +31,9 @@ class Printer:
         if timer:
             sleep(3)
 
+        if clear:
+            self.terminal.clear()
+
     def line(self,
              size,
              color: str = 'white') -> None:
@@ -35,23 +42,26 @@ class Printer:
     def error(self,
               text: str,
               line: bool = True,
-              timer: bool = True):
+              timer: bool = True,
+              clear: bool = False):
         color: str = 'red'
-        self.generic(text, color, line, timer)
+        self.generic(text, color, line, timer, clear)
 
     def success(self,
                 text: str,
                 line: bool = True,
-                timer: bool = True):
+                timer: bool = True,
+                clear: bool = False):
         color: str = 'green'
-        self.generic(text, color, line, timer)
+        self.generic(text, color, line, timer, clear)
 
     def warning(self,
                 text: str,
                 line: bool = True,
-                timer: bool = True):
+                timer: bool = True,
+                clear: bool = False):
         color: str = 'yellow'
-        self.generic(text, color, line, timer)
+        self.generic(text, color, line, timer, clear)
 
     def option_list(self,
                     options: list):
