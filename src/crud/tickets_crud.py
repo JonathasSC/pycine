@@ -7,7 +7,8 @@ from src.schemas.ticket_schemas import TicketCreate
 from src.queries.tickets_queries import (
     INSERT_TICKET,
     SELECT_TICKETS_BY_PERSON_ID,
-    SELECT_TICKETS_BY_ID
+    SELECT_TICKETS_BY_ID,
+    DELETE_TICKET_BY_ID,
 )
 
 
@@ -57,5 +58,19 @@ class TicketsCrud(BaseCrud):
             self.logger.info('SELECIONADO TICKETS POR PERSON ID')
             return tickets_list
 
+        except Exception as e:
+            raise e
+
+    def delete_ticket_by_id(self, ticket_id: str) -> Optional[Tuple[str]]:
+        try:
+            if not self.select_ticket_by_id(ticket_id):
+                raise ValueError('Nenhum ticket com esse ID foi encontrado.')
+
+            self.conn.connect()
+            self.conn.cursor.execute(DELETE_TICKET_BY_ID, [ticket_id])
+            self.conn.connection.commit()
+            self.conn.close()
+
+            return ticket_id
         except Exception as e:
             raise e

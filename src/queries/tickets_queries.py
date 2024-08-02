@@ -24,3 +24,8 @@ SELECT * FROM tickets WHERE person_id = ?
 SELECT_TICKETS_BY_ID = """
 SELECT * FROM tickets WHERE ticket_id = ?
 """
+
+DELETE_TICKET_BY_ID = """
+DELETE FROM tickets
+WHERE ticket_id = ?;
+"""
