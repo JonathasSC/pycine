@@ -57,8 +57,8 @@ class AuthView(BaseView):
 
             try:
                 person_data: dict = self.inputs.input_register()
-                self.persons_crud.insert_person(person_data)
-                person_created: tuple = self.persons_crud.select_by_email(
+                self.person_crud.insert_person(person_data)
+                person_created: tuple = self.person_crud.select_by_email(
                     person_data['email'])
                 self.clients_crud.insert_client(person_created[0])
 
@@ -69,7 +69,7 @@ class AuthView(BaseView):
                     self.printer.error(
                         text=erro['msg'][12:],
                         line=False,
-                        timer=False
+                        timer=True
                     )
 
                     self.printer.line(len(erro['msg'][12:]), color='red')

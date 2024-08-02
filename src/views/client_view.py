@@ -83,7 +83,8 @@ class ClientView(BaseView):
             case 3:
                 self.manager.purchase_view.start()
             case 4:
-                self.logout()
+                if self.close(text='Realmente deseja sair?'):
+                    self.logout()
                 self.manager.home_view.start()
             case 5:
                 if self.close():

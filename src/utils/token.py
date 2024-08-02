@@ -12,7 +12,7 @@ class Token:
 
         self.uuid: UUID = UUID()
         self.logger: Logger = Logger()
-        self.persons_crud: PersonsCrud = PersonsCrud()
+        self.person_crud: PersonsCrud = PersonsCrud()
 
     def create_token(self) -> str:
         self.logger.info('CRIANDO TOKEN')
@@ -61,5 +61,5 @@ class Token:
         person_id = self.person_id_from_token(token)
         if person_id:
             self.logger.info('SELECIONANDO PESSOA POR TOKEN')
-            return self.persons_crud.get_person_role(person_id)
+            return self.person_crud.get_person_role(person_id)
         return None

@@ -42,7 +42,6 @@ class BaseView:
         self.handlers: Handlers = Handlers()
 
     def logout(self) -> None:
-        self.printer.generic('Saindo...', line=True, timer=True, clear=True)
         self.token.delete_token()
         self.logger.info('FAZENDO LOGOUT')
 
@@ -115,14 +114,14 @@ class BaseView:
             except Exception as e:
                 self.printer.error(f'Erro ao criar admin: {str(e)}')
 
-    def close(self) -> bool:
+    def close(self, text: str = 'Realmente deseja fechar?') -> bool:
         self.terminal.clear()
 
         confirm_options = ['Sim', 'Não']
 
         option = self.choose_an_option(
             confirm_options,
-            text='Realmente deseja sair?')
+            text=text)
 
         if option == 1:
             self.terminal.clear()

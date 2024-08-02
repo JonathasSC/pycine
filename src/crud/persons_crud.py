@@ -8,7 +8,6 @@ from typing import (
     Optional,
 )
 
-
 from src.queries.persons_queries import (
     INSERT_PERSON,
     SELECT_BY_EMAIL,

@@ -33,8 +33,9 @@ class AdminView(BaseView):
                         self.manager.admin_view.admin_flow()
                         break
                     case 3:
-                        self.logout()
-                        self.manager.home_view.start()
+                        if self.close(text='Realmente deseja sair?'):
+                            self.logout()
+                            self.manager.home_view.start()
                     case 4:
                         if self.close():
                             break
