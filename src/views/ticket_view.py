@@ -9,6 +9,7 @@ class TicketView(BaseView):
         self.list_options: list = [
             'Adicionar novo ticket',
             'Deletar ticket',
+            'Ver ticket',
             'Voltar'
         ]
 
@@ -24,6 +25,8 @@ class TicketView(BaseView):
                     case 2:
                         self.del_ticket()
                     case 3:
+                        self.get_ticket()
+                    case 4:
                         self.manager.admin_view.admin_flow()
                     case _:
                         self.invalid_option()
@@ -34,7 +37,6 @@ class TicketView(BaseView):
 
     def crt_ticket(self) -> None:
         while True:
-
             try:
                 ticket_data = {}
 
@@ -66,24 +68,31 @@ class TicketView(BaseView):
                     self.printer.warning(text='Cancelando...', clear=True)
                     break
 
-                if not self.seat_crud.select_seat_by_id(ticket_data['seat_id']):
+                seat: tuple = self.seat_crud.select_seat_by_id(
+                    ticket_data['seat_id'])
+
+                if not seat:
                     raise ValueError(
                         'Nenhum assento com esse ID foi encontrada.')
 
+                if seat[5] == 'sold':
+                    raise ValueError('Essa cadeira já foi vendida')
+
                 if self.ticket_crud.insert_ticket(ticket_data):
-                    self.printer.success(
-                        text='Ticket criado com sucesso!',
-                        clear=True)
+                    self.seat_crud.update_seat_state(ticket_data['seat_id'],
+                                                     'sold')
+                    self.printer.success(text='Ticket criado com sucesso!',
+                                         clear=True)
 
             except ValueError as e:
-                self.printer.error(
-                    text=f'{e}',
-                    clear=True)
+                self.printer.error(text=f'{e}', clear=True)
 
             except Exception as e:
                 self.printer.error(
-                    text=f'Erro ao iniciar tela de cadeiras: {e}',
+                    text=f'Erro ao tentar criar ticket: {e}',
                     clear=True)
+
+            continue
 
     def del_ticket(self) -> None:
         while True:
@@ -99,8 +108,8 @@ class TicketView(BaseView):
                     self.printer.warning(text='Cancelando...', clear=True)
                     break
 
-                confirm_ticket: str = self.ticket_crud.delete_ticket_by_id(
-                    ticket_id)
+                self.ticket_crud.delete_ticket_by_id(ticket_id)
+                self.printer.success('Ticket deletado com sucesso!')
 
             except ValueError as e:
                 self.printer.error(
@@ -109,5 +118,49 @@ class TicketView(BaseView):
 
             except Exception as e:
                 self.printer.error(
-                    text=f'Erro ao iniciar tela de cadeiras: {e}',
+                    text=f'Erro ao deletar criar ticket: {e}',
+                    clear=True)
+
+    def get_ticket(self) -> None:
+        while True:
+            try:
+                self.terminal.clear()
+                self.printer.generic(
+                    text='Preencha os campos ou digite "q" para cancelar',
+                    line=True)
+
+                ticket_id: str = input('Ticket ID: ').strip()
+
+                if ticket_id.lower() == 'q':
+                    break
+
+                ticket: tuple = [
+                    self.ticket_crud.select_ticket_by_id(ticket_id)
+                ]
+
+                if not ticket:
+                    from time import sleep
+                    print('Ue')
+                    sleep(4)
+                    raise ValueError(
+                        'Nenhum ticket com esse ID foi encontrado')
+
+                header = [
+                    'TICKET ID',
+                    'SEAT ID',
+                    'PERSON ID',
+                    'SESSION ID'
+                ]
+
+                self.printer.display_table(header, ticket)
+                self.start()
+
+            except ValueError as e:
+                self.printer.error(
+                    text=f'{e}',
+                    clear=True)
+
+            except Exception as e:
+                self.printer.error(
+                    text=f'Erro ao pegar ticket: {e}',
                     clear=True)
