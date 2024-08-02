@@ -4,6 +4,7 @@ from src.views.room_view import RoomView
 from src.views.home_view import HomeView
 from src.views.admin_view import AdminView
 from src.views.movie_view import MovieView
+from src.views.ticket_view import TicketView
 from src.views.client_view import ClientView
 from src.views.person_view import PersonView
 from src.views.session_view import SessionView
@@ -18,6 +19,7 @@ class Manager:
         self.room_view: RoomView = RoomView(self)
         self.admin_view: AdminView = AdminView(self)
         self.movie_view: MovieView = MovieView(self)
+        self.ticket_view: TicketView = TicketView(self)
         self.person_view: PersonView = PersonView(self)
         self.client_view: ClientView = ClientView(self)
         self.session_view: SessionView = SessionView(self)

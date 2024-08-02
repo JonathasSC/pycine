@@ -54,6 +54,7 @@ class AdminView(BaseView):
             'Gerenciar salas',
             'Gerenciar sessões',
             'Gerenciar cadeiras',
+            'Gerenciar tickets',
             'Voltar',
         ]
 
@@ -72,6 +73,8 @@ class AdminView(BaseView):
                 case 5:
                     self.manager.seat_view.start()
                 case 6:
+                    self.manager.ticket_view.start()
+                case 7:
                     self.manager.admin_view.start()
                 case _:
                     self.invalid_option()

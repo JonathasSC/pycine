@@ -2,13 +2,16 @@ import os
 import json
 from typing import Optional
 from src.utils.uuid import UUID
+from src.utils.logger import Logger
 from src.crud.persons_crud import PersonsCrud
 
 
 class Token:
     def __init__(self) -> None:
         self.token_file = 'token.json'
+
         self.uuid: UUID = UUID()
+        self.logger: Logger = Logger()
         self.persons_crud: PersonsCrud = PersonsCrud()
 
     def create_token(self) -> str:

@@ -6,7 +6,6 @@ CREATE TABLE IF NOT EXISTS tickets (
     person_id TEXT,
     session_id TEXT,
 
-
     FOREIGN KEY (seat_id) REFERENCES seats(seat_id),
     FOREIGN KEY (person_id) REFERENCES persons(person_id),
     FOREIGN KEY (session_id) REFERENCES sessions(session_id)
