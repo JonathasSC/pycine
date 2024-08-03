@@ -139,7 +139,7 @@ class PersonsCrud(BaseCrud):
             print(f"Erro ao pegar papel de pessoa: {e}")
             return None
 
-    def delete_person(self, person_id: str):
+    def delete_person_by_id(self, person_id: str):
         try:
             self.conn.connect()
             self.conn.cursor.execute(DELETE_PERSON_BY_ID, [person_id])

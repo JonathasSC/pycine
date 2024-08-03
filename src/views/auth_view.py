@@ -57,10 +57,11 @@ class AuthView(BaseView):
 
             try:
                 person_data: dict = self.inputs.input_register()
-                self.persons_crud.insert_person(person_data)
-                person_created: tuple = self.persons_crud.select_by_email(
+                self.person_crud.insert_person(person_data)
+
+                person_created: tuple = self.person_crud.select_by_email(
                     person_data['email'])
-                self.clients_crud.insert_client(person_created[0])
+                self.client_crud.insert_client(person_created[0])
 
             except ValidationError as e:
                 self.terminal.clear()
@@ -68,11 +69,15 @@ class AuthView(BaseView):
                 for erro in e.errors():
                     self.printer.error(
                         text=erro['msg'][12:],
-                        line=False,
-                        timer=False
+                        line=True,
+                        timer=True
                     )
 
                     self.printer.line(len(erro['msg'][12:]), color='red')
+
+                    self.terminal.clear()
+                    self.printer.warning('Tente novamente')
+                    self.terminal.clear()
 
             except Exception as e:
                 self.terminal.clear()

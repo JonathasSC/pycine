@@ -57,10 +57,6 @@ class Inputs:
                 self.terminal.clear()
                 self.printer.password_params()
 
-                self.terminal.clear()
-                self.printer.warning('Tente novamente')
-                self.terminal.clear()
-
             else:
                 return password
 
