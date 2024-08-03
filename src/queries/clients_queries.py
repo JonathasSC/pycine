@@ -25,8 +25,12 @@ SELECT_CLIENT_BY_EMAIL = """
 SELECT * FROM clients WHERE email = ?;
 """
 
-DELETE_CLIENT = """
+DELETE_CLIENT_BY_ID = """
 DELETE FROM clients WHERE client_id = ?;
+"""
+
+DELETE_CLIENT_BY_PERSON_ID = """
+DELETE FROM clients WHERE person_id = ?;
 """
 
 SELECT_ALL_CLIENTS = """

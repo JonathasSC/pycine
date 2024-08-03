@@ -42,7 +42,6 @@ class SessionView(BaseView):
                     case _:
                         self.invalid_option()
                         self.start()
-                break
 
             except Exception as e:
                 self.printer.error(f'Erro ao iniciar tela de salas: {e}')
@@ -183,10 +182,10 @@ class SessionView(BaseView):
                     line=True
                 )
 
-                session_id: str = input('Session ID: ').strip().lower()
+                session_id: str = input('Session ID: ').strip()
 
-                if session_id == 'q':
-                    self.manager.session_view.put_session()
+                if session_id.lower() == 'q':
+                    break
 
                 session: tuple = self.session_crud.select_session_by_id(
                     session_id)
@@ -195,7 +194,7 @@ class SessionView(BaseView):
                     self.printer.error(
                         text='Nenhuma sala identificada, tente novamente')
                     self.terminal.clear()
-                    self.manager.session_view.put_session()
+                    break
 
                 old_data['room_id'] = session[1]
                 old_data['movie_id'] = session[2]
@@ -246,5 +245,4 @@ class SessionView(BaseView):
             except Exception as e:
                 self.printer.error(f'Erro ao atualizar sala: {e}')
 
-            finally:
-                self.manager.session_view.start()
+            self.manager.session_view.start()

@@ -2,16 +2,17 @@
 CREATE_SESSION_TABLE = """
 CREATE TABLE IF NOT EXISTS sessions (
     session_id TEXT PRIMARY KEY,
-    
     room_id TEXT,
     movie_id TEXT,
-
-    price TEXT,
-    start_time TEXT,
-
+    
+    price DECIMAL(10, 2),
+    start_date DATE,
+    start_time TIME,
+    
     FOREIGN KEY (room_id) REFERENCES rooms(room_id)
 );
 """
+
 
 SELECT_SESSIONS_BY_MOVIE_ID_WITH_ROOM_DETAILS = '''
 SELECT 
@@ -38,8 +39,7 @@ JOIN movies m ON s.movie_id = m.movie_id;
 '''
 
 SELECT_ALL_SESSIONS = """
-SELECT session_id, price, room_id, movie_id, start_time
-FROM sessions;
+SELECT * FROM sessions;
 """
 
 
@@ -52,13 +52,13 @@ SELECT * FROM sessions WHERE session_id = ?;
 """
 
 INSERT_SESSION = """
-INSERT INTO sessions (session_id, price, room_id, movie_id, start_time)
-VALUES (?, ?, ?, ?, ?);
+INSERT INTO sessions (session_id, room_id, movie_id, price, start_date, start_time)
+VALUES (?, ?, ?, ?, ?, ?);
 """
 
 UPDATE_SESSION = """
 UPDATE sessions
-SET room_id = ?, movie_id = ?, price = ?, start_time = ?
+SET room_id = ?, movie_id = ?, price = ?, start_date = ?, start_time = ?
 WHERE session_id = ?;
 """
 

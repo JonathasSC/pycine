@@ -84,7 +84,7 @@ class RoomView(BaseView):
             try:
                 self.terminal.clear()
                 header = ['ID', 'NAME', 'ROWS', 'COLUMNS', 'TYPE']
-                rooms_list: list = self.rooms_crud.select_all_rooms()
+                rooms_list: list = self.room_crud.select_all_rooms()
                 self.printer.display_table(header, rooms_list)
                 break
 
@@ -107,9 +107,9 @@ class RoomView(BaseView):
                     line=True
                 )
 
-                room_id: str = input('Room ID: ').strip().lower()
+                room_id: str = input('Room ID: ').strip()
 
-                if room_id == 'q':
+                if room_id.lower() == 'q':
                     break
 
                 room: tuple = self.room_crud.select_room_by_id(room_id)

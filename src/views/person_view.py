@@ -273,7 +273,36 @@ class PersonView(BaseView):
                     self.printer.error(f'Erro ao mostrar admins {e}')
                     self.manage_admin()
 
-        def del_client() -> None:
+        def del_client_by_email() -> None:
+            while True:
+                try:
+                    self.terminal.clear()
+                    self.printer.generic(
+                        text='Preencha os campos ou digite "q" para cancelar',
+                        line=True)
+
+                    client_email: str = input('Email: ').strip()
+
+                    if client_email.lower() == 'q':
+                        break
+
+                    confirm_delete: str = self.client_crud.delete_client_by_email(
+                        client_email)
+
+                    if client_email == confirm_delete:
+                        self.printer.success(
+                            text='Cliente deletado com sucesso!', clear=True)
+
+                    self.printer.success(
+                        text='Cliente deletado com sucesso!', clear=True)
+
+                    self.manage_client()
+
+                except Exception as e:
+                    self.printer.error(f'Erro ao deletar cliente: {e}')
+                    self.manage_client()
+
+        def del_client_by_id() -> None:
             while True:
                 try:
                     self.terminal.clear()
@@ -286,7 +315,7 @@ class PersonView(BaseView):
                     if client_id.lower() == 'q':
                         break
 
-                    confirm_delete: str = self.client_crud.delete_client(
+                    confirm_delete: str = self.client_crud.delete_client_by_id(
                         client_id)
 
                     if client_id == confirm_delete:
@@ -420,7 +449,8 @@ class PersonView(BaseView):
             manage_options: list = [
                 'Criar novo cliente',
                 'Listar clientes',
-                'Deletar cliente',
+                'Deletar cliente por id',
+                'Deletar cliente por email',
                 'Atualizar cliente',
                 'Voltar'
             ]
@@ -435,10 +465,12 @@ class PersonView(BaseView):
                     case 2:
                         get_all_clients()
                     case 3:
-                        del_client()
+                        del_client_by_id()
                     case 4:
-                        put_client()
+                        del_client_by_email()
                     case 5:
+                        put_client()
+                    case 6:
                         self.manager.person_view.start()
                     case _:
                         self.invalid_option()
@@ -447,18 +479,18 @@ class PersonView(BaseView):
             except Exception as e:
                 self.printer.error(e)
 
-    def close(self) -> None:
-        self.terminal.clear()
-        self.printer.generic("Deseja realmente sair?", line=True)
+    # def close(self) -> None:
+    #     self.terminal.clear()
+    #     self.printer.generic("Deseja realmente sair?", line=True)
 
-        confirm_options = ['Sim', 'Não']
-        option = self.choose_an_option(
-            confirm_options,
-            text='Escolha uma opção')
+    #     confirm_options = ['Sim', 'Não']
+    #     option = self.choose_an_option(
+    #         confirm_options,
+    #         text='Escolha uma opção')
 
-        if option == 1:
-            self.terminal.clear()
-            self.printer.generic('Fechado...', line=True, timer=True)
-            self.terminal.clear()
-        else:
-            self.start()
+    #     if option == 1:
+    #         self.terminal.clear()
+    #         self.printer.generic('Fechado...', line=True, timer=True)
+    #         self.terminal.clear()
+    #     else:
+    #         self.start()

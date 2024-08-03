@@ -118,7 +118,7 @@ class Inputs:
     def input_session(self):
         session_data: dict = {}
 
-        session_data['price'] = input('Price: ')
+        session_data['price'] = input('Price (R$): ')
         if session_data['price'] == 'q':
             return None
 

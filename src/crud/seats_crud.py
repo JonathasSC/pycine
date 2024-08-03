@@ -19,10 +19,9 @@ class SeatsCrud(BaseCrud):
 
     def insert_seat(self, data) -> Optional[str]:
         try:
-            room_id: str = data['room_id']
             seat_id: str = self.uuid.smaller_uuid()
-
             data['seat_id'] = seat_id
+
             seat_dict: Dict[str, Any] = dict(SeatCreate(**data))
 
             data_list: List[any] = [

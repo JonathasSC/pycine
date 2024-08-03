@@ -1,6 +1,6 @@
-from rich.console import Console
-from tabulate import tabulate
 from time import sleep
+from tabulate import tabulate
+from rich.console import Console
 from src.utils.terminal import Terminal
 
 
@@ -73,7 +73,6 @@ class Printer:
                       table_data: list,
                       page: int = 1,
                       per_page: int = 10):
-
         total_pages = (len(table_data) + per_page - 1) // per_page
 
         while True:
@@ -103,24 +102,20 @@ class Printer:
                 self.error(f'{e}')
                 self.terminal.clear()
 
-    def validate_page(self, total_pages):
+    def validate_page(self, total_pages: int):
         while True:
             try:
-                user_input: int
-                user_input = int(input(
-                    f"Escolha a pagina (1 - {total_pages}) ou '0' para voltar: "))
-
+                user_input = int(
+                    input(f"Escolha a pagina (1 - {total_pages}) ou '0' para voltar: "))
+                if 0 <= user_input <= total_pages:
+                    return user_input
+                else:
+                    self.error(
+                        f"Valor inválido. Por favor, digite um número entre 0 e {total_pages}.")
             except ValueError:
-                raise ValueError(f'Valor inválido, por favor digite um numero')
+                self.error('Valor inválido. Por favor, digite um número.')
 
-            if user_input not in range(0, total_pages + 1):
-                raise ValueError(
-                    "Valor inválida. Por favor, digite um número válido."
-                )
-
-            return user_input
-
-    def display_movies(self, movies_list) -> None:
+    def display_movies(self, movies_list: list) -> None:
         headers: list = ['NAME', 'GENRE', 'DURATION', 'SYNOPSIS']
 
         self.terminal.clear()
@@ -137,7 +132,7 @@ class Printer:
         self.printer.display_table(headers, movies_compacted)
         self.start()
 
-    def create_seat_matrix(self, seats) -> list:
+    def create_seat_matrix(self, seats: list) -> list:
         max_row = max(seat[3] for seat in seats) + 1
         max_col = max(seat[4] for seat in seats) + 1
 
@@ -163,7 +158,7 @@ class Printer:
 
         return seat_matrix
 
-    def print_seat_matrix(self, seat_matrix) -> None:
+    def print_seat_matrix(self, seat_matrix: list) -> None:
         self.terminal.clear()
         print(' Tela '.center(len(seat_matrix[0]) * 5, '-'))
 

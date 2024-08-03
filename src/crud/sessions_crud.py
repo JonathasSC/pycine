@@ -1,7 +1,8 @@
-from typing import List, Dict, Any, Optional, Tuple
+from datetime import datetime
 
 from src.crud.base_crud import BaseCrud
 from src.database.conn import Connection
+from typing import List, Dict, Any, Optional, Tuple
 from src.schemas.session_schemas import SessionCreate, SessionUpdate
 
 from src.queries.sessions_queries import (
@@ -63,8 +64,29 @@ class SessionsCrud(BaseCrud):
         try:
             session_id: str = self.uuid.smaller_uuid()
             data['session_id'] = session_id
-            session_data: Dict[str, Any] = dict(SessionCreate(**data))
-            data_list: List[Any] = list(session_data.values())
+
+            session_dict: Dict[str, Any] = dict(SessionCreate(**data))
+
+            now = datetime.now()
+            start_date = session_dict.get('start_date', None)
+            start_time = session_dict.get('start_time', None)
+
+            if start_date and start_time:
+                session_datetime = datetime.combine(start_date, start_time)
+                if session_datetime < now:
+                    raise ValueError(
+                        'A sessão não pode ser agendada para uma data e hora no passado.')
+
+            data_list: List[any] = [
+                session_dict.get('session_id', None),
+                session_dict.get('room_id', None),
+                session_dict.get('movie_id', None),
+
+                float(session_dict.get('price', None)),
+
+                session_dict.get('start_date', None).isoformat(),
+                session_dict.get('start_time', None).isoformat(),
+            ]
 
             self.conn.connect()
             self.conn.cursor.execute(INSERT_SESSION, data_list)
