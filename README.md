@@ -1,38 +1,67 @@
-<h1 align='center'>Pycine</h1>
-<h4 align='center'>Sistema de gerenciamento de cinema</h4>
+<div align="center">
+  <img src="./public/logo.jpg" alt="Logo Pycine" width="250px">
 
-### Recursos necessários 
+# Pycine
+
+#### Sistema de gerenciamento de cinema
+
+</div>
+
+---
+
+## Recursos necessários
 
 1. Python v3.10+;
 2. Git v2.45+;
 
-### Como executar?
+## Como executar?
 
-#### 1. Clone esse repositorio
+### 1. Clone este repositório
 
-Para criar clone desse repositório, utilize o comando:
-```git clone https://github.com/JonathasSC/pycine```
+Para clonar este repositório, utilize o comando:
 
-#### 2. Crie e ative um ammbiente virtual:
+```bash
+git clone https://github.com/JonathasSC/pycine
+```
 
-Dentro do repositorio clonado, abra um terminal e execute:
+### 2. Crie e ative um ambiente virtual
 
-```python -m venv venv```
+Dentro do repositório clonado, abra um terminal e execute:
 
-Aguarde alguns segundos e execute:
+```bash
+python -m venv venv
+```
 
-```.\venv\Scripts\activate```
+Aguarde alguns segundos e, em seguida, execute:
 
+No Windows:
 
-#### 3. Faça download das dependencias:
+```bash
+.\venv\Scripts\activate
+```
 
-Execute o comando abaixo para baixar todas as dependencias do projeto
-```pip install -r requirements.txt```
+No Linux/MacOS:
 
-#### 4. Execute o projeto:
+```bash
+source venv/bin/activate
+```
 
-Para efetivamente executar o projeto, execute:
+### 3. Instale as dependências
 
-```python main.py```
+Execute o comando abaixo para baixar todas as dependências do projeto:
 
+```bash
+pip install -r requirements.txt
+```
 
+### 4. Execute o projeto
+
+Para executar o projeto, utilize:
+
+```bash
+python main.py
+```
+
+<div align="center">
+Desenvolvido por JonathasSC
+</div>
