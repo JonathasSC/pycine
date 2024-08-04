@@ -9,7 +9,6 @@ from src.crud.sessions_crud import SessionsCrud
 
 from faker import Faker
 from datetime import datetime, timedelta
-from decimal import Decimal, InvalidOperation, ROUND_HALF_UP
 
 
 class Populate:
@@ -129,7 +128,6 @@ class Populate:
     def populate_all(self):
         self.populate_persons()
         self.populate_clients()
-        # self.populate_admins()
 
         self.populate_rooms()
         self.populate_movies()

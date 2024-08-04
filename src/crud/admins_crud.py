@@ -1,11 +1,11 @@
 from src.queries.admins_queries import (
     INSERT_ADMIN,
     DELETE_ADMIN,
+    DELETE_ALL_ADMINS,
     SELECT_ADMIN_BY_ID,
     SELECT_COUNT_ADMINS,
     SELECT_ADMIN_IN_PERSON,
     UPDATE_PERSON_ADMIN_BY_ADMIN_ID,
-    DELETE_ALL_ADMINS,
 )
 from src.queries.persons_queries import (
     DELETE_PERSON_BY_ID,

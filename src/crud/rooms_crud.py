@@ -5,10 +5,10 @@ from src.database.conn import Connection
 from src.schemas.room_schemas import RoomCreate, RoomUpdate
 
 from src.queries.rooms_queries import (
-    SELECT_ALL_ROOMS,
     INSERT_ROOM,
     UPDATE_ROOM,
     DELETE_ROOM,
+    SELECT_ALL_ROOMS,
     DELETE_ALL_ROOMS,
     SELECT_ROOM_BY_ID,
 )

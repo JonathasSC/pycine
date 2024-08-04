@@ -41,16 +41,17 @@ class HomeView(BaseView):
 
                 if option == 1:
                     self.manager.auth_view.login()
-                    self.start()
+                    self.manager.home_view.start()
 
                 elif option == 2:
                     self.manager.auth_view.register()
-                    self.manager.auth_view.login()
-                    self.start()
+                    self.manager.home_view.start()
 
                 elif option == 3:
-                    self.close()
-                    break
+                    if self.close():
+                        break
+                    self.manager.home_view.start()
+
                 break
 
             except Exception as e:

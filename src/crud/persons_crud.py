@@ -28,14 +28,17 @@ class PersonsCrud(BaseCrud):
         super().__init__(conn)
         self.logger.info('INSTANCIA PERSONS CRUD CRIADA')
 
-    def insert_person(self, data: Dict[str, Any]) -> bool:
+    def insert_person(self, data: dict) -> bool:
         try:
+            email_exists = self.select_by_email(data['email'])
+            if email_exists:
+                raise ValueError('Já existe uma pessoa com esse email')
+
             person_id: str = self.uuid.smaller_uuid()
             data['person_id'] = person_id
             data['password'] = self.hash.generate_hash(data['password'])
 
             data_dict: Dict[str, Any] = dict(PersonCreate(**data))
-
             data_list: List[Any] = list(data_dict.values())
 
             self.conn.connect()

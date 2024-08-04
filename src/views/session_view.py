@@ -127,7 +127,8 @@ class SessionView(BaseView):
                     'ROOM ID',
                     'MOVIE ID',
                     'PRICE',
-                    'START TIME'
+                    'START DATE',
+                    'START TIME',
                 ]
 
                 self.printer.display_table(header, session)
@@ -198,9 +199,9 @@ class SessionView(BaseView):
                     self.terminal.clear()
                     break
 
+                old_data['price'] = session[3]
                 old_data['room_id'] = session[1]
                 old_data['movie_id'] = session[2]
-                old_data['price'] = session[3]
                 old_data['start_time'] = session[4]
 
                 room_id: str = input(

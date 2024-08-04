@@ -31,3 +31,14 @@ def validate_seat_choice(seats, chosen_seat):
                 return seat[5]
             return None
     return None
+
+
+def email_validator(email: str) -> bool:
+    regex = r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
+    if not exists_email(email):
+        return False
+
+    if not re.match(regex, email):
+        return False
+
+    return True

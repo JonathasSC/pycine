@@ -1,7 +1,7 @@
-from src.database.conn import Connection
 from src.utils.uuid import UUID
-from src.utils.hashing import Hashing
 from src.utils.logger import Logger
+from src.utils.hashing import Hashing
+from src.database.conn import Connection
 
 
 class BaseCrud:

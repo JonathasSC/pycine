@@ -9,8 +9,8 @@ from src.queries.movies_queries import (
     UPDATE_MOVIE
 )
 from src.database.conn import Connection
-from src.schemas.movie_schemas import MovieCreate, MovieUpdate
 from typing import List, Dict, Any, Optional
+from src.schemas.movie_schemas import MovieCreate, MovieUpdate
 
 
 class MoviesCrud(BaseCrud):

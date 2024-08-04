@@ -6,15 +6,15 @@ from typing import List, Dict, Any, Optional, Tuple
 from src.schemas.session_schemas import SessionCreate, SessionUpdate
 
 from src.queries.sessions_queries import (
-    SELECT_SESSIONS_BY_MOVIE_ID,
-    SELECT_SESSIONS_BY_ID,
-    SELECT_ALL_SESSIONS,
     INSERT_SESSION,
     UPDATE_SESSION,
     DELETE_SESSION,
-    SELECT_SESSIONS_BY_MOVIE_ID_WITH_ROOM_DETAILS,
-    SELECT_ALL_SESSIONS_WITH_MOVIES,
+    SELECT_ALL_SESSIONS,
     DELETE_ALL_SESSIONS,
+    SELECT_SESSIONS_BY_ID,
+    SELECT_SESSIONS_BY_MOVIE_ID,
+    SELECT_ALL_SESSIONS_WITH_MOVIES,
+    SELECT_SESSIONS_BY_MOVIE_ID_WITH_ROOM_DETAILS,
 )
 
 

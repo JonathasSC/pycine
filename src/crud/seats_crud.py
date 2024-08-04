@@ -1,12 +1,13 @@
 from src.crud.base_crud import BaseCrud
 from src.database.conn import Connection
 from src.queries.seats_queries import (
-    SELECT_SEATS_BY_ROOM_ID,
+    INSERT_SEAT,
     SELECT_SEAT_BY_ID,
-    SELECT_SEATS_BY_ROOM_ID_SEAT_CODE,
-    SELECT_COUNT_SEATS_BY_ROOM_ID,
     UPDATE_SEAT_STATE,
-    INSERT_SEAT)
+    SELECT_SEATS_BY_ROOM_ID,
+    SELECT_COUNT_SEATS_BY_ROOM_ID,
+    SELECT_SEATS_BY_ROOM_ID_SEAT_CODE
+)
 
 from typing import Optional, Dict, List, Any
 from src.schemas.seat_schemas import SeatCreate

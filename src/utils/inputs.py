@@ -2,7 +2,7 @@ from src.utils.printer import Printer
 from src.utils.terminal import Terminal
 import getpass
 from typing import Optional, Dict
-from src.utils.validators import password_validator
+from src.utils.validators import password_validator, email_validator
 from datetime import datetime
 import re
 
@@ -12,11 +12,16 @@ class Inputs:
         self.printer: Printer = Printer()
         self.terminal: Terminal = Terminal()
 
-    def input_login(self) -> Dict[str, str]:
+    def input_login(self) -> Optional[dict]:
         person_data: dict = {}
 
         person_data['email'] = input('Email: ')
+        if person_data['email'] == 'q':
+            return None
+
         person_data['password'] = input('Senha: ')
+        if person_data['password'] == 'q':
+            return None
 
         return person_data
 
@@ -27,8 +32,8 @@ class Inputs:
         if person_data['name'] == 'q':
             return None
 
-        person_data['email'] = input('Email: ')
-        if person_data['email'] == 'q':
+        person_data['email'] = self.input_email('Email: ')
+        if person_data['email'] == None:
             return None
 
         person_data['password'] = self.input_password()
@@ -37,19 +42,32 @@ class Inputs:
 
         return person_data
 
-    def input_register(self) -> Dict[str, str]:
+    def input_register(self) -> Optional[dict]:
         person_data: dict = {}
 
-        person_data['name'] = input('Nome: ')
-        person_data['email'] = input('Email: ')
+        person_data['name'] = input('Nome: ').strip()
+        if person_data['name'] in 'Qq':
+            return None
+
+        person_data['email'] = self.input_email('Email: ')
+        if person_data['email'] == None:
+            return None
+
         person_data['password'] = self.input_password()
+        if person_data['password'] == None:
+            return None
 
         return person_data
 
-    def input_password(self) -> Dict[str, str]:
+    def input_password(self) -> Optional[str]:
         while True:
             password = getpass.getpass('Senha (ela está ocultada): ')
+            if password in 'Qq':
+                return None
+
             confirm_password: str = getpass.getpass('Confirme a senha: ')
+            if confirm_password in 'Qq':
+                return None
 
             if password != confirm_password:
                 self.printer.error('Senhas não correspondem, tente novamente')
@@ -221,3 +239,28 @@ class Inputs:
             self.printer.error(
                 text="Formato de preço inválido. Insira um numéro válido e positivo.",
                 clear=True)
+
+    def input_email(self, prompt: str) -> Optional[str]:
+        while True:
+            email = input(prompt).strip()
+            if email.lower() == 'q':
+                return None
+
+            if email_validator(email):
+                return email
+
+            self.printer.error(
+                text="Esse email não é valido ou está indisponivel",
+                clear=True)
+
+    def input_password(self, prompt) -> Optional[str]:
+        while True:
+            password = input(prompt).strip()
+            if password.lower() == 'q':
+                return None
+
+            if password_validator(password):
+                return password
+
+            self.terminal.clear()
+            self.printer.password_params()

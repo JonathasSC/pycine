@@ -7,12 +7,13 @@ from src.queries.clients_queries import (
     UPDATE_PERSON_CLIENT_BY_CLIENT_ID
 )
 
-from src.queries.persons_queries import SELECT_BY_EMAIL, DELETE_PERSON_BY_ID
 
-from typing import Any, Dict, List, Optional, Tuple
 from src.crud.base_crud import BaseCrud
 from src.database.conn import Connection
+from typing import Any, Dict, List, Optional, Tuple
 from src.schemas.client_schemas import ClientCreate
+
+from src.queries.persons_queries import SELECT_BY_EMAIL, DELETE_PERSON_BY_ID
 
 
 class ClientsCrud(BaseCrud):

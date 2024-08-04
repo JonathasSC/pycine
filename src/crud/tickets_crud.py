@@ -3,13 +3,13 @@ from typing import Dict, Any, List, Optional, Tuple
 from src.crud.base_crud import BaseCrud
 from src.database.conn import Connection
 
-from src.schemas.ticket_schemas import TicketCreate
 from src.queries.tickets_queries import (
     INSERT_TICKET,
-    SELECT_TICKETS_BY_PERSON_ID,
-    SELECT_TICKETS_BY_ID,
     DELETE_TICKET_BY_ID,
+    SELECT_TICKETS_BY_ID,
+    SELECT_TICKETS_BY_PERSON_ID,
 )
+from src.schemas.ticket_schemas import TicketCreate
 
 
 class TicketsCrud(BaseCrud):

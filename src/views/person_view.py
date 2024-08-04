@@ -141,19 +141,22 @@ class PersonView(BaseView):
 
                     self.terminal.clear()
                     self.printer.generic(
-                        'Digite o Admin ID, ou "q" para cancelar', line=True)
-                    admin_id: str = input('Admin ID: ').strip().lower()
+                        text='Preenchas os campos ou digite "q" para cancelar.',
+                        line=True
+                    )
 
-                    if admin_id == 'q':
+                    admin_id: str = input('Admin ID: ').strip()
+
+                    if admin_id.lower() == 'q':
                         self.manage_admin()
 
                     admin = self.admin_crud.select_by_id(admin_id)
 
                     if not admin:
-                        self.terminal.clear()
                         self.printer.error(
-                            'Nenhum admin identificado, tente novamente')
-                        self.terminal.clear()
+                            text='Nenhum admin identificado, tente novamente',
+                            clear=True)
+
                         put_admin()
 
                     person = self.person_crud.select_by_id(admin[1])
@@ -164,24 +167,28 @@ class PersonView(BaseView):
 
                     name = input(
                         'Nome (deixe em branco para manter o atual): ').strip()
-                    email = input(
-                        'Email (deixe em branco para manter o atual): ').strip()
-                    password = input(
-                        'Senha (deixe em branco para manter a atual): ').strip()
+                    if name == None:
+                        self.printer.warning(
+                            text='Atualização cancelada',
+                            clear=True)
 
-                    while email and not exists_email(email):
-                        self.terminal.clear()
-                        self.printer.error('Esse email já está em uso')
-                        self.terminal.clear()
+                        continue
 
-                        email = input('Email: ').strip()
+                    email = self.inputs.input_email(
+                        'Email (deixe em branco para manter o atual): ')
+                    if email == None:
+                        self.printer.warning(
+                            text='Atualização cancelada',
+                            clear=True)
+                        continue
 
-                    while password and not password_validator(password):
-                        self.terminal.clear()
-                        self.printer.password_params()
-                        self.terminal.clear()
-
-                        password = input('Senha: ').strip()
+                    password = self.inputs.input_password(
+                        'Senha (deixe em branco para manter a atual): ')
+                    if password == None:
+                        self.printer.warning(
+                            text='Atualização cancelada',
+                            clear=True)
+                        continue
 
                     if not name:
                         data['name'] = old_data['name']
@@ -221,7 +228,6 @@ class PersonView(BaseView):
                     self.manage_admin()
 
         while True:
-
             manage_options: list = [
                 'Criar novo admin',
                 'Listar admins',

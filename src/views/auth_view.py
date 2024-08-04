@@ -11,33 +11,49 @@ class AuthView(BaseView):
 
     def login(self) -> Optional[str]:
         self.logger.info('AREA DE LOGIN')
-
-        token = self.token.load_token()
-        if token:
-            user_role = self.token.get_role_from_token(token)
-            if user_role:
-                return user_role
-
         while True:
-            self.terminal.clear()
-            self.printer.generic('Bem-vindo á Pycine!', line=True)
-            person_data: dict = self.inputs.input_login()
             try:
+                token = self.token.load_token()
+                if token:
+                    user_role = self.token.get_role_from_token(token)
+                    if user_role:
+                        return user_role
+
+                self.terminal.clear()
+                self.printer.generic(
+                    text='Bem-vindo á Pycine!'.center(50)
+                )
+
+                self.printer.generic(
+                    text='Preencha os campos ou digite "q" para cancelar',
+                    line=True)
+
+                person_data: Optional[dict] = self.inputs.input_login()
+
+                if person_data == None:
+                    self.printer.warning(
+                        text='Login cancelado',
+                        clear=True)
+
+                    break
+
                 person = self.person_crud.select_by_credentials(person_data)
+
                 if person:
                     person_id: str = person[0]
                     person_role: str = self.person_crud.get_person_role(
                         person_id)
 
                     token = self.token.create_token_map(person_id)
+
                     self.terminal.clear()
                     self.printer.success('Login realizado com sucesso')
+
                     return person_role
 
                 else:
                     self.terminal.clear()
-                    self.printer.error(
-                        'Credenciais erradas, tente novamente...')
+                    self.printer.error('Credenciais erradas, tente novamente')
 
             except ValidationError as e:
                 self.terminal.clear()
@@ -51,17 +67,34 @@ class AuthView(BaseView):
         self.logger.info('AREA DE REGISTRO')
 
         while True:
-            self.terminal.clear()
-            self.printer.generic('Crie sua conta agora!', line=True)
-            person_data: dict = {}
-
             try:
-                person_data: dict = self.inputs.input_register()
-                self.person_crud.insert_person(person_data)
+                self.terminal.clear()
+                self.printer.generic(
+                    text='Crie sua conta agora!'.center(50)
+                )
 
-                person_created: tuple = self.person_crud.select_by_email(
-                    person_data['email'])
-                self.client_crud.insert_client(person_created[0])
+                self.printer.generic(
+                    text='Preencha os campos ou digite "q" para cancelar',
+                    line=True
+                )
+
+                person_data: Optional[dict] = self.inputs.input_register()
+
+                if person_data == None:
+                    self.printer.warning(
+                        text='Registro cancelado',
+                        clear=True
+                    )
+                    break
+
+                person_id = Optional[str] = self.person_crud.insert_person(
+                    person_data)
+
+                self.client_crud.insert_client(person_id)
+
+                self.printer.success(
+                    text='Registro efetuado com sucesso!',
+                    clear=True)
 
             except ValidationError as e:
                 self.terminal.clear()
@@ -74,17 +107,17 @@ class AuthView(BaseView):
                     )
 
                     self.printer.line(len(erro['msg'][12:]), color='red')
+                    self.printer.warning(text='Tente novamente', clear=True)
 
-                    self.terminal.clear()
-                    self.printer.warning('Tente novamente')
-                    self.terminal.clear()
+            except ValueError as e:
+                self.terminal.clear()
+                self.printer.error(f'{e}')
 
             except Exception as e:
                 self.terminal.clear()
                 self.printer.error(f'Erro ao registrar-se: {str(e)}')
 
             else:
-                self.terminal.clear()
-                self.printer.success('Registro realizado com sucesso!')
-                self.manager.start()
-                break
+                self.printer.success(
+                    text='Registro realizado com sucesso!',
+                    clear=True)
