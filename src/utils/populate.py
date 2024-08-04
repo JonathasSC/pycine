@@ -8,8 +8,8 @@ from src.crud.persons_crud import PersonsCrud
 from src.crud.sessions_crud import SessionsCrud
 
 from faker import Faker
-from decimal import Decimal
 from datetime import datetime, timedelta
+from decimal import Decimal, InvalidOperation, ROUND_HALF_UP
 
 
 class Populate:
@@ -103,15 +103,15 @@ class Populate:
 
         for n in range(self.populate_range):
             now = datetime.now()
-            future_date = now + timedelta(days=random.randint(1, 30))
+            future_date = (now + timedelta(days=random.randint(1, 30))).date()
             future_time = (now + timedelta(hours=random.randint(1, 12))).time()
 
             data = {
-                'price': Decimal('25.99'),
+                'price': '25.50',
                 'room_id': rooms_id_list[n],
                 'movie_id': movies_id_list[n],
-                'start_date': future_date.date().isoformat(),
-                'start_time': future_time.isoformat()
+                'start_date': future_date,
+                'start_time': future_time
             }
 
             self.session_crud.insert_session(data)

@@ -3,6 +3,8 @@ from src.utils.terminal import Terminal
 import getpass
 from typing import Optional, Dict
 from src.utils.validators import password_validator
+from datetime import datetime
+import re
 
 
 class Inputs:
@@ -60,7 +62,7 @@ class Inputs:
             else:
                 return password
 
-    def input_movie(self) -> Dict[str, str]:
+    def input_movie(self) -> Optional[dict]:
         movie_data: dict = {}
 
         movie_data['name'] = input('Nome: ')
@@ -81,11 +83,11 @@ class Inputs:
 
         return movie_data
 
-    def input_seat(self):
+    def input_seat(self) -> Optional[dict]:
         ticket_data: dict = {}
         ticket_data['Room ID'] = input('')
 
-    def input_room(self):
+    def input_room(self) -> Optional[dict]:
         room_data: dict = {}
 
         room_data['name'] = input('Name: ')
@@ -115,11 +117,11 @@ class Inputs:
         room_data['type'] = valid_types[option - 1]
         return room_data
 
-    def input_session(self):
+    def input_session(self) -> Optional[dict]:
         session_data: dict = {}
 
-        session_data['price'] = input('Price (R$): ')
-        if session_data['price'] == 'q':
+        session_data['price'] = self.input_price('Price (00.00): ')
+        if session_data['price'] is None:
             return None
 
         session_data['room_id'] = input('Room ID: ')
@@ -130,8 +132,14 @@ class Inputs:
         if session_data['movie_id'] == 'q':
             return None
 
-        session_data['start_time'] = input('Start time: ')
-        if session_data['start_time'] == 'q':
+        session_data['start_date'] = self.input_date(
+            'Start date (dd/mm/yyyy)')
+        if session_data['start_date'] is None:
+            return None
+
+        session_data['start_time'] = self.input_time(
+            'Start time (HH:MM)')
+        if session_data['start_time'] is None:
             return None
 
         return session_data
@@ -166,11 +174,50 @@ class Inputs:
                 self.printer.error('Por favor, digite um número válido.')
 
     def invalid_option(self):
-        self.terminal.clear()
-        self.printer.error('Opção inválida, tente novamente')
-        self.terminal.clear()
+        self.printer.error('Opção inválida, tente novamente', clear=True)
 
     def invalid_value(self):
-        self.terminal.clear()
-        self.printer.error('Valor inválido, tente novamente')
-        self.terminal.clear()
+        self.printer.error('Valor inválido, tente novamente', clear=True)
+
+    def input_date(self, prompt: str) -> Optional[str]:
+        while True:
+            date_input = input(prompt)
+            if date_input.lower() == 'q':
+                return None
+            try:
+                parsed_date = datetime.strptime(date_input, '%d/%m/%Y').date()
+                return parsed_date.isoformat()
+
+            except ValueError:
+                self.printer.error(
+                    text="Formato de data inválido. Use o formato dd/mm/aaaa.",
+                    clear=True)
+
+    def input_time(self, prompt: str) -> Optional[str]:
+        while True:
+            time_input = input(prompt)
+            if time_input.lower() == 'q':
+                return None
+            try:
+                parsed_time = datetime.strptime(time_input, '%H:%M').time()
+                return parsed_time.strftime('%H:%M')
+
+            except ValueError:
+                self.printer.error(
+                    text="Formato de hora inválido. Use o formato HH:MM.",
+                    clear=True)
+
+    def input_price(self, prompt: str) -> Optional[str]:
+        while True:
+            regex = r'^\d+(?:\.\d{2})?$'
+            price = input(prompt).strip()
+
+            if price.lower() == 'q':
+                return None
+
+            if re.match(regex, price):
+                return price
+
+            self.printer.error(
+                text="Formato de preço inválido. Insira um numéro válido e positivo.",
+                clear=True)

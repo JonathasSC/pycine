@@ -5,7 +5,7 @@ CREATE TABLE IF NOT EXISTS sessions (
     room_id TEXT,
     movie_id TEXT,
     
-    price DECIMAL(10, 2),
+    price TEXT,
     start_date DATE,
     start_time TIME,
     

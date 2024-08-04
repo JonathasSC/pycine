@@ -82,10 +82,10 @@ class SessionsCrud(BaseCrud):
                 session_dict.get('room_id', None),
                 session_dict.get('movie_id', None),
 
-                float(session_dict.get('price', None)),
+                str(session_dict.get('price', None)),
 
                 session_dict.get('start_date', None).isoformat(),
-                session_dict.get('start_time', None).isoformat(),
+                session_dict.get('start_time', None).strftime('%H:%M')
             ]
 
             self.conn.connect()
