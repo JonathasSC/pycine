@@ -264,14 +264,24 @@ class PersonView(BaseView):
                         'EMAIL',
                         'PASSWORD'
                     ]
-                    admin_list: list = self.client_crud.select_all_clients()
-                    self.printer.display_table(header, admin_list)
-                    self.manage_admin()
+
+                    client_list: list = self.client_crud.select_all_clients()
+
+                    client_list_formatted = [[
+                        client[0],
+                        client[1],
+                        client[2],
+                        client[3],
+                        f'{str(client[4])[:50]}...'
+                    ] for client in client_list]
+
+                    self.printer.display_table(header, client_list_formatted)
+                    self.manage_client()
 
                 except Exception as e:
                     self.terminal.clear()
                     self.printer.error(f'Erro ao mostrar admins {e}')
-                    self.manage_admin()
+                    self.manage_client()
 
         def del_client_by_email() -> None:
             while True:
@@ -432,9 +442,7 @@ class PersonView(BaseView):
                             'Nenhum dado fornecido para atualização.')
 
                 except ValueError as e:
-                    self.terminal.clear()
-                    self.printer.error(f'{e}')
-                    self.terminal.clear()
+                    self.printer.error(text=f'{e}', clear=True)
                     self.put_admin()
 
                 except Exception as e:
@@ -478,19 +486,3 @@ class PersonView(BaseView):
 
             except Exception as e:
                 self.printer.error(e)
-
-    # def close(self) -> None:
-    #     self.terminal.clear()
-    #     self.printer.generic("Deseja realmente sair?", line=True)
-
-    #     confirm_options = ['Sim', 'Não']
-    #     option = self.choose_an_option(
-    #         confirm_options,
-    #         text='Escolha uma opção')
-
-    #     if option == 1:
-    #         self.terminal.clear()
-    #         self.printer.generic('Fechado...', line=True, timer=True)
-    #         self.terminal.clear()
-    #     else:
-    #         self.start()

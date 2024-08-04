@@ -143,26 +143,10 @@ class ClientView(BaseView):
                 if not movies_list:
                     self.handlers.handle_no_sessions_available()
                 else:
-                    self.display_movies(movies_list)
+                    self.printer.display_movies(movies_list)
 
             except Exception as e:
                 print(f'Erro ao mostrar filmes {e}')
 
             finally:
                 self.manager.client_view.start()
-
-    def display_movies(self, movies_list) -> None:
-        headers: list = ['NAME', 'GENRE', 'DURATION', 'SYNOPSIS']
-
-        self.terminal.clear()
-        self.printer.generic(
-            text='Filmes em cartaz',
-            line=True
-        )
-
-        movies_compacted = [
-            [movie[6], movie[7], movie[8], f'{str(movie[9])[:50]}...'] for movie in movies_list
-        ]
-
-        self.printer.display_table(headers, movies_compacted)
-        self.start()

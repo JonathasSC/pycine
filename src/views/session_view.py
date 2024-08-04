@@ -54,8 +54,9 @@ class SessionView(BaseView):
                     'SESSION ID',
                     'ROOM ID',
                     'MOVIE ID',
-                    'PRICE',
-                    'START TIME'
+                    'PRICE (R$)',
+                    'START DATE',
+                    'START TIME',
                 ]
                 movies_list: list = self.session_crud.select_all_sessions()
                 movies_formated: list = [[
@@ -64,6 +65,7 @@ class SessionView(BaseView):
                     movie[2],
                     movie[3],
                     movie[4],
+                    movie[5],
                 ] for movie in movies_list]
 
                 self.printer.display_table(header, movies_formated)

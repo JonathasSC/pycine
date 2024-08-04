@@ -73,6 +73,7 @@ class Printer:
                       table_data: list,
                       page: int = 1,
                       per_page: int = 10):
+
         total_pages = (len(table_data) + per_page - 1) // per_page
 
         while True:
@@ -89,6 +90,7 @@ class Printer:
                 )
 
                 print(table)
+                print(f'\nPágina {page} de {total_pages}')
 
                 page_input = self.validate_page(total_pages)
 
@@ -98,9 +100,7 @@ class Printer:
                     page = page_input
 
             except Exception as e:
-                self.terminal.clear()
-                self.error(f'{e}')
-                self.terminal.clear()
+                self.error(text=f'{e}', clear=True)
 
     def validate_page(self, total_pages: int):
         while True:
@@ -122,14 +122,16 @@ class Printer:
         self.printer.generic(
             text='Filmes em cartaz',
             line=True
-
         )
 
-        movies_compacted = [
-            [movie[6], movie[7], movie[8], f'{str(movie[9])[:50]}...'] for movie in movies_list
+        movies_compacted = [[
+            movie[6],
+            movie[7],
+            movie[8],
+            f'{str(movie[9])[:50]}...'] for movie in movies_list
         ]
 
-        self.printer.display_table(headers, movies_compacted)
+        self.display_table(headers, movies_compacted)
         self.start()
 
     def create_seat_matrix(self, seats: list) -> list:
