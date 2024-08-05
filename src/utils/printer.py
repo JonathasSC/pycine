@@ -171,6 +171,11 @@ class Printer:
         self.error('A senha deve conter: ', timer=False)
 
         self.error(
+            text='- Pelo menos 8 caracteres',
+            line=False,
+            timer=False)
+
+        self.error(
             text='- Pelo menos um digito',
             line=False,
             timer=False)
