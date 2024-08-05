@@ -42,6 +42,7 @@ class AdminView(BaseView):
                     case _:
                         self.invalid_option()
                         self.start()
+                break
 
             except Exception as e:
                 self.printer.error(f'Erro ao iniciar tela de admin: {e}')

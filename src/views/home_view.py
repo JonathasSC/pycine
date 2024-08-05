@@ -42,17 +42,16 @@ class HomeView(BaseView):
                 if option == 1:
                     self.manager.auth_view.login()
                     self.manager.home_view.start()
+                    break
 
                 elif option == 2:
                     self.manager.auth_view.register()
                     self.manager.home_view.start()
+                    break
 
                 elif option == 3:
                     if self.close():
                         break
-                    self.manager.home_view.start()
-
-                break
 
             except Exception as e:
                 self.printer.error(f'Erro ao iniciar Inicial {e}')
