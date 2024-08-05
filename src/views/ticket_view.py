@@ -139,9 +139,6 @@ class TicketView(BaseView):
                 ]
 
                 if not ticket:
-                    from time import sleep
-                    print('Ue')
-                    sleep(4)
                     raise ValueError(
                         'Nenhum ticket com esse ID foi encontrado')
 
