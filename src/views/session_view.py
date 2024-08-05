@@ -186,8 +186,11 @@ class SessionView(BaseView):
                 )
 
                 session_id: str = input('Session ID: ').strip()
-
                 if session_id.lower() == 'q':
+                    self.printer.warning(
+                        text='Cancelando...',
+                        clear=True,
+                        timer=True)
                     break
 
                 session: tuple = self.session_crud.select_session_by_id(
@@ -202,16 +205,53 @@ class SessionView(BaseView):
                 old_data['price'] = session[3]
                 old_data['room_id'] = session[1]
                 old_data['movie_id'] = session[2]
-                old_data['start_time'] = session[4]
+                old_data['start_date'] = session[4]
+                old_data['start_time'] = session[5]
 
-                room_id: str = input(
+                room_id = input(
                     'Room ID (deixe em branco para manter o atual): ').strip()
-                movie_id: int = input(
+                if room_id.lower() == 'q':
+                    self.printer.warning(
+                        text='Cancelando...',
+                        clear=True,
+                        timer=True)
+                    break
+
+                movie_id = input(
                     'Movie ID (deixe em branco para manter o atual): ').strip()
-                price: int = input(
-                    'Price (deixe em branco para manter a atual): ').strip()
-                start_time: str = input(
+                if movie_id.lower() == 'q':
+                    self.printer.warning(
+                        text='Cancelando...',
+                        clear=True,
+                        timer=True)
+                    break
+
+                price = self.inputs.input_price(
+                    'Price (deixe em branco para manter a atual): ')
+                if price == None:
+                    self.printer.warning(
+                        text='Cancelando...',
+                        clear=True,
+                        timer=True)
+                    break
+
+                start_time = self.inputs.input_time(
                     'Start Time (deixe em branco para manter a atual): ').strip()
+                if start_time == None:
+                    self.printer.warning(
+                        text='Cancelando...',
+                        clear=True,
+                        timer=True)
+                    break
+
+                start_date = self.inputs.input_date(
+                    'Room ID (deixe em branco para manter o atual): ')
+                if start_date == None:
+                    self.printer.warning(
+                        text='Cancelando...',
+                        clear=True,
+                        timer=True)
+                    break
 
                 if not room_id:
                     new_data['room_id'] = old_data['room_id']
@@ -233,6 +273,11 @@ class SessionView(BaseView):
                 else:
                     new_data['start_time'] = start_time
 
+                if not start_time:
+                    new_data['start_date'] = old_data['start_date']
+                else:
+                    new_data['start_date'] = start_date
+
                 if new_data:
                     self.session_crud.update_session(session_id, new_data)
                     self.printer.success('Sala atualizado com sucesso!')
@@ -247,5 +292,3 @@ class SessionView(BaseView):
 
             except Exception as e:
                 self.printer.error(f'Erro ao atualizar sala: {e}')
-
-            self.manager.session_view.start()

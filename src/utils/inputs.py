@@ -36,7 +36,7 @@ class Inputs:
         if person_data['email'] == None:
             return None
 
-        person_data['password'] = self.input_password()
+        person_data['password'] = self.input_password('Senha: ')
         if person_data['password'] == 'q':
             return None
 

@@ -133,9 +133,8 @@ class MovieView(BaseView):
                     line=True
                 )
 
-                movie_id: str = input('Movie ID: ').strip().lower()
-
-                if movie_id == 'q':
+                movie_id: str = input('Movie ID: ').strip()
+                if movie_id.lower() == 'q':
                     self.manager.movie_view.start()
 
                 movie: tuple = self.movie_crud.select_movie_by_id(movie_id)

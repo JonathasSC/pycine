@@ -171,7 +171,6 @@ class PersonView(BaseView):
                         self.printer.warning(
                             text='Atualização cancelada',
                             clear=True)
-
                         continue
 
                     email = self.inputs.input_email(
