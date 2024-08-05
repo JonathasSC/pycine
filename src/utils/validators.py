@@ -8,9 +8,7 @@ from src.database.conn import Connection
 def password_validator(senha: str) -> bool:
     padrao = r'^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()-_+=])[A-Za-z\d!@#$%^&*()-_+=]{8,}$'
 
-    if re.match(padrao, senha):
-        return True
-    return False
+    return re.match(padrao, senha)
 
 
 def exists_email(email: str) -> bool:
@@ -21,9 +19,7 @@ def exists_email(email: str) -> bool:
     person_exists: tuple = conn.cursor.fetchone()
     conn.close()
 
-    if person_exists:
-        return False
-    return True
+    return person_exists is None
 
 
 def validate_seat_choice(seats, chosen_seat):
@@ -46,7 +42,7 @@ def email_validator(email: str) -> bool:
     return True
 
 
-def session_validator(room_id: str, start_time: str, start_date: str):
+def session_validator(room_id: str, start_date: str, start_time: str) -> bool:
     conn: Connection = Connection(auto_connect=False)
 
     conn.connect()
@@ -55,9 +51,7 @@ def session_validator(room_id: str, start_time: str, start_date: str):
     session_exists: tuple = conn.cursor.fetchone()
     conn.close()
 
-    if session_exists:
-        return False
-    return True
+    return session_exists is None
 
 
 def exists_room(room_id: str):
@@ -68,6 +62,4 @@ def exists_room(room_id: str):
     person_exists: tuple = conn.cursor.fetchone()
     conn.close()
 
-    if person_exists:
-        return False
-    return True
+    return person_exists is None

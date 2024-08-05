@@ -77,8 +77,8 @@ class Populate:
             self.rooms_crud.insert_room(data)
 
     def populate_sessions(self):
-        rooms_id_list: list = []
-        movies_id_list: list = []
+        rooms_id_list = []
+        movies_id_list = []
 
         for _ in range(self.populate_range):
             data = {
@@ -87,7 +87,6 @@ class Populate:
                 'duration': Faker().time(pattern='%H:%M:%S'),
                 'synopsis': Faker().text()
             }
-
             movies_id_list.append(self.movies_crud.insert_movie(data))
 
         for _ in range(self.populate_range):
@@ -97,23 +96,29 @@ class Populate:
                 'columns': 10,
                 'type': 'vip'
             }
-
             rooms_id_list.append(self.rooms_crud.insert_room(data))
 
         for n in range(self.populate_range):
             now = datetime.now()
-            future_date = (now + timedelta(days=random.randint(1, 30))).date()
-            future_time = (now + timedelta(hours=random.randint(1, 12))).time()
+            future_date = now + timedelta(days=random.randint(1, 30),
+                                          hours=random.randint(0, 23), minutes=random.randint(0, 59))
+
+            if future_date.hour >= 24:
+                future_date += timedelta(days=1)
+                future_date = future_date.replace(hour=future_date.hour - 24)
 
             data = {
                 'price': '25.50',
                 'room_id': rooms_id_list[n],
                 'movie_id': movies_id_list[n],
-                'start_date': future_date,
-                'start_time': future_time
+                'start_date': future_date.date(),
+                'start_time': future_date.time()
             }
 
-            self.session_crud.insert_session(data)
+            try:
+                self.session_crud.insert_session(data)
+            except ValueError as e:
+                self.logger.warning(f'Não foi possível inserir a sessão: {e}')
 
     def populate_seats(self):
         rooms = self.rooms_crud.select_all_rooms()
@@ -130,6 +135,10 @@ class Populate:
         self.populate_clients()
 
         self.populate_rooms()
+        print('Populate rooms finalizado')
         self.populate_movies()
+        print('Populate movies finalizado')
         self.populate_sessions()
+        print('Populate sessions finalizado')
         self.populate_seats()
+        print('Populate seats finalizado')
