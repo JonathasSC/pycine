@@ -81,13 +81,10 @@ class AuthView(BaseView):
                 person_data: Optional[dict] = self.inputs.input_register()
 
                 if person_data == None:
-                    self.printer.warning(
-                        text='Registro cancelado',
-                        clear=True
-                    )
+                    self.printer.warning(text='Registro cancelado', clear=True)
                     break
 
-                person_id = Optional[str] = self.person_crud.insert_person(
+                person_id: Optional[str] = self.person_crud.insert_person(
                     person_data)
 
                 self.client_crud.insert_client(person_id)
@@ -95,6 +92,7 @@ class AuthView(BaseView):
                 self.printer.success(
                     text='Registro efetuado com sucesso!',
                     clear=True)
+                break
 
             except ValidationError as e:
                 self.terminal.clear()
@@ -116,8 +114,3 @@ class AuthView(BaseView):
             except Exception as e:
                 self.terminal.clear()
                 self.printer.error(f'Erro ao registrar-se: {str(e)}')
-
-            else:
-                self.printer.success(
-                    text='Registro realizado com sucesso!',
-                    clear=True)

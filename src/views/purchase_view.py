@@ -54,7 +54,7 @@ class PurchaseView(BaseView):
     def choose_movie(self) -> Optional[tuple]:
         self.terminal.clear()
         movies: list = self.session_crud.select_all_session_with_movies()
-        movies_names = [movie[6] for movie in movies]
+        movies_names = [movie[7] for movie in movies]
 
         option: str = self.choose_an_option(
             options=movies_names,
@@ -131,14 +131,17 @@ class PurchaseView(BaseView):
                        person_id: str) -> Optional[tuple]:
 
         self.terminal.clear()
+        seat_id: str = seat[0]
         seat_code: str = seat[2]
         session_time: str = session[4]
+        seat_date: str = session[5]
         movie_name: str = self.movie_crud.select_movie_by_id(session[2])[1]
 
         self.printer.generic("Revise seu ticket", line=True)
         self.printer.generic(f"Filme: {movie_name}")
         self.printer.generic(f"Assento: {seat_code}")
-        self.printer.generic(f"Horário: {session_time}")
+        self.printer.generic(f"Horário: {seat_date}")
+        self.printer.generic(f"Data: {session_time}")
 
         confirm_options = ['Sim, confirmar']
         option: str = self.choose_an_option(
@@ -158,6 +161,7 @@ class PurchaseView(BaseView):
 
         ticket_id: str = self.ticket_crud.insert_ticket(data)
         ticket: tuple = self.ticket_crud.select_ticket_by_id(ticket_id)
+        self.seat_crud.update_seat_state(seat_id, 'sold')
 
         self.terminal.clear()
         return ticket

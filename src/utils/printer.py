@@ -119,20 +119,19 @@ class Printer:
         headers: list = ['NAME', 'GENRE', 'DURATION', 'SYNOPSIS']
 
         self.terminal.clear()
-        self.printer.generic(
+        self.generic(
             text='Filmes em cartaz',
             line=True
         )
 
         movies_compacted = [[
-            movie[6],
             movie[7],
             movie[8],
-            f'{str(movie[9])[:50]}...'] for movie in movies_list
+            movie[9],
+            f'{str(movie[10])[:50]}...'] for movie in movies_list
         ]
 
         self.display_table(headers, movies_compacted)
-        self.start()
 
     def create_seat_matrix(self, seats: list) -> list:
         max_row = max(seat[3] for seat in seats) + 1

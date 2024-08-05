@@ -2,7 +2,7 @@ from src.utils.printer import Printer
 from src.utils.terminal import Terminal
 import getpass
 from typing import Optional, Dict
-from src.utils.validators import password_validator, email_validator
+from src.utils.validators import password_validator, email_validator, exists_room
 from datetime import datetime
 import re
 
@@ -53,32 +53,12 @@ class Inputs:
         if person_data['email'] == None:
             return None
 
-        person_data['password'] = self.input_password()
+        person_data['password'] = self.input_password(
+            'Senha (ela está ocultada): ')
         if person_data['password'] == None:
             return None
 
         return person_data
-
-    def input_password(self) -> Optional[str]:
-        while True:
-            password = getpass.getpass('Senha (ela está ocultada): ')
-            if password in 'Qq':
-                return None
-
-            confirm_password: str = getpass.getpass('Confirme a senha: ')
-            if confirm_password in 'Qq':
-                return None
-
-            if password != confirm_password:
-                self.printer.error('Senhas não correspondem, tente novamente')
-                pass
-
-            elif not password_validator(password):
-                self.terminal.clear()
-                self.printer.password_params()
-
-            else:
-                return password
 
     def input_movie(self) -> Optional[dict]:
         movie_data: dict = {}
@@ -139,11 +119,11 @@ class Inputs:
         session_data: dict = {}
 
         session_data['price'] = self.input_price('Price (00.00): ')
-        if session_data['price'] is None:
+        if session_data['price'] == None:
             return None
 
-        session_data['room_id'] = input('Room ID: ')
-        if session_data['room_id'] == 'q':
+        session_data['room_id'] = self.input_room_id('Room ID: ')
+        if session_data['room_id'] == None:
             return None
 
         session_data['movie_id'] = input('Movie ID: ')
@@ -151,12 +131,12 @@ class Inputs:
             return None
 
         session_data['start_date'] = self.input_date(
-            'Start date (dd/mm/yyyy)')
+            'Start date (dd/mm/yyyy): ')
         if session_data['start_date'] is None:
             return None
 
         session_data['start_time'] = self.input_time(
-            'Start time (HH:MM)')
+            'Start time (HH:MM): ')
         if session_data['start_time'] is None:
             return None
 
@@ -255,12 +235,34 @@ class Inputs:
 
     def input_password(self, prompt) -> Optional[str]:
         while True:
-            password = input(prompt).strip()
+            password = getpass.getpass(prompt)
             if password.lower() == 'q':
                 return None
+
+            confirm_password = getpass.getpass(
+                'Confirme (ela está ocultada): ')
+            if confirm_password.lower() == 'q':
+                return None
+
+            if password != confirm_password:
+                self.printer.error('Senhas não correspondem, tente novamente')
+                continue
 
             if password_validator(password):
                 return password
 
             self.terminal.clear()
             self.printer.password_params()
+
+    def input_room_id(self, prompt: str) -> Optional[str]:
+        while True:
+            room_id = input(prompt).strip()
+            if room_id.lower() == 'q':
+                return None
+
+            if not exists_room(room_id):
+                return room_id
+
+            self.printer.error(
+                text="Nenhuma sala com esse id foi encontrada",
+                clear=True)

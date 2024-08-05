@@ -144,6 +144,7 @@ class ClientView(BaseView):
                     self.handlers.handle_no_sessions_available()
                 else:
                     self.printer.display_movies(movies_list)
+                    break
 
             except Exception as e:
                 print(f'Erro ao mostrar filmes {e}')

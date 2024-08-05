@@ -9,8 +9,17 @@ CREATE TABLE IF NOT EXISTS sessions (
     start_date DATE,
     start_time TIME,
     
-    FOREIGN KEY (room_id) REFERENCES rooms(room_id)
+    FOREIGN KEY (room_id) REFERENCES rooms(room_id),
+    UNIQUE (room_id, start_date, start_time)
 );
+"""
+
+SELECT_BY_ROOM_START_DATE_AND_TIME = """
+SELECT * 
+FROM sessions 
+WHERE room_id = ? 
+  AND start_date = ? 
+  AND start_time = ?;
 """
 
 

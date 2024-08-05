@@ -4,6 +4,7 @@ from src.crud.base_crud import BaseCrud
 from src.database.conn import Connection
 from typing import List, Dict, Any, Optional, Tuple
 from src.schemas.session_schemas import SessionCreate, SessionUpdate
+from src.utils.validators import session_validator
 
 from src.queries.sessions_queries import (
     INSERT_SESSION,
@@ -68,6 +69,8 @@ class SessionsCrud(BaseCrud):
             session_dict: Dict[str, Any] = dict(SessionCreate(**data))
 
             now = datetime.now()
+
+            room_id = session_dict.get('room_id', None)
             start_date = session_dict.get('start_date', None)
             start_time = session_dict.get('start_time', None)
 
@@ -76,6 +79,9 @@ class SessionsCrud(BaseCrud):
                 if session_datetime < now:
                     raise ValueError(
                         'A sessão não pode ser agendada para uma data e hora no passado.')
+
+            if session_validator(room_id, start_time.isoformat(), start_date.strftime('%H:%M')):
+                raise ValueError('Já existe uma sessão nessa sala e horário')
 
             data_list: List[any] = [
                 session_dict.get('session_id', None),
