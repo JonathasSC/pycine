@@ -1,6 +1,7 @@
 from src.views.base_view import BaseView
 from src.utils.validators import validate_seat_choice
 from typing import Optional
+from time import sleep
 
 
 class PurchaseView(BaseView):
@@ -11,7 +12,6 @@ class PurchaseView(BaseView):
 
     def start(self) -> None:
         token: str = self.token.load_token()
-        person_role: str = self.token.get_role_from_token(token)
         person_id: str = self.token.person_id_from_token(token)
 
         while True:
@@ -41,15 +41,12 @@ class PurchaseView(BaseView):
                 self.terminal.clear()
                 self.printer.success(
                     'COMPRA EFEITUADA COM SUCESSO, VOLTE SEMPRE!')
+                break
 
             except Exception as e:
                 raise e
 
-        if person_role == 'client':
-            self.manager.client_view.start()
-
-        elif person_role == 'admin':
-            self.manager.client_view.start()
+        self.manager.client_view.start()
 
     def choose_movie(self) -> Optional[tuple]:
         self.terminal.clear()
@@ -105,25 +102,26 @@ class PurchaseView(BaseView):
             self.printer.print_seat_matrix(seat_matrix)
 
             seat_code: str = input(
-                'Escolha um assento pelo código (ou digite "q" para voltar): ')
+                'Escolha um assento pelo código (ou digite "q" para voltar): ').strip()
 
-            if seat_code.lower() == 'q':
+            if seat_code.lower() in 'Qq':
                 self.terminal.clear()
                 return None
+
+            seat_code = seat_code.upper()
 
             if validate_seat_choice(seats, seat_code):
                 seat: tuple = self.seat_crud.select_seat_by_room_id_and_seat_code(
                     room_id,
                     seat_code)
 
-                self.terminal.clear()
                 return seat
 
-            self.terminal.clear()
             self.printer.error(
-                'Assento indisponivel, escolha outro',
-                timer=True)
-            self.terminal.clear()
+                text='Assento indisponivel, escolha outro',
+                timer=True,
+                clear=True
+            )
 
     def process_ticket(self,
                        seat: tuple,

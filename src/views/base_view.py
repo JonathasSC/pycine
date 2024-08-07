@@ -123,9 +123,4 @@ class BaseView:
             confirm_options,
             text=text)
 
-        if option == 1:
-            self.terminal.clear()
-            self.printer.generic('Fechado...', line=True, timer=True)
-            self.terminal.clear()
-            return True
-        return False
+        return option == 1

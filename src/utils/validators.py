@@ -3,6 +3,7 @@ from src.queries.persons_queries import SELECT_BY_EMAIL
 from src.queries.sessions_queries import SELECT_BY_ROOM_START_DATE_AND_TIME
 from src.queries.rooms_queries import SELECT_ROOM_BY_ID
 from src.database.conn import Connection
+from time import sleep
 
 
 def password_validator(senha: str) -> bool:
@@ -24,10 +25,8 @@ def exists_email(email: str) -> bool:
 
 def validate_seat_choice(seats, chosen_seat):
     for seat in seats:
-        if seat[2] == chosen_seat:
-            if seat[5] == 'available':
-                return seat[5]
-            return None
+        if seat[2] == chosen_seat.upper():
+            return seat[5] if seat[5] == 'available' else None
     return None
 
 

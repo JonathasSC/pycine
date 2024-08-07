@@ -116,6 +116,7 @@ class SeatsCrud(BaseCrud):
                 SELECT_SEATS_BY_ROOM_ID_SEAT_CODE, [room_id, seat_code])
             seat: tuple = self.conn.cursor.fetchone()
             self.conn.close()
+
             return seat
         except Exception as e:
             raise e
