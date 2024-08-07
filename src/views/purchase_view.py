@@ -52,11 +52,13 @@ class PurchaseView(BaseView):
         self.terminal.clear()
         movies: list = self.session_crud.select_all_session_with_movies()
         movies_names = [movie[7] for movie in movies]
+        header: list = ['Nome do filme']
 
         option: str = self.choose_an_option(
             options=movies_names,
             text='Escolha um filme',
-            cancel=True
+            header=header,
+            cancel=True,
         )
 
         if not option:
@@ -73,13 +75,16 @@ class PurchaseView(BaseView):
             movie_id)
 
         options_formated = [
-            f'{session[0]} | {session[1]} | {session[2]} | {session[3]}' for session in sessions]
+            f'R$ {session[0]} | {session[1]} | {session[2]} | {session[3]}' for session in sessions]
 
         sessions_id: list = [session[5] for session in sessions]
 
+        header: list = ['Preço(R$)', 'Hora', 'Tipo', 'Nome']
+
         option = self.choose_an_option(
             options=options_formated,
-            text='Escolha uma sessão',
+            text='Escolha uma sessão'.center(32),
+            header=header,
             cancel=True
         )
 
