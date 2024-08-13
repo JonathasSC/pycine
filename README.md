@@ -31,16 +31,22 @@ Entre no repositório clonado, crie um ambiente virtual e a tive com esse comand
 No Windows:
 
 ```bash
-cd pycine | python -m venv venv | .\venv\Scripts\activate
+cd pycine | python -m venv venv
+```
+
+```bash
+.\venv\Scripts\activate
 ```
 
 No Linux/MacOS:
 
 ```bash
-cd pycine && python3 -m venv venv && source venv/bin/activate
+cd pycine && python3 -m venv venv
 ```
 
-Aguarde alguns segundos e continue para a próxima etapa.
+```bash
+source venv/bin/activate
+```
 
 ### 3. Instale as dependências
 
