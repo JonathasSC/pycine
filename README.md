@@ -18,7 +18,7 @@
 
 ### 1. Clone este repositório
 
-Para clonar este repositório, utilize o comando:
+Para clonar este repositório, utilize o comando no terminal:
 
 ```bash
 git clone https://github.com/JonathasSC/pycine
@@ -26,25 +26,21 @@ git clone https://github.com/JonathasSC/pycine
 
 ### 2. Crie e ative um ambiente virtual
 
-Dentro do repositório clonado, abra um terminal e execute:
-
-```bash
-python -m venv venv
-```
-
-Aguarde alguns segundos e, em seguida, execute:
+Entre no repositório clonado, crie um ambiente virtual e a tive com esse comando:
 
 No Windows:
 
 ```bash
-.\venv\Scripts\activate
+cd pycine && python -m venv venv && .\venv\Scripts\activate
 ```
 
 No Linux/MacOS:
 
 ```bash
-source venv/bin/activate
+cd pycine || python3 -m venv venv || source venv/bin/activate
 ```
+
+Aguarde alguns segundos e continue para a próxima etapa.
 
 ### 3. Instale as dependências
 
