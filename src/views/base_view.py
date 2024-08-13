@@ -51,12 +51,13 @@ class BaseView:
 
     def choose_an_option(self,
                          options: list,
+                         header: list = [],
                          text: str = 'Escolha uma opção',
                          cancel: bool = False) -> Optional[str]:
         while True:
             try:
                 self.printer.generic(text, line=True)
-                self.printer.option_list(options)
+                self.printer.option_list(options, header)
 
                 if cancel:
                     self.printer.generic(f'[0] - Cancelar')
@@ -79,21 +80,11 @@ class BaseView:
                     text="Entrada inválida. Por favor, digite um número.",
                     clear=True)
 
-    def execute_option(self,
-                       options: dict,
-                       option: int) -> None:
-        action = options.get(option, self.invalid_option)
-        action()
-
     def invalid_option(self) -> None:
-        self.terminal.clear()
-        self.printer.error('Opção inválida, tente novamente')
-        self.terminal.clear()
+        self.printer.error('Opção inválida, tente novamente', clear=True)
 
     def invalid_value(self) -> None:
-        self.terminal.clear()
-        self.printer.error('Valor inválido, tente novamente')
-        self.terminal.clear()
+        self.printer.error('Valor inválido, tente novamente', clear=True)
 
     def crt_admin(self) -> None:
         while True:
@@ -123,9 +114,4 @@ class BaseView:
             confirm_options,
             text=text)
 
-        if option == 1:
-            self.terminal.clear()
-            self.printer.generic('Fechado...', line=True, timer=True)
-            self.terminal.clear()
-            return True
-        return False
+        return option == 1

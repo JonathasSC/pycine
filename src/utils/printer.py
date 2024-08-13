@@ -64,7 +64,22 @@ class Printer:
         self.generic(text, color, line, timer, clear)
 
     def option_list(self,
-                    options: list):
+                    options: list,
+                    header: list = []):
+        if header:
+            print(' [X] - ', end='')
+            for text in header:
+                if len(header) == 1:
+                    print(f'{text.upper()}', end='')
+                else:
+                    print(f'{text.upper()} - ', end='')
+
+            print(' ')
+            if len(header) == 1:
+                self.line(size=(len(max(header)) + 8))
+            else:
+                self.line(size=(len(max(header)) + 36))
+
         for index, item in enumerate(options):
             self.generic(f'[{index + 1}] - {item}')
 

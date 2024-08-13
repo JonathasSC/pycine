@@ -9,8 +9,8 @@ class AdminView(BaseView):
         self.list_options: list = [
             'Fluxo publico',
             'Fluxo administrativo',
-            'Logout',
-            'Sair',
+            'Sair da conta',
+            'Fechar',
         ]
 
     def start(self) -> None:
@@ -34,10 +34,17 @@ class AdminView(BaseView):
                         break
                     case 3:
                         if self.close(text='Realmente deseja sair?'):
+                            self.printer.generic(
+                                text='Saindo...',
+                                line=True,
+                                timer=True,
+                                clear=True
+                            )
                             self.logout()
                             self.manager.home_view.start()
                     case 4:
                         if self.close():
+                            self.terminal.clear()
                             break
                     case _:
                         self.invalid_option()

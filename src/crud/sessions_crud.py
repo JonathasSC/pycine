@@ -80,16 +80,15 @@ class SessionsCrud(BaseCrud):
                     raise ValueError(
                         'A sessão não pode ser agendada para uma data e hora no passado.')
 
-            if session_validator(room_id, start_time.isoformat(), start_date.strftime('%H:%M')):
-                raise ValueError('Já existe uma sessão nessa sala e horário')
+                if not session_validator(room_id, start_date.isoformat(), start_time.strftime('%H:%M:%S')):
+                    raise ValueError(
+                        'Já existe uma sessão nessa sala e horário.')
 
-            data_list: List[any] = [
+            data_list: List[Any] = [
                 session_dict.get('session_id', None),
                 session_dict.get('room_id', None),
                 session_dict.get('movie_id', None),
-
                 str(session_dict.get('price', None)),
-
                 session_dict.get('start_date', None).isoformat(),
                 session_dict.get('start_time', None).strftime('%H:%M')
             ]
@@ -99,10 +98,11 @@ class SessionsCrud(BaseCrud):
             self.conn.connection.commit()
             self.conn.close()
 
-            self.logger.info('INSERINDO SESSÃO')
+            self.logger.info(f'Sessão inserida com sucesso: {session_id}')
             return session_id
 
         except Exception as e:
+            self.logger.error(f'Erro ao inserir sessão: {e}')
             raise e
 
     def update_session(self, session_id: str, session_data: Dict[str, Any]) -> Optional[str]:

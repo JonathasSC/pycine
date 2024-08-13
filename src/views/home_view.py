@@ -51,6 +51,7 @@ class HomeView(BaseView):
 
                 elif option == 3:
                     if self.close():
+                        self.terminal.clear()
                         break
 
             except Exception as e:

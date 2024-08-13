@@ -1,6 +1,7 @@
 from src.views.base_view import BaseView
 from src.utils.validators import validate_seat_choice
 from typing import Optional
+from time import sleep
 
 
 class PurchaseView(BaseView):
@@ -11,7 +12,6 @@ class PurchaseView(BaseView):
 
     def start(self) -> None:
         token: str = self.token.load_token()
-        person_role: str = self.token.get_role_from_token(token)
         person_id: str = self.token.person_id_from_token(token)
 
         while True:
@@ -41,25 +41,24 @@ class PurchaseView(BaseView):
                 self.terminal.clear()
                 self.printer.success(
                     'COMPRA EFEITUADA COM SUCESSO, VOLTE SEMPRE!')
+                break
 
             except Exception as e:
                 raise e
 
-        if person_role == 'client':
-            self.manager.client_view.start()
-
-        elif person_role == 'admin':
-            self.manager.client_view.start()
+        self.manager.client_view.start()
 
     def choose_movie(self) -> Optional[tuple]:
         self.terminal.clear()
         movies: list = self.session_crud.select_all_session_with_movies()
         movies_names = [movie[7] for movie in movies]
+        header: list = ['Nome do filme']
 
         option: str = self.choose_an_option(
             options=movies_names,
             text='Escolha um filme',
-            cancel=True
+            header=header,
+            cancel=True,
         )
 
         if not option:
@@ -76,13 +75,16 @@ class PurchaseView(BaseView):
             movie_id)
 
         options_formated = [
-            f'{session[0]} | {session[1]} | {session[2]} | {session[3]}' for session in sessions]
+            f'R$ {session[0]} | {session[1]} | {session[2]} | {session[3]}' for session in sessions]
 
         sessions_id: list = [session[5] for session in sessions]
 
+        header: list = ['Preço(R$)', 'Hora', 'Tipo', 'Nome']
+
         option = self.choose_an_option(
             options=options_formated,
-            text='Escolha uma sessão',
+            text='Escolha uma sessão'.center(32),
+            header=header,
             cancel=True
         )
 
@@ -105,25 +107,26 @@ class PurchaseView(BaseView):
             self.printer.print_seat_matrix(seat_matrix)
 
             seat_code: str = input(
-                'Escolha um assento pelo código (ou digite "q" para voltar): ')
+                'Escolha um assento pelo código (ou digite "q" para voltar): ').strip()
 
-            if seat_code.lower() == 'q':
+            if seat_code.lower() in 'Qq':
                 self.terminal.clear()
                 return None
+
+            seat_code = seat_code.upper()
 
             if validate_seat_choice(seats, seat_code):
                 seat: tuple = self.seat_crud.select_seat_by_room_id_and_seat_code(
                     room_id,
                     seat_code)
 
-                self.terminal.clear()
                 return seat
 
-            self.terminal.clear()
             self.printer.error(
-                'Assento indisponivel, escolha outro',
-                timer=True)
-            self.terminal.clear()
+                text='Assento indisponivel, escolha outro',
+                timer=True,
+                clear=True
+            )
 
     def process_ticket(self,
                        seat: tuple,

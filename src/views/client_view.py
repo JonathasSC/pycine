@@ -44,7 +44,7 @@ class ClientView(BaseView):
                         'Ver filmes em exibição',
                         'Ver meus tickets',
                         'Comprar ingresso',
-                        'Logout',
+                        'Sair da conta',
                         'Fechar'
                     ]
 
@@ -84,10 +84,17 @@ class ClientView(BaseView):
                 self.manager.purchase_view.start()
             case 4:
                 if self.close(text='Realmente deseja sair?'):
+                    self.printer.generic(
+                        text='Saindo...',
+                        line=True,
+                        timer=True,
+                        clear=True
+                    )
                     self.logout()
                 self.manager.home_view.start()
             case 5:
                 if self.close():
+                    self.terminal.clear()
                     return False
             case _:
                 self.invalid_option()
