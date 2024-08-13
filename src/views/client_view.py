@@ -96,6 +96,7 @@ class ClientView(BaseView):
                 if self.close():
                     self.terminal.clear()
                     return False
+                self.manager.client_view.start()
             case _:
                 self.invalid_option()
                 self.start()

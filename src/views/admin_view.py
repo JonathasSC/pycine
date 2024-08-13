@@ -41,11 +41,12 @@ class AdminView(BaseView):
                                 clear=True
                             )
                             self.logout()
-                            self.manager.home_view.start()
+                        self.manager.home_view.start()
                     case 4:
                         if self.close():
                             self.terminal.clear()
                             break
+                        self.manager.admin_view.start()
                     case _:
                         self.invalid_option()
                         self.start()

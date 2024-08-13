@@ -89,9 +89,12 @@ class BaseView:
     def crt_admin(self) -> None:
         while True:
             try:
-                person_data: dict = self.inputs.input_person()
-                self.person_crud.insert_person(person_data)
+                person_data = self.inputs.input_person()
+                if person_data == None:
+                    self.printer.success('Registro de admin cancelada')
+                    continue
 
+                self.person_crud.insert_person(person_data)
                 person: tuple = self.person_crud.select_by_email(
                     person_data['email']
                 )
