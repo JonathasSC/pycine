@@ -349,10 +349,12 @@ class PersonView(BaseView):
                 try:
                     self.terminal.clear()
                     self.printer.generic(
-                        text='Preencha os campos ou digite deixe em branco para cancelar',
+                        text='Preencha os campos ou digite "q" cancelar',
                         line=True)
 
-                    person_data: dict = self.inputs.input_person()
+                    person_data = self.inputs.input_person()
+                    if person_data == None:
+                        break
 
                     if any(value == '' for value in person_data.values()):
                         break
