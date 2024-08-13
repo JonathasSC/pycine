@@ -91,8 +91,9 @@ class BaseView:
             try:
                 person_data = self.inputs.input_person()
                 if person_data == None:
-                    self.printer.success('Registro de admin cancelada')
-                    continue
+                    self.printer.warning(
+                        'Registro de primeiro admin cancelado')
+                    break
 
                 self.person_crud.insert_person(person_data)
                 person: tuple = self.person_crud.select_by_email(
