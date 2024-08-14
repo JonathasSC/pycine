@@ -2,7 +2,7 @@ from src.utils.printer import Printer
 from src.utils.terminal import Terminal
 import getpass
 from typing import Optional, Dict
-from src.utils.validators import password_validator, email_validator, exists_room
+from src.utils.validators import password_validator, email_validator, exists_room, exists_email
 from datetime import datetime
 import re
 
@@ -304,3 +304,36 @@ class Inputs:
             return None
 
         return movie_data
+
+    def input_put_person(self) -> None:
+        person_data: dict = {}
+
+        person_data['name'] = input(
+            'Nome (deixe em branco para manter o atual): ').strip()
+        if person_data['name'] == 'q':
+            return None
+
+        person_data['email'] = input(
+            'Email (deixe em branco para manter o atual): ').strip()
+        if person_data['email'] == 'q':
+            return None
+
+        person_data['password'] = input(
+            'Senha (deixe em branco para manter a atual): ').strip()
+        if person_data['password'] == 'q':
+            return None
+
+        while person_data['email'] and not exists_email(person_data['email']):
+            self.printer.error(
+                text='Esse email já está em uso', clear=True)
+
+            person_data['email'] = input('Email: ').strip()
+
+        while person_data['password'] and not password_validator(person_data['password']):
+            self.terminal.clear()
+            self.printer.password_params()
+            self.terminal.clear()
+
+            person_data['password'] = input('Senha: ').strip()
+
+        return person_data
