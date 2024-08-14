@@ -4,9 +4,11 @@ from src.queries.clients_queries import (
     SELECT_ALL_CLIENTS,
     SELECT_CLIENT_BY_ID,
     DELETE_CLIENT_BY_PERSON_ID,
-    UPDATE_PERSON_CLIENT_BY_CLIENT_ID
+    UPDATE_PERSON_CLIENT_BY_CLIENT_ID,
+    SELECT_CLIENT_BY_PERSON_EMAIL
 )
 
+from src.queries.persons_queries import UPDATE_PERSON_BY_EMAIL
 
 from src.crud.base_crud import BaseCrud
 from src.database.conn import Connection
@@ -106,14 +108,33 @@ class ClientsCrud(BaseCrud):
             )
 
             self.conn.connection.commit()
-            self.conn.cursor.execute(
-                SELECT_CLIENT_BY_ID(client_id)
-            )
+            self.conn.cursor.execute(SELECT_CLIENT_BY_ID, [client_id])
 
             client: tuple = self.conn.cursor.fetchone()
             self.conn.close()
 
             self.logger.info('ATUALIZANDO CLIENT POR ID')
+            return client
+
+        except Exception as e:
+            raise e
+
+    def update_client_by_email(self, email: str, data: dict) -> Optional[Tuple[str]]:
+        try:
+            data_list: List[str] = [
+                data.get('name', None),
+                data.get('email', None),
+                data.get('password', None),
+                email
+            ]
+
+            self.conn.connect()
+            self.conn.cursor.execute(UPDATE_PERSON_BY_EMAIL, data_list)
+            self.conn.connection.commit()
+            client: tuple = self.conn.cursor.fetchone()
+            self.conn.close()
+
+            self.logger.info('ATUALIZANDO CLIENT POR EMAIL')
             return client
 
         except Exception as e:
@@ -135,7 +156,8 @@ class ClientsCrud(BaseCrud):
     def select_by_email(self, client_email: str) -> tuple:
         try:
             self.conn.connect()
-            self.conn.cursor.execute(SELECT_BY_EMAIL, [client_email])
+            self.conn.cursor.execute(
+                SELECT_CLIENT_BY_PERSON_EMAIL, [client_email])
             client: tuple = self.conn.cursor.fetchone()
             self.conn.close()
 

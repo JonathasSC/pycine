@@ -56,3 +56,19 @@ SET
 WHERE 
     person_id = (SELECT person_id FROM admins WHERE admin_id = ?);
 """
+
+
+SELECT_CLIENT_BY_PERSON_EMAIL = """
+SELECT
+    c.client_id,
+    p.person_id,
+    p.name,
+    p.email, 
+    p.password
+FROM 
+    clients c
+JOIN 
+    persons p ON p.person_id = c.person_id
+WHERE
+    p.email = ?
+"""

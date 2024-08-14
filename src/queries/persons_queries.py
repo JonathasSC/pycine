@@ -13,6 +13,12 @@ SET name = ?, email = ?, password = ?
 WHERE person_id = ?;
 """
 
+UPDATE_PERSON_BY_EMAIL = """
+UPDATE persons
+SET name = ?, email = ?, password = ?
+WHERE email = ?;
+"""
+
 INSERT_PERSON = """
 INSERT INTO persons (person_id, name, email, password) VALUES (?, ?, ?, ?)
 """

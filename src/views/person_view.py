@@ -1,6 +1,6 @@
 from pydantic import ValidationError
 from src.views.base_view import BaseView
-from src.utils.validators import exists_email, password_validator
+from typing import Optional
 
 
 class PersonView(BaseView):
@@ -417,84 +417,57 @@ class PersonView(BaseView):
         def put_client() -> None:
             while True:
                 try:
-                    old_data = {}
-                    data = {}
+                    old_data: dict = {}
+                    new_data: dict = {}
 
                     self.terminal.clear()
                     self.printer.generic(
-                        'Digite o Client ID, ou "q" para cancelar', line=True)
-                    client_id: str = input('Client ID: ').strip().lower()
+                        'Digite o EMAIL, ou "q" para cancelar', line=True)
+                    email: str = input('Email: ').strip().lower()
 
-                    if client_id == 'q':
-                        self.manage_client()
+                    if email == 'q':
+                        self.printer.success(
+                            text='Edição de cliente cancelada',
+                            clear=True)
+                        self.manager.person_view.manage_client()
 
-                    client: tuple = self.client_crud.select_by_id(client_id)
+                    client: Optional[tuple] = self.client_crud.select_by_email(
+                        email)
 
                     if not client:
-                        self.terminal.clear()
-                        self.printer.error(
-                            'Nenhum cliente identificado, tente novamente')
-                        self.terminal.clear()
+                        self.printer.warning(
+                            text='Nenhum cliente identificado, tente novamente',
+                            clear=True)
                         put_client()
 
-                    person = self.person_crud.select_by_id(client[1])
+                    old_data['name'] = client[2]
+                    old_data['email'] = client[3]
+                    old_data['password'] = client[4]
 
-                    old_data['name'] = person[1]
-                    old_data['email'] = person[2]
-                    old_data['password'] = person[3]
+                    new_data: Optional[dict] = self.inputs.input_put_person()
 
-                    name = input(
-                        'Nome (deixe em branco para manter o atual): ').strip()
-                    email = input(
-                        'Email (deixe em branco para manter o atual): ').strip()
-                    password = input(
-                        'Senha (deixe em branco para manter a atual): ').strip()
+                    if not new_data:
+                        self.printer.success(
+                            text='Edição de cliente cancelada',
+                            clear=True)
+                        self.manager.person_view.manage_client()
 
-                    while email and not exists_email(email):
-                        self.terminal.clear()
-                        self.printer.error('Esse email já está em uso')
-                        self.terminal.clear()
+                    data: dict = {
+                        'name': new_data.get('name') if new_data.get('name') != '' else old_data['name'],
+                        'email': new_data.get('email') if new_data.get('email') != '' else old_data['email'],
+                        'password': self.hash.generate_hash(new_data.get('password')) if new_data.get('password') != '' else old_data['password'],
+                    }
 
-                        email = input('Email: ').strip()
-
-                    while password and not password_validator(password):
-                        self.terminal.clear()
-                        self.printer.password_params()
-                        self.terminal.clear()
-
-                        password = input('Senha: ').strip()
-
-                    if not name:
-                        data['name'] = old_data['name']
-                    else:
-                        data['name'] = name
-
-                    if not email:
-                        data['email'] = old_data['email']
-                    else:
-                        data['email'] = email
-
-                    if not password:
-                        data['password'] = old_data['password']
-                    else:
-                        data['password'] = self.hash.generate_hash(
-                            password
-                        )
-
-                    if data:
-                        self.client_crud.update_client(client_id, data)
-                        self.printer.success('Cliente atualizado com sucesso!')
-                    else:
-                        self.printer.info(
-                            'Nenhum dado fornecido para atualização.')
+                    self.client_crud.update_client_by_email(email, data)
+                    self.printer.success(
+                        'Cliente atualizado com sucesso!',
+                        clear=True)
 
                 except ValueError as e:
                     self.printer.error(text=f'{e}', clear=True)
-                    self.put_admin()
 
                 except Exception as e:
                     self.printer.error(f'Erro ao atualizar cliente: {e}')
-                    self.put_client()
 
                 finally:
                     self.manage_client()
