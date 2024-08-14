@@ -63,19 +63,19 @@ class Inputs:
     def input_movie(self) -> Optional[dict]:
         movie_data: dict = {}
 
-        movie_data['name'] = input('Nome: ')
+        movie_data['name'] = input('Nome: ').strip().lower()
         if movie_data['name'] == 'q':
             return None
 
-        movie_data['genre'] = input('Genre: ')
+        movie_data['genre'] = input('Genre: ').strip().lower()
         if movie_data['genre'] == 'q':
             return None
 
-        movie_data['duration'] = input('Duration: ')
+        movie_data['duration'] = self.input_time('Duration (HH:MM):')
         if movie_data['duration'] == 'q':
             return None
 
-        movie_data['synopsis'] = input('Synopsis: ')
+        movie_data['synopsis'] = input('Synopsis: ').strip().lower()
         if movie_data['synopsis'] == 'q':
             return None
 
@@ -266,3 +266,41 @@ class Inputs:
             self.printer.error(
                 text="Nenhuma sala com esse id foi encontrada",
                 clear=True)
+
+    def input_put_room(self) -> None:
+        movie_data: dict = {}
+
+        movie_data['name'] = input(
+            'Nome (deixe em branco para manter o atual): ').strip().lower()
+        if movie_data['name'] == 'q':
+            return None
+
+        movie_data['genre'] = input(
+            'Genre (deixe em branco para manter o atual): ').strip().lower()
+        if movie_data['genre'] == 'q':
+            return None
+
+        while True:
+            movie_data['duration'] = input(
+                'Duration (HH:MM) (deixe em branco para manter o atual): ').strip().lower()
+            if movie_data['duration'] == 'q':
+                return None
+            elif movie_data['duration'] == '':
+                break
+            else:
+                try:
+                    formated_duration = datetime.strptime(
+                        movie_data['duration'], '%H:%M').time()
+                    movie_data['duration'] = formated_duration
+                    break
+                except ValueError:
+                    self.printer.error(
+                        text="Formato de hora inválido. Use o formato HH:MM.",
+                        clear=True)
+
+        movie_data['synopsis'] = input(
+            'Synopsis (deixe em branco para manter o atual): ').strip().lower()
+        if movie_data['synopsis'] == 'q':
+            return None
+
+        return movie_data

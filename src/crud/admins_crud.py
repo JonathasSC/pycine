@@ -5,6 +5,7 @@ from src.queries.admins_queries import (
     SELECT_ADMIN_BY_ID,
     SELECT_COUNT_ADMINS,
     SELECT_ADMIN_IN_PERSON,
+    SELECT_ADMIN_BY_PERSON_EMAIL,
     UPDATE_PERSON_ADMIN_BY_ADMIN_ID,
 )
 from src.queries.persons_queries import (
@@ -23,6 +24,16 @@ class AdminsCrud(BaseCrud):
     def __init__(self, conn: Connection = None):
         super().__init__(conn)
         self.logger.info('INSTANCIA ADMIN CRUD CRIADA')
+
+    def select_by_email(self, email: str) -> tuple:
+        try:
+            self.conn.connect()
+            self.conn.cursor.execute(SELECT_ADMIN_BY_PERSON_EMAIL, [email])
+            admin: tuple = self.conn.cursor.fetchone()
+            return admin
+
+        except Exception as e:
+            raise e
 
     def select_by_id(self, admin_id: str) -> tuple:
         try:

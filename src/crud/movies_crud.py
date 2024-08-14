@@ -1,11 +1,15 @@
 from src.crud.base_crud import BaseCrud
 from src.queries.movies_queries import (
-    SELECT_ALL_MOVIES,
     INSERT_MOVIE,
-    DELETE_ALL_MOVIES,
+
+    SELECT_ALL_MOVIES,
     SELECT_MOVIE_BY_ID,
     SELECT_MOVIE_BY_NAME,
-    DELETE_MOVIE,
+
+    DELETE_ALL_MOVIES,
+    DELETE_MOVIE_BY_ID,
+    DELETE_MOVIE_BY_NAME,
+
     UPDATE_MOVIE
 )
 from src.database.conn import Connection
@@ -90,13 +94,28 @@ class MoviesCrud(BaseCrud):
         try:
             if self.select_movie_by_id(movie_id):
                 self.conn.connect()
-                self.conn.cursor.execute(DELETE_MOVIE, [movie_id])
+                self.conn.cursor.execute(DELETE_MOVIE_BY_ID, [movie_id])
                 self.conn.connection.commit()
                 self.conn.close()
 
                 self.logger.info('DELETANDO FILME POR ID')
                 return movie_id
             raise ValueError('Nenhum filme com esse ID foi encontrado')
+
+        except Exception as e:
+            raise e
+
+    def delete_movie_by_name(self, name: str) -> Optional[str]:
+        try:
+            if self.select_movie_by_name(name):
+                self.conn.connect()
+                self.conn.cursor.execute(DELETE_MOVIE_BY_NAME, [name])
+                self.conn.connection.commit()
+                self.conn.close()
+
+                self.logger.info('DELETANDO FILME POR NOME')
+                return name
+            raise ValueError('Nenhum filme com esse nome foi encontrado')
 
         except Exception as e:
             raise e
