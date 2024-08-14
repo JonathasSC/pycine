@@ -62,3 +62,10 @@ SET
 WHERE 
     person_id = (SELECT person_id FROM admins WHERE admin_id = ?);
 """
+
+SELECT_ADMIN_BY_PERSON_EMAIL = """
+SELECT a.admin_id, p.person_id
+FROM admins a
+JOIN persons p ON a.person_id = p.person_id
+WHERE p.email = ?;
+"""

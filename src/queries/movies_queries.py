@@ -1,10 +1,10 @@
 CREATE_MOVIES_TABLE = """
 CREATE TABLE IF NOT EXISTS movies (
     movie_id TEXT PRIMARY KEY,
-    name TEXT,
-    genre TEXT,
-    duration TEXT,
-    synopsis TEXT
+    name TEXT UNIQUE NOT NULL,
+    genre TEXT UNIQUE NOT NULL,
+    duration TEXT UNIQUE NOT NULL,
+    synopsis TEXT UNIQUE NOT NULL
 );
 """
 
@@ -36,7 +36,12 @@ SET name = ?, genre = ?, duration = ?, synopsis = ?
 WHERE movie_id = ?;
 """
 
-DELETE_MOVIE = """
+DELETE_MOVIE_BY_NAME = """
+DELETE FROM movies 
+WHERE name = ?;
+"""
+
+DELETE_MOVIE_BY_ID = """
 DELETE FROM movies 
 WHERE movie_id = ?;
 """
