@@ -1,5 +1,6 @@
 from src.views.base_view import BaseView
 from pydantic import ValidationError
+from typing import Optional
 
 
 class MovieView(BaseView):
@@ -100,14 +101,16 @@ class MovieView(BaseView):
                     text='Preencha os campos ou digite "q" para cancelar',
                     line=True)
 
-                movie_id: str = input('Movie ID: ')
+                movie_name: str = input('Nome do filme: ').strip().lower()
 
-                if movie_id.lower() == 'q':
+                if movie_name.lower() == 'q':
+                    self.printer.success('Exclusão cancelada', clear=True)
                     break
 
-                confirm_movie_id: str = self.movie_crud.delete_movie(movie_id)
+                confirm_del: str = self.movie_crud.delete_movie_by_name(
+                    movie_name)
 
-                if movie_id == confirm_movie_id:
+                if confirm_del:
                     self.printer.success(
                         text='Filme deletado com sucesso!',
                         clear=True)
@@ -129,15 +132,18 @@ class MovieView(BaseView):
 
                 self.terminal.clear()
                 self.printer.generic(
-                    text='Digite o Movie ID, ou "q" para cancelar',
+                    text='Preencha os campos, ou digite "q" para cancelar',
                     line=True
                 )
 
-                movie_id: str = input('Movie ID: ').strip()
-                if movie_id.lower() == 'q':
+                movie_name: str = input('Nome do filme: ').strip().lower()
+                if movie_name == 'q':
+                    self.printer.success(
+                        text='Edição cancelada com sucesso!',
+                        clear=True)
                     self.manager.movie_view.start()
 
-                movie: tuple = self.movie_crud.select_movie_by_id(movie_id)
+                movie: tuple = self.movie_crud.select_movie_by_name(movie_name)
 
                 if not movie:
                     self.printer.error(
@@ -145,46 +151,30 @@ class MovieView(BaseView):
                     self.terminal.clear()
                     self.manager.movie_view.put_movie()
 
+                movie_id: str = movie[0]
                 old_data['name'] = movie[1]
                 old_data['genre'] = movie[2]
                 old_data['duration'] = movie[3]
                 old_data['synopsis'] = movie[4]
 
-                name: str = input(
-                    'Nome (deixe em branco para manter o atual): ').strip()
-                genre: str = input(
-                    'Genero (deixe em branco para manter o atual): ').strip()
-                duration: str = input(
-                    'Duração (deixe em branco para manter a atual): ').strip()
-                synopsis: str = input(
-                    'Synopsis (deixe em branco para manter a atual): ').strip()
+                new_data: Optional[dict] = self.inputs.input_put_room()
+                if new_data == None:
+                    self.printer.success(
+                        text='Edição cancelada com sucesso!',
+                        clear=True)
+                    self.manager.movie_view.put_movie()
 
-                if not name:
-                    new_data['name'] = old_data['name']
-                else:
-                    new_data['name'] = name
+                data: dict = {
+                    'name': new_data.get('name') if new_data.get('name') != '' else old_data['name'],
+                    'genre': new_data.get('genre') if new_data.get('genre') != '' else old_data['genre'],
+                    'duration': new_data.get('duration') if new_data.get('duration') != '' else old_data['duration'],
+                    'synopsis': new_data.get('synopsis') if new_data.get('synopsis') != '' else old_data['synopsis'],
+                }
 
-                if not genre:
-                    new_data['genre'] = old_data['genre']
-                else:
-                    new_data['genre'] = genre
-
-                if not duration:
-                    new_data['duration'] = old_data['duration']
-                else:
-                    new_data['duration'] = duration
-
-                if not synopsis:
-                    new_data['synopsis'] = old_data['synopsis']
-                else:
-                    new_data['synopsis'] = synopsis
-
-                if new_data:
-                    self.movie_crud.update_movie(movie_id, new_data)
-                    self.printer.success('Filme atualizado com sucesso!')
-                else:
-                    self.printer.info(
-                        'Nenhum dado fornecido para atualização.')
+                self.movie_crud.update_movie(movie_id, data)
+                self.printer.success(
+                    'Filme atualizado com sucesso!',
+                    clear=True)
 
             except ValueError as e:
                 self.printer.error(f'{e}', clear=True)

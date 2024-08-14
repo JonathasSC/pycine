@@ -17,8 +17,10 @@ class HomeView(BaseView):
             try:
                 if self.admin_crud.get_count_admin() == 0:
                     self.terminal.clear()
-                    self.printer.generic('Create first admin', line=True)
-                    self.crt_admin()
+                    self.printer.generic(
+                        'Registre o primeiro admin (ctrl+C para fechar o app)', line=True)
+                    if not self.crt_admin():
+                        break
 
                 token = self.token.load_token()
                 person_role = self.token.get_role_from_token(token)

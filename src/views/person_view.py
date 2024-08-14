@@ -59,18 +59,29 @@ class PersonView(BaseView):
             while True:
                 try:
                     token: str = self.token.load_token()
+                    self.terminal.clear()
+                    email: str = input('Email: ').strip()
 
-                    admin_id: str = input('Admin ID: ')
-                    admin: tuple = self.admin_crud.select_by_id(admin_id)
+                    if email.lower() == 'q':
+                        self.printer.warning(
+                            'Exclusão de admin cancelada', clear=True)
+                        self.manage_admin()
 
+                    admin: tuple = self.admin_crud.select_by_email(email)
+                    if not admin:
+                        self.printer.warning(
+                            'Nenhum admin com esse email encontrado', clear=True)
+                        self.manage_admin()
+
+                    admin_id: str = admin[0]
                     person_id: str = admin[1]
+
                     my_person_id: str = self.token.person_id_from_token(token)
 
+                    confirm_options = ['Sim']
                     if person_id == my_person_id:
                         self.terminal.clear()
-
                         self.printer.warning('CUIDADO!', timer=False)
-
                         self.printer.generic(
                             'Você está tentando deletar sua própria conta.'
                         )
@@ -81,7 +92,6 @@ class PersonView(BaseView):
                             'Por favor, confirme se realmente deseja proceder com esta ação.'
                         )
 
-                        confirm_options = ['Sim']
                         option = self.choose_an_option(
                             confirm_options,
                             text='Realmente deseja deletar sua própria conta?',
@@ -89,7 +99,8 @@ class PersonView(BaseView):
 
                         if option and option == 1:
                             self.admin_crud.delete_admin(admin_id)
-                            self.printer.success('Admin deletado com sucesso!')
+                            self.printer.success(
+                                'Admin deletado com sucesso!', clear=True)
 
                             self.logout()
                             self.manager.home_view.start()
@@ -97,10 +108,25 @@ class PersonView(BaseView):
                         else:
                             self.terminal.clear()
                             self.printer.success('Operação cancelada!')
-                            self.manage_admin()
+                    else:
+                        option = self.choose_an_option(
+                            confirm_options,
+                            text='Realmente deseja deletar um admin?',
+                            cancel=True)
+
+                        if option and option == 1:
+                            self.admin_crud.delete_admin(admin_id)
+                            self.printer.success(
+                                text='Admin deletado com sucesso!',
+                                clear=True)
+                        else:
+                            self.printer.success(
+                                'Operação cancelada!', clear=True)
 
                 except Exception as e:
                     self.printer.error(f'Erro ao criar sala: {e}')
+
+                finally:
                     self.manage_admin()
 
         def crt_admin() -> None:

@@ -64,7 +64,7 @@ class BaseView:
                 option: int = int(input('Digite uma opção: '))
 
                 if cancel and option == 0:
-                    self.printer.warning(text='Cancelando...', clear=True)
+                    # self.printer.warning(text='Cancelando...', clear=True)
                     return None
 
                 if 0 < option <= len(options):
@@ -92,8 +92,8 @@ class BaseView:
                 person_data = self.inputs.input_person()
                 if person_data == None:
                     self.printer.warning(
-                        'Registro de primeiro admin cancelado')
-                    break
+                        'Registro de primeiro admin cancelado', clear=True)
+                    return False
 
                 self.person_crud.insert_person(person_data)
                 person: tuple = self.person_crud.select_by_email(
@@ -102,10 +102,11 @@ class BaseView:
 
                 self.admin_crud.insert_admin(person[0])
                 self.printer.success('Admin criado com sucesso!')
-                break
+                return True
 
             except ValidationError as e:
                 self.handlers.handle_validation_error(e)
+
             except Exception as e:
                 self.printer.error(f'Erro ao criar admin: {str(e)}')
 
