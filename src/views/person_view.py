@@ -289,7 +289,7 @@ class PersonView(BaseView):
                 try:
                     self.terminal.clear()
                     header = [
-                        'ADMIN ID',
+                        'CLIENT ID',
                         'PERSON ID',
                         'NAME',
                         'EMAIL',
@@ -325,6 +325,15 @@ class PersonView(BaseView):
                     client_email: str = input('Email: ').strip()
 
                     if client_email.lower() == 'q':
+                        self.printer.error(
+                            text='Exclusão cancelada',
+                            clear=True)
+                        break
+
+                    if not self.client_crud.select_by_email(client_email):
+                        self.printer.error(
+                            text='Nenhum cliente com esse EMAIL encontrado',
+                            clear=True)
                         break
 
                     confirm_delete: str = self.client_crud.delete_client_by_email(
@@ -333,14 +342,11 @@ class PersonView(BaseView):
                     if client_email == confirm_delete:
                         self.printer.success(
                             text='Cliente deletado com sucesso!', clear=True)
-
-                    self.printer.success(
-                        text='Cliente deletado com sucesso!', clear=True)
-
-                    self.manage_client()
+                        self.manage_client()
 
                 except Exception as e:
                     self.printer.error(f'Erro ao deletar cliente: {e}')
+                finally:
                     self.manage_client()
 
         def del_client_by_id() -> None:
@@ -354,20 +360,30 @@ class PersonView(BaseView):
                     client_id: str = input('Client ID: ')
 
                     if client_id.lower() == 'q':
+                        self.printer.error(
+                            text='Exclusão cancelada',
+                            clear=True)
+                        break
+
+                    if not self.client_crud.select_by_id(client_id):
+                        self.printer.error(
+                            text='Nenhum cliente com esse ID encontrado',
+                            clear=True)
                         break
 
                     confirm_delete: str = self.client_crud.delete_client_by_id(
                         client_id)
 
                     if client_id == confirm_delete:
-                        self.terminal.clear()
-                        self.printer.success('Cliente deletado com sucesso!')
-                        self.terminal.clear()
+                        self.printer.success(
+                            'Cliente deletado com sucesso!', clear=True)
 
                     self.manage_client()
 
                 except Exception as e:
                     self.printer.error(f'Erro ao deletar cliente: {e}')
+
+                finally:
                     self.manage_client()
 
         def crt_client() -> None:
@@ -380,16 +396,14 @@ class PersonView(BaseView):
 
                     person_data = self.inputs.input_person()
                     if person_data == None:
-                        break
-
-                    if any(value == '' for value in person_data.values()):
+                        self.printer.success('Inserção cancelada!', clear=True)
                         break
 
                     person_id: str = self.person_crud.insert_person(
                         person_data)
 
                     self.client_crud.insert_client(person_id)
-                    self.printer.success('Admin criado com sucesso!')
+                    self.printer.success('Cliente criado com sucesso!')
                     self.manage_client()
 
                 except ValidationError as e:

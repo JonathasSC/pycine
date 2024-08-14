@@ -37,7 +37,7 @@ class Inputs:
             return None
 
         person_data['password'] = self.input_password('Senha: ')
-        if person_data['password'] == 'q':
+        if person_data['password'] == None:
             return None
 
         return person_data

@@ -71,7 +71,7 @@ class ClientsCrud(BaseCrud):
             self.conn.connection.commit()
             self.conn.close()
 
-            self.logger.info('DELETANDO CLIENTE POR ID')
+            self.logger.info('DELETANDO CLIENTE POR EMAIL')
             return client_email
 
         except Exception as e:
@@ -127,6 +127,19 @@ class ClientsCrud(BaseCrud):
             self.conn.close()
 
             self.logger.info('SELECIONANDO CLIENTE POR ID')
+            return client
+
+        except Exception as e:
+            raise e
+
+    def select_by_email(self, client_email: str) -> tuple:
+        try:
+            self.conn.connect()
+            self.conn.cursor.execute(SELECT_BY_EMAIL, [client_email])
+            client: tuple = self.conn.cursor.fetchone()
+            self.conn.close()
+
+            self.logger.info('SELECIONANDO CLIENTE POR EMAIL')
             return client
 
         except Exception as e:
