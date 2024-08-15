@@ -120,3 +120,15 @@ class SeatsCrud(BaseCrud):
             return seat
         except Exception as e:
             raise e
+
+    def delete_seats_by_room_name(self, room_name) -> Optional[str]:
+        try:
+            self.conn.connect()
+            self.conn.cursor.execute(
+                SELECT_SEATS_BY_ROOM_ID_SEAT_CODE, [room_name])
+            self.conn.connection.commit()
+            self.conn.close()
+
+            return 
+        except Exception as e:
+            raise e

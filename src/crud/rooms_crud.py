@@ -167,7 +167,7 @@ class RoomsCrud(BaseCrud):
                 self.conn.close()
 
                 self.logger.info('DELETANDO SALA POR NOME')
-                return room_name
+                return self.select_room_by_name(room_name) is None
 
         except Exception as e:
             raise e

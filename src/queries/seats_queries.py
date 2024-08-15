@@ -41,7 +41,6 @@ SELECT_SEATS_BY_ROOM_ID_SEAT_CODE = """
 SELECT * FROM seats WHERE room_id = ? AND seat_code = ?;
 """
 
-
 UPDATE_SEAT_STATE = """
 UPDATE seats 
 SET state = ?

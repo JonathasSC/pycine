@@ -172,13 +172,8 @@ class RoomView(BaseView):
                 if room_name.lower() == 'q':
                     break
 
-                confirm_name: str = self.room_crud.delete_room_by_name(
-                    room_name)
-
-                if room_name == confirm_name:
-                    self.printer.success(
-                        text='Filme deletado com sucesso!',
-                        clear=True)
+                if self.room_crud.delete_room_by_name(room_name) and self.seat_crud.delete_seats_by_room_name(room_name):
+                    self.printer.success(text='Filme deletado com sucesso!',clear=True)
 
             except ValueError as e:
                 self.printer.error(text=f'{e}',

@@ -100,7 +100,7 @@ class Inputs:
     def input_room(self) -> Optional[dict]:
         room_data: dict = {}
 
-        room_data['name'] = input('Nome da sala: ')
+        room_data['name'] = input('Nome da sala: ').strip().lower()
         if room_data['name'] == 'q':
             return None
 
