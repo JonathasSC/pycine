@@ -10,7 +10,8 @@ from src.queries.admins_queries import (
 )
 from src.queries.persons_queries import (
     DELETE_PERSON_BY_ID,
-    SELECT_PERSON_BY_ID
+    SELECT_PERSON_BY_ID,
+    UPDATE_PERSON_BY_EMAIL
 )
 
 from src.crud.base_crud import BaseCrud
@@ -142,6 +143,31 @@ class AdminsCrud(BaseCrud):
 
             self.logger.info(
                 'DADOS DE PERSONS QUE SÃO ADMINS ATUALIZADOS NO BANCO DE DADOS')
+
+        except Exception as e:
+            self.logger.warning(
+                'EXCEÇÃO AO TENTAR ATUALIZAR DADOS DE PERSONS QUE SÃO ADMINS')
+            raise e
+
+    def update_admin_by_email(self, email: str, data: dict) -> None:
+        try:
+            self.logger.info(
+                'TENTANDO ATUALIZAR DADOS DE PERSONS QUE SÃO ADMINS BASEADO NO admin_id')
+
+            data_list: List[str] = [
+                data.get('name', None),
+                data.get('email', None),
+                data.get('password', None),
+                email
+            ]
+
+            self.conn.connect()
+            self.conn.cursor.execute(UPDATE_PERSON_BY_EMAIL, data_list)
+
+            self.conn.connection.commit()
+            self.conn.close()
+
+            self.logger.info('ATUALIZANDO ADMIN POR EMAIL')
 
         except Exception as e:
             self.logger.warning(

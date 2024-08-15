@@ -130,12 +130,11 @@ class ClientsCrud(BaseCrud):
 
             self.conn.connect()
             self.conn.cursor.execute(UPDATE_PERSON_BY_EMAIL, data_list)
+
             self.conn.connection.commit()
-            client: tuple = self.conn.cursor.fetchone()
             self.conn.close()
 
             self.logger.info('ATUALIZANDO CLIENT POR EMAIL')
-            return client
 
         except Exception as e:
             raise e

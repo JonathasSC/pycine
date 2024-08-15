@@ -162,92 +162,57 @@ class PersonView(BaseView):
         def put_admin() -> None:
             while True:
                 try:
-                    old_data = {}
-                    data = {}
+                    old_data: dict = {}
+                    new_data: dict = {}
 
                     self.terminal.clear()
                     self.printer.generic(
-                        text='Preenchas os campos ou digite "q" para cancelar.',
-                        line=True
-                    )
+                        'Digite o EMAIL, ou "q" para cancelar', line=True)
+                    email: str = input('Email: ').strip().lower()
 
-                    admin_id: str = input('Admin ID: ').strip()
+                    if email == 'q':
+                        self.printer.success(
+                            text='Edição de admin cancelada',
+                            clear=True)
+                        self.manager.person_view.manage_admin()
 
-                    if admin_id.lower() == 'q':
-                        self.manage_admin()
-
-                    admin = self.admin_crud.select_by_id(admin_id)
+                    admin: Optional[tuple] = self.admin_crud.select_by_email(
+                        email)
 
                     if not admin:
-                        self.printer.error(
+                        self.printer.warning(
                             text='Nenhum admin identificado, tente novamente',
                             clear=True)
-
                         put_admin()
 
-                    person = self.person_crud.select_by_id(admin[1])
+                    old_data['name'] = admin[2]
+                    old_data['email'] = admin[3]
+                    old_data['password'] = admin[4]
 
-                    old_data['name'] = person[1]
-                    old_data['email'] = person[2]
-                    old_data['password'] = person[3]
+                    new_data: Optional[dict] = self.inputs.input_put_person()
 
-                    name = input(
-                        'Nome (deixe em branco para manter o atual): ').strip()
-                    if name == None:
-                        self.printer.warning(
-                            text='Atualização cancelada',
+                    if not new_data:
+                        self.printer.success(
+                            text='Edição de admin cancelada',
                             clear=True)
-                        continue
+                        self.manager.person_view.manage_admin()
 
-                    email = self.inputs.input_email(
-                        'Email (deixe em branco para manter o atual): ')
-                    if email == None:
-                        self.printer.warning(
-                            text='Atualização cancelada',
-                            clear=True)
-                        continue
+                    data: dict = {
+                        'name': new_data.get('name') if new_data.get('name') != '' else old_data['name'],
+                        'email': new_data.get('email') if new_data.get('email') != '' else old_data['email'],
+                        'password': self.hash.generate_hash(new_data.get('password')) if new_data.get('password') != '' else old_data['password'],
+                    }
 
-                    password = self.inputs.input_password(
-                        'Senha (deixe em branco para manter a atual): ')
-                    if password == None:
-                        self.printer.warning(
-                            text='Atualização cancelada',
-                            clear=True)
-                        continue
-
-                    if not name:
-                        data['name'] = old_data['name']
-                    else:
-                        data['name'] = name
-
-                    if not email:
-                        data['email'] = old_data['email']
-                    else:
-                        data['email'] = email
-
-                    if not password:
-                        data['password'] = old_data['password']
-                    else:
-                        data['password'] = self.hash.generate_hash(
-                            password
-                        )
-
-                    if data:
-                        self.admin_crud.update_admin(admin_id, data)
-                        self.printer.success('Admin atualizado com sucesso!')
-                    else:
-                        self.printer.info(
-                            'Nenhum dado fornecido para atualização.')
+                    self.admin_crud.update_admin_by_email(email, data)
+                    self.printer.success(
+                        'admin atualizado com sucesso!',
+                        clear=True)
 
                 except ValueError as e:
-                    self.terminal.clear()
-                    self.printer.error(f'{e}')
-                    self.terminal.clear()
-                    self.put_admin()
+                    self.printer.error(text=f'{e}', clear=True)
 
                 except Exception as e:
                     self.printer.error(f'Erro ao atualizar admin: {e}')
-                    self.put_admin()
 
                 finally:
                     self.manage_admin()

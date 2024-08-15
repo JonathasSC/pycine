@@ -318,16 +318,16 @@ class Inputs:
         if person_data['email'] == 'q':
             return None
 
+        while person_data['email'] and not email_validator(person_data['email']):
+            self.printer.error('Email invalido ou já em uso.', clear=True)
+            person_data['email'] = input('Email: ')
+            if person_data['email'] == 'q':
+                return None
+
         person_data['password'] = input(
             'Senha (deixe em branco para manter a atual): ').strip()
         if person_data['password'] == 'q':
             return None
-
-        while person_data['email'] and not exists_email(person_data['email']):
-            self.printer.error(
-                text='Esse email já está em uso', clear=True)
-
-            person_data['email'] = input('Email: ').strip()
 
         while person_data['password'] and not password_validator(person_data['password']):
             self.terminal.clear()
@@ -335,5 +335,7 @@ class Inputs:
             self.terminal.clear()
 
             person_data['password'] = input('Senha: ').strip()
+            if person_data['password'] == 'q':
+                return None
 
         return person_data

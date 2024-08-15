@@ -64,8 +64,16 @@ WHERE
 """
 
 SELECT_ADMIN_BY_PERSON_EMAIL = """
-SELECT a.admin_id, p.person_id
-FROM admins a
-JOIN persons p ON a.person_id = p.person_id
-WHERE p.email = ?;
+SELECT
+    a.admin_id,
+    p.person_id,
+    p.name,
+    p.email, 
+    p.password
+FROM 
+    admins a
+JOIN 
+    persons p ON p.person_id = a.person_id
+WHERE
+    p.email = ?
 """
