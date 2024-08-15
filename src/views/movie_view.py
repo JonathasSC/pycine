@@ -138,8 +138,8 @@ class MovieView(BaseView):
 
                 movie_name: str = input('Nome do filme: ').strip().lower()
                 if movie_name == 'q':
-                    self.printer.success(
-                        text='Edição cancelada com sucesso!',
+                    self.printer.warning(
+                        text='Cancelando...',
                         clear=True)
                     self.manager.movie_view.start()
 
@@ -157,10 +157,10 @@ class MovieView(BaseView):
                 old_data['duration'] = movie[3]
                 old_data['synopsis'] = movie[4]
 
-                new_data: Optional[dict] = self.inputs.input_put_room()
+                new_data: Optional[dict] = self.inputs.input_movie()
                 if new_data == None:
-                    self.printer.success(
-                        text='Edição cancelada com sucesso!',
+                    self.printer.warning(
+                        text='Cancelando...',
                         clear=True)
                     self.manager.movie_view.put_movie()
 

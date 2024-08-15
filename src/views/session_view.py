@@ -291,4 +291,4 @@ class SessionView(BaseView):
                 self.terminal.clear()
 
             except Exception as e:
-                self.printer.error(f'Erro ao atualizar sala: {e}')
+                self.printer.error(f'Erro ao atualizar sessão: {e}')

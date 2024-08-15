@@ -50,7 +50,7 @@ class SeatView(BaseView):
 
                 if not self.room_crud.select_room_by_id(room_id):
                     self.printer.warning(
-                        text='Nenhuma sala com esse ID foi encontrada.',
+                        text='Nenhuma sala identificada tente novamente',
                         clear=True)
                     continue
 

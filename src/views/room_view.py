@@ -1,5 +1,6 @@
 from src.views.base_view import BaseView
 from pydantic import ValidationError
+from typing import Optional
 
 
 class RoomView(BaseView):
@@ -55,8 +56,8 @@ class RoomView(BaseView):
 
                 auto_seat = ['Sim', 'Não']
                 option: int = self.choose_an_option(
-                    auto_seat,
-                    'Deseja criar cadeiras automaticamente? ',
+                    options=auto_seat,
+                    text='Deseja criar cadeiras automaticamente? ',
                 )
 
                 if option == 1:
@@ -64,9 +65,12 @@ class RoomView(BaseView):
                     room: tuple = self.room_crud.select_room_by_id(room_id)
                     self.seat_crud.insert_seats_by_room(room)
                 else:
-                    self.room_crud.insert_room(room_data)
+                    room_id: str = self.room_crud.insert_room(room_data)
 
-                self.printer.success('Sala criada com sucesso!')
+                self.printer.success(
+                    text='Sala criada com sucesso!',
+                    clear=True)
+
                 break
 
             except ValidationError as e:
@@ -103,63 +107,47 @@ class RoomView(BaseView):
 
                 self.terminal.clear()
                 self.printer.generic(
-                    text='Digite o Room ID, ou "q" para cancelar',
+                    text='Digite o nome da sala, ou "q" para cancelar',
                     line=True
                 )
 
-                room_id: str = input('Room ID: ').strip()
+                name: str = input('Nome da sala: ').strip()
 
-                if room_id.lower() == 'q':
-                    break
+                if name.lower() == 'q':
+                    self.printer.warning(
+                        text='Cancelando...',
+                        clear=True)
+                    self.manager.room_view.start()
 
-                room: tuple = self.room_crud.select_room_by_id(room_id)
+                room: Optional[tuple] = self.room_crud.select_room_by_name(
+                    name)
 
                 if not room:
                     self.printer.error(
-                        text='Nenhuma sala identificada, tente novamente')
-                    self.terminal.clear()
+                        text='Nenhuma sala identificada tente novamente', clear=True)
                     self.manager.room_view.put_room()
 
                 old_data['name'] = room[1]
                 old_data['rows'] = room[2]
-                old_data['columns'] = room[3]
                 old_data['type'] = room[4]
+                old_data['columns'] = room[3]
 
-                name: str = input(
-                    'Nome (deixe em branco para manter o atual): ').strip()
-                rows: int = input(
-                    'Rows (deixe em branco para manter o atual): ').strip()
-                columns: int = input(
-                    'Colunas (deixe em branco para manter a atual): ').strip()
-                _type: str = input(
-                    'Type (deixe em branco para manter a atual): ').strip()
+                new_data: Optional[dict] = self.inputs.input_put_room()
 
-                if not name:
-                    new_data['name'] = old_data['name']
-                else:
-                    new_data['name'] = name
+                if not new_data:
+                    self.printer.warning(
+                        text='Cancelando...',
+                        clear=True)
+                    self.manager.room_view.start()
 
-                if not rows:
-                    new_data['rows'] = old_data['rows']
-                else:
-                    new_data['rows'] = rows
+                data: dict = {
+                    'name': new_data.get('name') if new_data.get('name') != '' else old_data['name'],
+                    'rows': new_data.get('rows') if new_data.get('rows') != '' else old_data['rows'],
+                    'type': new_data.get('type') if new_data.get('type') != '' else old_data['type'],
+                    'columns': new_data.get('columns') if new_data.get('columns') != '' else old_data['columns'],
+                }
 
-                if not columns:
-                    new_data['columns'] = old_data['columns']
-                else:
-                    new_data['columns'] = columns
-
-                if not _type:
-                    new_data['type'] = old_data['type']
-                else:
-                    new_data['type'] = _type
-
-                if new_data:
-                    self.room_crud.update_room(room_id, new_data)
-                    self.printer.success('Sala atualizado com sucesso!')
-                else:
-                    self.printer.info(
-                        'Nenhum dado fornecido para atualização.')
+                self.room_crud.update_room_by_name(name, data)
 
             except ValueError as e:
                 self.terminal.clear()
@@ -179,15 +167,15 @@ class RoomView(BaseView):
                     text='Preencha os campos ou digite "q" para cancelar',
                     line=True)
 
-                room_id: str = input('Room ID: ').strip()
+                room_name: str = input('Nome da sala: ').strip()
 
-                if room_id.lower() == 'q':
+                if room_name.lower() == 'q':
                     break
 
-                confirm_room_id: str = self.room_crud.delete_room_by_id(
-                    room_id)
+                confirm_name: str = self.room_crud.delete_room_by_id(
+                    room_name)
 
-                if room_id == confirm_room_id:
+                if room_name == confirm_name:
                     self.printer.success(
                         text='Filme deletado com sucesso!',
                         clear=True)

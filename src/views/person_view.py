@@ -171,8 +171,8 @@ class PersonView(BaseView):
                     email: str = input('Email: ').strip().lower()
 
                     if email == 'q':
-                        self.printer.success(
-                            text='Edição de admin cancelada',
+                        self.printer.warning(
+                            text='Cancelando...',
                             clear=True)
                         self.manager.person_view.manage_admin()
 
@@ -192,8 +192,8 @@ class PersonView(BaseView):
                     new_data: Optional[dict] = self.inputs.input_put_person()
 
                     if not new_data:
-                        self.printer.success(
-                            text='Edição de admin cancelada',
+                        self.printer.warning(
+                            text='Cancelando...',
                             clear=True)
                         self.manager.person_view.manage_admin()
 
@@ -391,8 +391,8 @@ class PersonView(BaseView):
                     email: str = input('Email: ').strip().lower()
 
                     if email == 'q':
-                        self.printer.success(
-                            text='Edição de cliente cancelada',
+                        self.printer.warning(
+                            text='Cancelando...',
                             clear=True)
                         self.manager.person_view.manage_client()
 
@@ -412,8 +412,8 @@ class PersonView(BaseView):
                     new_data: Optional[dict] = self.inputs.input_put_person()
 
                     if not new_data:
-                        self.printer.success(
-                            text='Edição de cliente cancelada',
+                        self.printer.warning(
+                            text='Cancelando...',
                             clear=True)
                         self.manager.person_view.manage_client()
 

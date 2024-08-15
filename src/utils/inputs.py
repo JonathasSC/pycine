@@ -1,10 +1,17 @@
+import re
+import getpass
+from datetime import datetime
+from typing import Optional, Dict
+
 from src.utils.printer import Printer
 from src.utils.terminal import Terminal
-import getpass
-from typing import Optional, Dict
-from src.utils.validators import password_validator, email_validator, exists_room, exists_email
-from datetime import datetime
-import re
+
+from src.utils.validators import (
+    exists_room,
+    email_validator,
+    password_validator,
+    exists_room_by_name,
+)
 
 
 class Inputs:
@@ -81,30 +88,43 @@ class Inputs:
 
         return movie_data
 
-    def input_seat(self) -> Optional[dict]:
-        ticket_data: dict = {}
-        ticket_data['Room ID'] = input('')
+    def get_integer_input(self, prompt):
+        while True:
+            user_input = input(prompt)
+            if user_input == 'q':
+                return None
+            if user_input.isdigit():
+                return int(user_input)
+            self.printer.error('Preencha com um número válido', clear=True)
 
     def input_room(self) -> Optional[dict]:
         room_data: dict = {}
 
-        room_data['name'] = input('Name: ')
+        room_data['name'] = input('Nome da sala: ')
         if room_data['name'] == 'q':
             return None
 
-        room_data['rows'] = int(input('Rows: '))
-        if room_data['rows'] == 'q':
+        while room_data['name'] and not exists_room_by_name(room_data['name']):
+            self.printer.error('Nome invalido ou já em uso.', clear=True)
+            room_data['name'] = input(
+                'Nome da sala (deixe em branco para manter o atual): ').strip().lower()
+            if room_data['name'] == 'q':
+                return None
+
+        room_data['rows'] = self.get_integer_input('Linhas: ')
+        if room_data['rows'] is None:
             return None
 
-        room_data['columns'] = int(input('Columns: '))
-        if room_data['columns'] == 'q':
+        room_data['columns'] = self.get_integer_input('Colunas: ')
+        if room_data['columns'] is None:
             return None
 
+        options = ['normal', 'dublado', 'legendado', 'vip']
         valid_types = ['normal', 'dubbed', 'subtitled', 'vip']
         self.terminal.clear()
 
         option: int = self.choose_an_option(
-            valid_types,
+            options,
             'Escolha o tipo da sala:',
             cancel=True
         )
@@ -264,10 +284,10 @@ class Inputs:
                 return room_id
 
             self.printer.error(
-                text="Nenhuma sala com esse id foi encontrada",
+                text='Nenhuma sala identificada tente novamente',
                 clear=True)
 
-    def input_put_room(self) -> None:
+    def input_movie(self) -> None:
         movie_data: dict = {}
 
         movie_data['name'] = input(
@@ -304,6 +324,48 @@ class Inputs:
             return None
 
         return movie_data
+
+    def input_put_room(self) -> None:
+        room_data: dict = {}
+
+        room_data['name'] = input(
+            'Nome da sala (deixe em branco para manter o atual): ').strip().lower()
+        if room_data['name'] == 'q':
+            return None
+
+        while room_data['name'] and not exists_room_by_name(room_data['name']):
+            self.printer.error('Nome invalido ou já em uso.', clear=True)
+            room_data['name'] = input(
+                'Nome da sala (deixe em branco para manter o atual): ').strip().lower()
+            if room_data['name'] == 'q':
+                return None
+
+        room_data['rows'] = self.get_integer_input(
+            'Linhas (deixe em branco para manter o atual): ')
+        if room_data['rows'] is None:
+            return None
+
+        room_data['columns'] = self.get_integer_input(
+            'Colunas (deixe em branco para manter o atual): ')
+        if room_data['columns'] is None:
+            return None
+
+        options = ['normal', 'dublado', 'legendado', 'vip']
+        valid_types = ['normal', 'dubbed', 'subtitled', 'vip']
+        self.terminal.clear()
+
+        option: int = self.choose_an_option(
+            options,
+            'Escolha o tipo da sala:',
+            cancel=True
+        )
+
+        if option == 0:
+            return None
+
+        room_data['type'] = valid_types[option - 1]
+
+        return room_data
 
     def input_put_person(self) -> None:
         person_data: dict = {}

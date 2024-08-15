@@ -1,7 +1,7 @@
 import re
 from src.queries.persons_queries import SELECT_BY_EMAIL
 from src.queries.sessions_queries import SELECT_BY_ROOM_START_DATE_AND_TIME
-from src.queries.rooms_queries import SELECT_ROOM_BY_ID
+from src.queries.rooms_queries import SELECT_ROOM_BY_ID, SELECT_ROOM_BY_NAME
 from src.database.conn import Connection
 from time import sleep
 
@@ -58,6 +58,17 @@ def exists_room(room_id: str):
 
     conn.connect()
     conn.cursor.execute(SELECT_ROOM_BY_ID, [room_id])
+    person_exists: tuple = conn.cursor.fetchone()
+    conn.close()
+
+    return person_exists is None
+
+
+def exists_room_by_name(name: str):
+    conn: Connection = Connection(auto_connect=False)
+
+    conn.connect()
+    conn.cursor.execute(SELECT_ROOM_BY_NAME, [name])
     person_exists: tuple = conn.cursor.fetchone()
     conn.close()
 
