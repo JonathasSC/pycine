@@ -55,8 +55,7 @@ class MovieView(BaseView):
                 movie_data: dict = self.inputs.input_movie()
 
                 if not movie_data:
-                    self.terminal.clear()
-                    self.printer.success('Operação cancelada!')
+                    self.printer.warning(text='Cancelando...', clear=True)
                     self.manager.movie_view.start()
 
                 self.movie_crud.insert_movie(movie_data)
@@ -107,13 +106,17 @@ class MovieView(BaseView):
                     self.printer.success('Exclusão cancelada', clear=True)
                     break
 
-                confirm_del: str = self.movie_crud.delete_movie_by_name(
-                    movie_name)
+                if not self.movie_crud.delete_movie_by_name(movie_name):
+                    self.printer.warning(
+                        text='Nenhum filme com esse nome encontrado',
+                        clear=True
+                    )
+                    self.manager.movie_view.del_movie()
 
-                if confirm_del:
-                    self.printer.success(
-                        text='Filme deletado com sucesso!',
-                        clear=True)
+                self.printer.success(
+                    text='Filme deletado com sucesso!',
+                    clear=True
+                )
 
             except ValueError as e:
                 self.printer.error(f'{e}')
@@ -137,10 +140,9 @@ class MovieView(BaseView):
                 )
 
                 movie_name: str = input('Nome do filme: ').strip().lower()
+
                 if movie_name == 'q':
-                    self.printer.warning(
-                        text='Cancelando...',
-                        clear=True)
+                    self.printer.warning(text='Cancelando...', clear=True)
                     self.manager.movie_view.start()
 
                 movie: tuple = self.movie_crud.select_movie_by_name(movie_name)
@@ -159,9 +161,7 @@ class MovieView(BaseView):
 
                 new_data: Optional[dict] = self.inputs.input_movie()
                 if new_data == None:
-                    self.printer.warning(
-                        text='Cancelando...',
-                        clear=True)
+                    self.printer.warning(text='Cancelando...', clear=True)
                     self.manager.movie_view.put_movie()
 
                 data: dict = {
@@ -173,8 +173,7 @@ class MovieView(BaseView):
 
                 self.movie_crud.update_movie(movie_id, data)
                 self.printer.success(
-                    'Filme atualizado com sucesso!',
-                    clear=True)
+                    'Filme atualizado com sucesso!', clear=True)
 
             except ValueError as e:
                 self.printer.error(f'{e}', clear=True)

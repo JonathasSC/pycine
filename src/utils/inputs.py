@@ -7,9 +7,11 @@ from src.utils.printer import Printer
 from src.utils.terminal import Terminal
 
 from src.utils.validators import (
-    exists_room,
+    exists_room_by_id,
+    exists_movie_by_id,
     email_validator,
     password_validator,
+    price_validator,
     exists_room_by_name,
 )
 
@@ -280,7 +282,7 @@ class Inputs:
             if room_id.lower() == 'q':
                 return None
 
-            if not exists_room(room_id):
+            if not exists_room_by_id(room_id):
                 return room_id
 
             self.printer.error(
@@ -325,7 +327,7 @@ class Inputs:
 
         return movie_data
 
-    def input_put_room(self) -> None:
+    def input_put_room(self) -> Optional[dict]:
         room_data: dict = {}
 
         room_data['name'] = input(
@@ -367,7 +369,7 @@ class Inputs:
 
         return room_data
 
-    def input_put_person(self) -> None:
+    def input_put_person(self) -> Optional[dict]:
         person_data: dict = {}
 
         person_data['name'] = input(
@@ -392,12 +394,64 @@ class Inputs:
             return None
 
         while person_data['password'] and not password_validator(person_data['password']):
-            self.terminal.clear()
-            self.printer.password_params()
-            self.terminal.clear()
+            self.printer.password_params(clear=True)
 
             person_data['password'] = input('Senha: ').strip()
             if person_data['password'] == 'q':
                 return None
 
         return person_data
+
+    def input_put_session(self) -> Optional[dict]:
+        session_data: dict = {}
+
+        session_data['room_id'] = input(
+            'Room ID (deixe em branco para manter o atual): ').strip()
+        if session_data['room_id'].lower() == 'q':
+            return None
+
+        while session_data['room_id'] and not exists_room_by_id(session_data['room_id']):
+            self.printer.password_params(clear=True)
+
+            session_data['room_id'] = input(
+                'Room ID (deixe em branco para manter o atual): ').strip()
+            if session_data['room_id'].lower() == 'q':
+                return None
+
+        session_data['movie_id'] = input(
+            'Movie ID (deixe em branco para manter o atual): ').strip()
+        if session_data['movie_id'].lower() == 'q':
+            return None
+
+        while session_data['movie_id'] and not exists_movie_by_id(session_data['movie_id']):
+            self.printer.password_params(clear=True)
+
+            session_data['movie_id'] = input(
+                'Movie ID (deixe em branco para manter o atual): ').strip()
+            if session_data['movie_id'].lower() == 'q':
+                return None
+
+        session_data['price'] = input(
+            'Price (deixe em branco para manter a atual): ')
+        if session_data['price'] == None:
+            return None
+
+        while session_data['price'] and not price_validator(session_data['price']):
+            self.printer.password_params(clear=True)
+
+            session_data['price'] = input(
+                'Movie ID (deixe em branco para manter o atual): ').strip()
+            if session_data['price'].lower() == 'q':
+                return None
+
+        session_data['start_time'] = self.input_time(
+            'Start Time (deixe em branco para manter a atual): ').strip()
+        if session_data['start_time'] == None:
+            return None
+
+        session_data['start_date'] = self.input_date(
+            'Room ID (deixe em branco para manter o atual): ')
+        if session_data['start_date'] == None:
+            return None
+
+        return session_data

@@ -4,7 +4,7 @@ from src.crud.base_crud import BaseCrud
 from src.database.conn import Connection
 from typing import List, Dict, Any, Optional, Tuple
 from src.schemas.session_schemas import SessionCreate, SessionUpdate
-from src.utils.validators import session_validator
+from src.utils.validators import exists_session
 
 from src.queries.sessions_queries import (
     INSERT_SESSION,
@@ -80,7 +80,7 @@ class SessionsCrud(BaseCrud):
                     raise ValueError(
                         'A sessão não pode ser agendada para uma data e hora no passado.')
 
-                if not session_validator(room_id, start_date.isoformat(), start_time.strftime('%H:%M:%S')):
+                if not exists_session(room_id, start_date.isoformat(), start_time.strftime('%H:%M:%S')):
                     raise ValueError(
                         'Já existe uma sessão nessa sala e horário.')
 
@@ -130,13 +130,19 @@ class SessionsCrud(BaseCrud):
 
     def delete_session(self, session_id: str) -> Optional[str]:
         try:
-            self.conn.connect()
-            self.conn.cursor.execute(DELETE_SESSION, (session_id,))
-            self.conn.connection.commit()
-            self.conn.close()
+            session: Optional[tuple] = self.select_session_by_id(
+                session_id=session_id
+            )
 
-            self.logger.info('DELETANDO SESSÃO')
-            return session_id
+            if session:
+                self.conn.connect()
+                self.conn.cursor.execute(DELETE_SESSION, (session_id,))
+                self.conn.connection.commit()
+                self.conn.close()
+
+                self.logger.info('DELETANDO SESSÃO')
+
+            return session is not None
 
         except Exception as e:
             raise e

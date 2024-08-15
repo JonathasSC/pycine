@@ -58,13 +58,12 @@ class PersonView(BaseView):
         def del_admin() -> None:
             while True:
                 try:
-                    token: str = self.token.load_token()
                     self.terminal.clear()
+                    token: str = self.token.load_token()
                     email: str = input('Email: ').strip()
 
                     if email.lower() == 'q':
-                        self.printer.warning(
-                            'Exclusão de admin cancelada', clear=True)
+                        self.printer.warning(text='Cancelando...', clear=True)
                         self.manage_admin()
 
                     admin: tuple = self.admin_crud.select_by_email(email)
@@ -106,8 +105,8 @@ class PersonView(BaseView):
                             self.manager.home_view.start()
 
                         else:
-                            self.terminal.clear()
-                            self.printer.success('Operação cancelada!')
+                            self.printer.warning(
+                                text='Cancelando...', clear=True)
                     else:
                         option = self.choose_an_option(
                             confirm_options,
@@ -120,9 +119,9 @@ class PersonView(BaseView):
                                 text='Admin deletado com sucesso!',
                                 clear=True)
                         else:
-                            self.printer.success(
-                                'Operação cancelada!', clear=True)
-
+                            self.printer.warning(
+                                text='Cancelando...',
+                                clear=True)
                 except Exception as e:
                     self.printer.error(f'Erro ao criar sala: {e}')
 
@@ -140,8 +139,9 @@ class PersonView(BaseView):
                     person_data: dict = self.inputs.input_person()
 
                     if not person_data:
-                        self.terminal.clear()
-                        self.printer.success('Operação cancelada!')
+                        self.printer.warning(
+                            text='...',
+                            clear=True)
                         self.manage_admin()
 
                     person_id: str = self.person_crud.insert_person(
@@ -193,7 +193,7 @@ class PersonView(BaseView):
 
                     if not new_data:
                         self.printer.warning(
-                            text='Cancelando...',
+                            text='...',
                             clear=True)
                         self.manager.person_view.manage_admin()
 
@@ -412,9 +412,7 @@ class PersonView(BaseView):
                     new_data: Optional[dict] = self.inputs.input_put_person()
 
                     if not new_data:
-                        self.printer.warning(
-                            text='Cancelando...',
-                            clear=True)
+                        self.printer.warning(text='Cancelando...', clear=True)
                         self.manager.person_view.manage_client()
 
                     data: dict = {

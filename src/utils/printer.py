@@ -181,7 +181,10 @@ class Printer:
         for row in seat_matrix:
             print(" ".join(row))
 
-    def password_params(self) -> None:
+    def password_params(self, clear: bool = False) -> None:
+        if clear:
+            self.terminal.clear()
+
         self.error('A senha deve conter: ', timer=False)
 
         self.error(
@@ -203,3 +206,6 @@ class Printer:
             '- Pelo menos um letra maiuscula',
             line=False,
             timer=True)
+
+        if clear:
+            self.terminal.clear()

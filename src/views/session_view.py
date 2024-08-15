@@ -1,6 +1,7 @@
 from src.views.base_view import BaseView
 from src.crud.sessions_crud import SessionsCrud
 from pydantic import ValidationError
+from typing import Optional
 
 
 class SessionView(BaseView):
@@ -88,8 +89,8 @@ class SessionView(BaseView):
                 session_data: dict = self.inputs.input_session()
 
                 if not session_data:
-                    self.terminal.clear()
-                    self.printer.success('Operação cancelada!')
+                    self.printer.warning(text='Cancelando...',
+                                         clear=True)
                     self.manager.session_view.start()
 
                 self.session_crud.insert_session(session_data)
@@ -117,6 +118,7 @@ class SessionView(BaseView):
                 session_id: str = input('Session ID: ')
 
                 if session_id.lower() == 'q':
+                    self.printer.warning(text='Cancelando...', clear=True)
                     break
 
                 session: tuple = [self.session_crud.select_session_by_id(
@@ -153,19 +155,23 @@ class SessionView(BaseView):
                     text='Preencha os campos ou digite "q" para cancelar',
                     line=True)
 
-                session_id: str = input('Session ID: ')
+                session_id: str = input('Session ID: ').strip()
 
                 if session_id.lower() == 'q':
+                    self.printer.warning(text='Cancelando...', clear=True)
                     break
 
-                confirm_session_id: str = self.session_crud.delete_session(
-                    session_id)
+                if not self.session_crud.delete_session(session_id):
+                    self.printer.warning(
+                        text='Nenhuma sessão encontrada, tente novamente',
+                        clear=True
+                    )
+                    self.manager.session_view.del_session()
 
-                if session_id == confirm_session_id:
-                    self.terminal.clear()
-                    self.printer.success(
-                        'Sessão deletada com sucesso!', timer=True)
-                    self.terminal.clear()
+                self.printer.success(
+                    text='Sessão deletada com sucesso!',
+                    clear=True
+                )
 
             except Exception as e:
                 self.printer.error(f'Erro ao deletar filme: {e}')
@@ -187,20 +193,17 @@ class SessionView(BaseView):
 
                 session_id: str = input('Session ID: ').strip()
                 if session_id.lower() == 'q':
-                    self.printer.warning(
-                        text='Cancelando...',
-                        clear=True,
-                        timer=True)
-                    break
+                    self.printer.warning(text='Cancelando...', clear=True)
+                    self.manager.session_view.start()
 
                 session: tuple = self.session_crud.select_session_by_id(
                     session_id)
 
                 if not session:
                     self.printer.error(
-                        text='Nenhuma sala identificada, tente novamente')
-                    self.terminal.clear()
-                    break
+                        text='Nenhuma sala identificada, tente novamente',
+                        clear=True)
+                    self.put_session()
 
                 old_data['price'] = session[3]
                 old_data['room_id'] = session[1]
@@ -208,87 +211,28 @@ class SessionView(BaseView):
                 old_data['start_date'] = session[4]
                 old_data['start_time'] = session[5]
 
-                room_id = input(
-                    'Room ID (deixe em branco para manter o atual): ').strip()
-                if room_id.lower() == 'q':
-                    self.printer.warning(
-                        text='Cancelando...',
-                        clear=True,
-                        timer=True)
-                    break
+                new_data: Optional[dict] = self.inputs.input_put_session()
 
-                movie_id = input(
-                    'Movie ID (deixe em branco para manter o atual): ').strip()
-                if movie_id.lower() == 'q':
-                    self.printer.warning(
-                        text='Cancelando...',
-                        clear=True,
-                        timer=True)
-                    break
+                if not new_data:
+                    self.printer.warning(text='Cancelando...', clear=True)
+                    self.manager.movie_view.start()
 
-                price = self.inputs.input_price(
-                    'Price (deixe em branco para manter a atual): ')
-                if price == None:
-                    self.printer.warning(
-                        text='Cancelando...',
-                        clear=True,
-                        timer=True)
-                    break
+                data: dict = {
+                    'price': new_data.get('price') if new_data.get('price') != '' else old_data['price'],
+                    'room_id': new_data.get('room_id') if new_data.get('room_id') != '' else old_data['room_id'],
+                    'movie_id': new_data.get('movie_id') if new_data.get('movie_id') != '' else old_data['movie_id'],
+                    'start_date': new_data.get('start_date') if new_data.get('start_date') != '' else old_data['start_date'],
+                    'start_time': new_data.get('start_time') if new_data.get('start_time') != '' else old_data['start_time'],
+                }
 
-                start_time = self.inputs.input_time(
-                    'Start Time (deixe em branco para manter a atual): ').strip()
-                if start_time == None:
-                    self.printer.warning(
-                        text='Cancelando...',
-                        clear=True,
-                        timer=True)
-                    break
-
-                start_date = self.inputs.input_date(
-                    'Room ID (deixe em branco para manter o atual): ')
-                if start_date == None:
-                    self.printer.warning(
-                        text='Cancelando...',
-                        clear=True,
-                        timer=True)
-                    break
-
-                if not room_id:
-                    new_data['room_id'] = old_data['room_id']
-                else:
-                    new_data['room_id'] = room_id
-
-                if not movie_id:
-                    new_data['movie_id'] = old_data['movie_id']
-                else:
-                    new_data['movie_id'] = movie_id
-
-                if not price:
-                    new_data['price'] = old_data['price']
-                else:
-                    new_data['price'] = price
-
-                if not start_time:
-                    new_data['start_time'] = old_data['start_time']
-                else:
-                    new_data['start_time'] = start_time
-
-                if not start_time:
-                    new_data['start_date'] = old_data['start_date']
-                else:
-                    new_data['start_date'] = start_date
-
-                if new_data:
-                    self.session_crud.update_session(session_id, new_data)
-                    self.printer.success('Sala atualizado com sucesso!')
-                else:
-                    self.printer.info(
-                        'Nenhum dado fornecido para atualização.')
+                self.session_crud.update_session(session_id, data)
+                self.printer.success(
+                    text='Sessão atualizada com sucesso!',
+                    clear=True
+                )
 
             except ValueError as e:
-                self.terminal.clear()
-                self.printer.error(f'{e}')
-                self.terminal.clear()
+                self.printer.error(f'{e}', clear=True)
 
             except Exception as e:
                 self.printer.error(f'Erro ao atualizar sessão: {e}')
