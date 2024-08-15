@@ -172,7 +172,7 @@ class RoomView(BaseView):
                 if room_name.lower() == 'q':
                     break
 
-                confirm_name: str = self.room_crud.delete_room_by_id(
+                confirm_name: str = self.room_crud.delete_room_by_name(
                     room_name)
 
                 if room_name == confirm_name:

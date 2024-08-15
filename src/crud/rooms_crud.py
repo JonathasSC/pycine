@@ -160,7 +160,7 @@ class RoomsCrud(BaseCrud):
 
     def delete_room_by_name(self, room_name: str) -> Optional[str]:
         try:
-            if self.select_room_by_id(room_name):
+            if self.select_room_by_name(room_name):
                 self.conn.connect()
                 self.conn.cursor.execute(DELETE_ROOM_BY_NAME, [room_name])
                 self.conn.connection.commit()
@@ -168,8 +168,6 @@ class RoomsCrud(BaseCrud):
 
                 self.logger.info('DELETANDO SALA POR NOME')
                 return room_name
-
-            raise ValueError('Nenhuma sala com esse NOME foi encontrado')
 
         except Exception as e:
             raise e
