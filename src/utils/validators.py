@@ -6,13 +6,7 @@ from src.queries.movies_queries import SELECT_MOVIE_BY_NAME, SELECT_MOVIE_BY_ID
 from src.database.conn import Connection
 
 
-def password_validator(senha: str) -> bool:
-    padrao = r'^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()-_+=])[A-Za-z\d!@#$%^&*()-_+=]{8,}$'
-
-    return re.match(padrao, senha)
-
-
-def exists_email(email: str) -> bool:
+def validate_exists_email(email: str) -> bool:
     conn: Connection = Connection(auto_connect=False)
 
     conn.connect()
@@ -23,25 +17,7 @@ def exists_email(email: str) -> bool:
     return person_exists is None
 
 
-def validate_seat_choice(seats, chosen_seat):
-    for seat in seats:
-        if seat[2] == chosen_seat.upper():
-            return seat[5] if seat[5] == 'available' else None
-    return None
-
-
-def email_validator(email: str) -> bool:
-    regex = r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
-    if not exists_email(email):
-        return False
-
-    if not re.match(regex, email):
-        return False
-
-    return True
-
-
-def exists_session(room_id: str, start_date: str, start_time: str) -> bool:
+def validate_exists_session(room_id: str, start_date: str, start_time: str) -> bool:
     conn: Connection = Connection(auto_connect=False)
 
     conn.connect()
@@ -53,7 +29,7 @@ def exists_session(room_id: str, start_date: str, start_time: str) -> bool:
     return session_exists is None
 
 
-def exists_movie_by_id(movie_id: str):
+def validate_exists_movie_by_id(movie_id: str):
     conn: Connection = Connection(auto_connect=False)
 
     conn.connect()
@@ -64,7 +40,7 @@ def exists_movie_by_id(movie_id: str):
     return exists is None
 
 
-def exists_movie_by_name(name: str):
+def validate_exists_movie_by_name(name: str):
     conn: Connection = Connection(auto_connect=False)
 
     conn.connect()
@@ -75,7 +51,7 @@ def exists_movie_by_name(name: str):
     return exists is None
 
 
-def exists_room_by_id(room_id: str):
+def validate_exists_room_by_id(room_id: str):
     conn: Connection = Connection(auto_connect=False)
 
     conn.connect()
@@ -86,7 +62,7 @@ def exists_room_by_id(room_id: str):
     return exists is None
 
 
-def exists_room_by_name(name: str):
+def validate_exists_room_by_name(name: str):
     conn: Connection = Connection(auto_connect=False)
 
     conn.connect()
@@ -97,6 +73,29 @@ def exists_room_by_name(name: str):
     return exists is None
 
 
-def price_validator(price: str):
+def validate_price_format(price: str):
     regex = r'^\d+(?:\.\d{2})?$'
     return re.match(regex, price)
+
+
+def validate_email_format(email: str) -> bool:
+    regex = r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
+    if not validate_exists_email(email):
+        return False
+
+    if not re.match(regex, email):
+        return False
+
+    return True
+
+
+def validate_password_format(senha: str) -> bool:
+    padrao = r'^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()-_+=])[A-Za-z\d!@#$%^&*()-_+=]{8,}$'
+    return re.match(padrao, senha)
+
+
+def validate_seat_choice_format(seats, chosen_seat: str):
+    for seat in seats:
+        if seat[2] == chosen_seat.upper():
+            return seat[5] if seat[5] == 'available' else None
+    return None

@@ -7,12 +7,12 @@ from src.utils.printer import Printer
 from src.utils.terminal import Terminal
 
 from src.utils.validators import (
-    exists_room_by_id,
-    exists_movie_by_id,
-    email_validator,
-    password_validator,
-    price_validator,
-    exists_room_by_name,
+    validate_exists_room_by_id,
+    validate_exists_movie_by_id,
+    validate_email_format,
+    validate_password_format,
+    validate_price_format,
+    validate_exists_room_by_name,
 )
 
 
@@ -106,7 +106,7 @@ class Inputs:
         if room_data['name'] == 'q':
             return None
 
-        while room_data['name'] and not exists_room_by_name(room_data['name']):
+        while room_data['name'] and not validate_exists_room_by_name(room_data['name']):
             self.printer.error('Nome invalido ou já em uso.', clear=True)
             room_data['name'] = input(
                 'Nome da sala (deixe em branco para manter o atual): ').strip().lower()
@@ -248,7 +248,7 @@ class Inputs:
             if email.lower() == 'q':
                 return None
 
-            if email_validator(email):
+            if validate_email_format(email):
                 return email
 
             self.printer.error(
@@ -270,7 +270,7 @@ class Inputs:
                 self.printer.error('Senhas não correspondem, tente novamente')
                 continue
 
-            if password_validator(password):
+            if validate_password_format(password):
                 return password
 
             self.terminal.clear()
@@ -282,7 +282,7 @@ class Inputs:
             if room_id.lower() == 'q':
                 return None
 
-            if not exists_room_by_id(room_id):
+            if not validate_exists_room_by_id(room_id):
                 return room_id
 
             self.printer.error(
@@ -335,7 +335,7 @@ class Inputs:
         if room_data['name'] == 'q':
             return None
 
-        while room_data['name'] and not exists_room_by_name(room_data['name']):
+        while room_data['name'] and not validate_exists_room_by_name(room_data['name']):
             self.printer.error('Nome invalido ou já em uso.', clear=True)
             room_data['name'] = input(
                 'Nome da sala (deixe em branco para manter o atual): ').strip().lower()
@@ -382,7 +382,7 @@ class Inputs:
         if person_data['email'] == 'q':
             return None
 
-        while person_data['email'] and not email_validator(person_data['email']):
+        while person_data['email'] and not validate_email_format(person_data['email']):
             self.printer.error('Email invalido ou já em uso.', clear=True)
             person_data['email'] = input('Email: ')
             if person_data['email'] == 'q':
@@ -393,7 +393,7 @@ class Inputs:
         if person_data['password'] == 'q':
             return None
 
-        while person_data['password'] and not password_validator(person_data['password']):
+        while person_data['password'] and not validate_password_format(person_data['password']):
             self.printer.password_params(clear=True)
 
             person_data['password'] = input('Senha: ').strip()
@@ -410,7 +410,7 @@ class Inputs:
         if session_data['room_id'].lower() == 'q':
             return None
 
-        while session_data['room_id'] and not exists_room_by_id(session_data['room_id']):
+        while session_data['room_id'] and not validate_exists_room_by_id(session_data['room_id']):
             self.printer.password_params(clear=True)
 
             session_data['room_id'] = input(
@@ -423,7 +423,7 @@ class Inputs:
         if session_data['movie_id'].lower() == 'q':
             return None
 
-        while session_data['movie_id'] and not exists_movie_by_id(session_data['movie_id']):
+        while session_data['movie_id'] and not validate_exists_movie_by_id(session_data['movie_id']):
             self.printer.password_params(clear=True)
 
             session_data['movie_id'] = input(
@@ -436,7 +436,7 @@ class Inputs:
         if session_data['price'] == None:
             return None
 
-        while session_data['price'] and not price_validator(session_data['price']):
+        while session_data['price'] and not validate_price_format(session_data['price']):
             self.printer.password_params(clear=True)
 
             session_data['price'] = input(

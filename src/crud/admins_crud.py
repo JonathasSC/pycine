@@ -163,7 +163,6 @@ class AdminsCrud(BaseCrud):
 
             self.conn.connect()
             self.conn.cursor.execute(UPDATE_PERSON_BY_EMAIL, data_list)
-
             self.conn.connection.commit()
             self.conn.close()
 
@@ -175,7 +174,15 @@ class AdminsCrud(BaseCrud):
             raise e
 
     def delete_all_admins(self) -> None:
-        self.conn.connect()
-        self.conn.cursor.execute(DELETE_ALL_ADMINS)
-        self.conn.connection.commit()
-        self.conn.close()
+        try:
+            self.conn.connect()
+            self.conn.cursor.execute(DELETE_ALL_ADMINS)
+            self.conn.connection.commit()
+            self.conn.close()
+
+            self.logger.info('DELETANDO TODOS OS ADMINS')
+
+        except Exception as e:
+            self.logger.warning(
+                'EXCEÇÃO AO TENTAR ATUALIZAR DADOS DE PERSONS QUE SÃO ADMINS')
+            raise e

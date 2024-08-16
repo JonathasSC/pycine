@@ -4,7 +4,7 @@ from src.crud.base_crud import BaseCrud
 from src.database.conn import Connection
 from typing import List, Dict, Any, Optional, Tuple
 from src.schemas.session_schemas import SessionCreate, SessionUpdate
-from src.utils.validators import exists_session
+from src.utils.validators import validate_exists_session
 
 from src.queries.sessions_queries import (
     INSERT_SESSION,
@@ -80,7 +80,7 @@ class SessionsCrud(BaseCrud):
                     raise ValueError(
                         'A sessão não pode ser agendada para uma data e hora no passado.')
 
-                if not exists_session(room_id, start_date.isoformat(), start_time.strftime('%H:%M:%S')):
+                if not validate_exists_session(room_id, start_date.isoformat(), start_time.strftime('%H:%M:%S')):
                     raise ValueError(
                         'Já existe uma sessão nessa sala e horário.')
 

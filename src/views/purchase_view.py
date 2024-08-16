@@ -1,7 +1,6 @@
 from src.views.base_view import BaseView
-from src.utils.validators import validate_seat_choice
+from src.utils.validators import validate_seat_choice_format
 from typing import Optional
-from time import sleep
 
 
 class PurchaseView(BaseView):
@@ -115,7 +114,7 @@ class PurchaseView(BaseView):
 
             seat_code = seat_code.upper()
 
-            if validate_seat_choice(seats, seat_code):
+            if validate_seat_choice_format(seats, seat_code):
                 seat: tuple = self.seat_crud.select_seat_by_room_id_and_seat_code(
                     room_id,
                     seat_code)
