@@ -5,6 +5,8 @@ from src.queries.seats_queries import (
     SELECT_SEAT_BY_ID,
     UPDATE_SEAT_STATE,
     SELECT_SEATS_BY_ROOM_ID,
+    DELETE_SEATS_BY_ROOM_NAME,
+    SELECT_SEATS_BY_ROOM_NAME,
     SELECT_COUNT_SEATS_BY_ROOM_ID,
     SELECT_SEATS_BY_ROOM_ID_SEAT_CODE
 )
@@ -18,7 +20,44 @@ class SeatsCrud(BaseCrud):
         super().__init__(conn)
         self.logger.info('INSTANCIA SEATS CRUD CRIADA')
 
-    def insert_seat(self, data) -> Optional[str]:
+# COUNT SEATS
+    def count_seats_by_room_id(self, room_id: str):
+        try:
+            self.conn.connect()
+            self.conn.cursor.execute(SELECT_COUNT_SEATS_BY_ROOM_ID, [room_id])
+            seats_count: int = self.conn.cursor.fetchone()[0]
+            self.logger.info(
+                'PESQUISANDO QUANTIDADES DE ASSENTOS POR ID DE SALA')
+            return seats_count
+        except Exception as e:
+            raise e
+
+# DELETE
+    def delete_seats_by_room_name(self, room_name: str) -> Optional[str]:
+        try:
+            self.conn.connect()
+            self.conn.cursor.execute(
+                DELETE_SEATS_BY_ROOM_NAME, [room_name])
+            self.conn.connection.commit()
+            self.conn.close()
+
+            return
+        except Exception as e:
+            raise e
+
+# UPDATE
+    def update_seat_state(self, seat_id: str, state: str) -> Optional[str]:
+        try:
+            self.conn.connect()
+            self.conn.cursor.execute(UPDATE_SEAT_STATE, [state, seat_id])
+            self.conn.connection.commit()
+            return seat_id
+
+        except Exception as e:
+            raise e
+
+# INSERTS
+    def insert_seat(self, data: dict) -> Optional[str]:
         try:
             seat_id: str = self.uuid.smaller_uuid()
             data['seat_id'] = seat_id
@@ -44,17 +83,6 @@ class SeatsCrud(BaseCrud):
         except Exception as e:
             raise e
 
-    def count_seats_by_room_id(self, room_id: str):
-        try:
-            self.conn.connect()
-            self.conn.cursor.execute(SELECT_COUNT_SEATS_BY_ROOM_ID, [room_id])
-            seats_count: int = self.conn.cursor.fetchone()[0]
-            self.logger.info(
-                'PESQUISANDO QUANTIDADES DE ASSENTOS POR ID DE SALA')
-            return seats_count
-        except Exception as e:
-            raise e
-
     def insert_seats_by_room(self, room: tuple):
         try:
             room_id = room[0]
@@ -77,17 +105,20 @@ class SeatsCrud(BaseCrud):
         except Exception as e:
             raise e
 
-    def update_seat_state(self, seat_id, state) -> Optional[str]:
+# SELECTS
+    def select_seats_by_room_name(self, room_name: str) -> Optional[str]:
         try:
             self.conn.connect()
-            self.conn.cursor.execute(UPDATE_SEAT_STATE, [state, seat_id])
-            self.conn.connection.commit()
-            return seat_id
+            self.conn.cursor.execute(
+                SELECT_SEATS_BY_ROOM_NAME, [room_name])
+            seats_list: list = self.conn.cursor.fetchall()
+            self.conn.close()
 
+            return seats_list
         except Exception as e:
             raise e
 
-    def select_seats_by_room_id(self, room_id) -> Optional[list]:
+    def select_seats_by_room_id(self, room_id: str) -> Optional[list]:
         try:
             self.conn.connect()
             self.conn.cursor.execute(SELECT_SEATS_BY_ROOM_ID, [room_id])
@@ -98,7 +129,7 @@ class SeatsCrud(BaseCrud):
         except Exception as e:
             raise e
 
-    def select_seat_by_id(self, seat_id) -> Optional[tuple]:
+    def select_seat_by_id(self, seat_id: str) -> Optional[tuple]:
         try:
             self.conn.connect()
             self.conn.cursor.execute(SELECT_SEAT_BY_ID, [seat_id])
@@ -109,7 +140,7 @@ class SeatsCrud(BaseCrud):
         except Exception as e:
             raise e
 
-    def select_seat_by_room_id_and_seat_code(self, room_id, seat_code) -> Optional[tuple]:
+    def select_seat_by_room_id_and_seat_code(self, room_id: str, seat_code: str) -> Optional[tuple]:
         try:
             self.conn.connect()
             self.conn.cursor.execute(
@@ -118,17 +149,5 @@ class SeatsCrud(BaseCrud):
             self.conn.close()
 
             return seat
-        except Exception as e:
-            raise e
-
-    def delete_seats_by_room_name(self, room_name) -> Optional[str]:
-        try:
-            self.conn.connect()
-            self.conn.cursor.execute(
-                SELECT_SEATS_BY_ROOM_ID_SEAT_CODE, [room_name])
-            self.conn.connection.commit()
-            self.conn.close()
-
-            return 
         except Exception as e:
             raise e

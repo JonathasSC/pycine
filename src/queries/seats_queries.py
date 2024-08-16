@@ -29,9 +29,6 @@ SELECT_SEATS_BY_ROOM_ID = """
 SELECT * FROM seats WHERE room_id = ?;
 """
 
-SELECT_SEATS_BY_ROOM_ID_ = """
-SELECT * FROM seats WHERE room_id = ?;
-"""
 
 SELECT_COUNT_SEATS_BY_ROOM_ID = """
 SELECT COUNT(*) FROM seats WHERE room_id = ?;
@@ -39,6 +36,18 @@ SELECT COUNT(*) FROM seats WHERE room_id = ?;
 
 SELECT_SEATS_BY_ROOM_ID_SEAT_CODE = """
 SELECT * FROM seats WHERE room_id = ? AND seat_code = ?;
+"""
+
+SELECT_SEATS_BY_ROOM_NAME = """
+SELECT seats.*
+FROM seats
+JOIN rooms ON seats.room_id = rooms.room_id
+WHERE rooms.name = ?;
+"""
+
+DELETE_SEATS_BY_ROOM_NAME = """
+DELETE FROM seats
+WHERE room_id = (SELECT room_id FROM rooms WHERE name = ?);
 """
 
 UPDATE_SEAT_STATE = """

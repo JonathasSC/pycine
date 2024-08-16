@@ -64,7 +64,6 @@ class BaseView:
                 option: int = int(input('Digite uma opção: '))
 
                 if cancel and option == 0:
-                    # self.printer.warning(text='Cancelando...', clear=True)
                     return None
 
                 if 0 < option <= len(options):

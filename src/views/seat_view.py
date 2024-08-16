@@ -11,6 +11,7 @@ class SeatView(BaseView):
         self.list_options: list = [
             'Adicionar nova cadeira',
             'Deletar cadeiras de uma sala',
+            'Ver lista de assentos de sala',
             'Voltar'
         ]
 
@@ -26,6 +27,8 @@ class SeatView(BaseView):
                     case 2:
                         self.del_seats_by_room_name()
                     case 3:
+                        self.get_seats_by_room_name()
+                    case 4:
                         self.manager.admin_view.admin_flow()
                     case _:
                         self.invalid_option()
@@ -99,15 +102,14 @@ class SeatView(BaseView):
                     )
 
                     if not state_option:
-                        break
+                        self.manager.seat_view.start()
 
                     seat_data['state'] = seat_data[state_option - 1]
                     self.seat_crud.insert_seat(seat_data)
-                    break
+                    self.manager.seat_view.start()
 
                 if not seat_data:
                     self.printer.warning(text='Cancelando...', clear=True)
-                    break
 
             except ValueError as e:
                 self.printer.error(
@@ -118,35 +120,103 @@ class SeatView(BaseView):
                 self.printer.error(
                     text=f'Erro ao iniciar tela de cadeiras: {e}',
                     clear=True)
+            finally:
+                self.manager.seat_view.start()
 
+    # def del_seats_by_room_name(self) -> None:
+    #     while True:
+    #         try:
+    #             self.terminal.clear()
+
+    #             self.printer.generic(
+    #                 text='Preencha os campos ou digite "q" para cancelar',
+    #                 line=True)
+    #             room_name: str = input('Nome da sala: ')
+
+    #             if room_name.lower() == 'q':
+    #                 self.printer.warning(text='Cancelando...', clear=True)
+    #                 self.manager.seat_view.start()
+
+    #             if not self.room_crud.select_room_by_name(room_name):
+    #                 self.printer.warning(
+    #                     text='Nenhuma sala encontrada, tente novamente',
+    #                     clear=True
+    #                 )
+    #                 self.manager.seat_view.del_seats_by_room_name()
+
+    #             self.printer.success(
+    #                 text=f'Cadeiras da {room_name} deletadas com sucesso!',
+    #                 clear=True
+    #             )
+
+    #         except Exception as e:
+    #             self.printer.error(f'Erro ao deletar cadeiras: {e}')
+
+    #         finally:
+    #             self.manager.seat_view.start()
     def del_seats_by_room_name(self) -> None:
         while True:
             try:
                 self.terminal.clear()
-
                 self.printer.generic(
-                    text='Preencha os campos ou digite "q" para cancelar',
-                    line=True)
-                room_name: str = input('Nome da sala: ')
+                    text='Preencha os campos ou digite "q" para cancelar', line=True)
+
+                room_name: str = input('Nome da sala: ').strip()
 
                 if room_name.lower() == 'q':
                     self.printer.warning(text='Cancelando...', clear=True)
-                    self.manager.seat_view.start()
+                    break
 
                 if not self.room_crud.select_room_by_name(room_name):
-                    self.printer.error(
-                        text='Nenhuma sala encontrada, tente novamente',
-                        clear=True
-                    )
-                    self.manager.seat_view.del_seats_by_room_name()
+                    self.printer.warning(text='Nenhuma sala encontrada, tente novamente',
+                                         clear=True)
+                    continue
 
-                self.printer.success(
-                    text=f'Cadeiras da {room_name} deletadas com sucesso!',
-                    clear=True
-                )
+                self.seat_crud.delete_seats_by_room_name(room_name)
+                self.printer.success(text=f'Assentos deletadas com sucesso!',
+                                     clear=True)
+                break
 
             except Exception as e:
                 self.printer.error(f'Erro ao deletar cadeiras: {e}')
 
-            finally:
-                self.manager.seat_view.del_seats_by_room_name()
+        self.manager.seat_view.start()
+
+    def get_seats_by_room_name(self) -> None:
+        while True:
+            try:
+                self.terminal.clear()
+                self.printer.generic(text='Preencha os campos ou digite "q" para cancelar',
+                                     line=True)
+
+                room_name: str = input('Nome da sala: ')
+
+                if room_name.lower() == 'q':
+                    self.printer.warning(text='Cancelando...', clear=True)
+                    break
+
+                if not self.room_crud.select_room_by_name(room_name):
+                    self.printer.warning(
+                        text='Nenhuma sala encontrada, tente novamente',
+                        clear=True
+                    )
+                    continue
+
+                header = [
+                    'ID DO ASSENTO',
+                    'ID DA SALA',
+                    'CODIGO DO ASSENTO',
+                    'LINHA',
+                    'COLUNA',
+                    'ESTADO'
+                ]
+                seats_list: list = self.seat_crud.select_seats_by_room_name(
+                    room_name)
+                self.printer.display_table(header, seats_list)
+
+                break
+
+            except Exception as e:
+                self.printer.error(f'Erro ao deletar cadeiras: {e}')
+
+            self.manager.seat_view.start()
