@@ -151,9 +151,8 @@ class RoomsCrud(BaseCrud):
                 self.conn.close()
 
                 self.logger.info('DELETANDO SALA POR ID')
-                return room_id
-
-            raise ValueError('Nenhuma sala com esse ID foi encontrado')
+                return True
+            return False
 
         except Exception as e:
             raise e
@@ -167,7 +166,8 @@ class RoomsCrud(BaseCrud):
                 self.conn.close()
 
                 self.logger.info('DELETANDO SALA POR NOME')
-                return self.select_room_by_name(room_name) is None
+                return True
+            return False
 
         except Exception as e:
             raise e

@@ -102,14 +102,17 @@ class SeatView(BaseView):
                     )
 
                     if not state_option:
-                        self.manager.seat_view.start()
-
+                        break
+                    
                     seat_data['state'] = seat_data[state_option - 1]
                     self.seat_crud.insert_seat(seat_data)
-                    self.manager.seat_view.start()
+                    break
 
                 if not seat_data:
                     self.printer.warning(text='Cancelando...', clear=True)
+                    break
+
+                break
 
             except ValueError as e:
                 self.printer.error(
@@ -120,40 +123,8 @@ class SeatView(BaseView):
                 self.printer.error(
                     text=f'Erro ao iniciar tela de cadeiras: {e}',
                     clear=True)
-            finally:
-                self.manager.seat_view.start()
+            self.manager.seat_view.start()
 
-    # def del_seats_by_room_name(self) -> None:
-    #     while True:
-    #         try:
-    #             self.terminal.clear()
-
-    #             self.printer.generic(
-    #                 text='Preencha os campos ou digite "q" para cancelar',
-    #                 line=True)
-    #             room_name: str = input('Nome da sala: ')
-
-    #             if room_name.lower() == 'q':
-    #                 self.printer.warning(text='Cancelando...', clear=True)
-    #                 self.manager.seat_view.start()
-
-    #             if not self.room_crud.select_room_by_name(room_name):
-    #                 self.printer.warning(
-    #                     text='Nenhuma sala encontrada, tente novamente',
-    #                     clear=True
-    #                 )
-    #                 self.manager.seat_view.del_seats_by_room_name()
-
-    #             self.printer.success(
-    #                 text=f'Cadeiras da {room_name} deletadas com sucesso!',
-    #                 clear=True
-    #             )
-
-    #         except Exception as e:
-    #             self.printer.error(f'Erro ao deletar cadeiras: {e}')
-
-    #         finally:
-    #             self.manager.seat_view.start()
     def del_seats_by_room_name(self) -> None:
         while True:
             try:
@@ -168,12 +139,12 @@ class SeatView(BaseView):
                     break
 
                 if not self.room_crud.select_room_by_name(room_name):
-                    self.printer.warning(text='Nenhuma sala encontrada, tente novamente',
+                    self.printer.warning('Nenhuma sala encontrada, tente novamente',
                                          clear=True)
                     continue
 
                 self.seat_crud.delete_seats_by_room_name(room_name)
-                self.printer.success(text=f'Assentos deletadas com sucesso!',
+                self.printer.success('Assentos deletadas com sucesso!',
                                      clear=True)
                 break
 

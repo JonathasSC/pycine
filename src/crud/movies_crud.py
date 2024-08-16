@@ -107,16 +107,15 @@ class MoviesCrud(BaseCrud):
 
     def delete_movie_by_name(self, name: str) -> Optional[str]:
         try:
-            movie: Optional[tuple] = self.select_movie_by_name(name)
-            if movie:
+            if self.select_movie_by_name(name):
                 self.conn.connect()
                 self.conn.cursor.execute(DELETE_MOVIE_BY_NAME, [name])
                 self.conn.connection.commit()
                 self.conn.close()
 
                 self.logger.info('DELETANDO FILME POR NOME')
-
-            return movie is not None
+                return True
+            return False
 
         except Exception as e:
             raise e

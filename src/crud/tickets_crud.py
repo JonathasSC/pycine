@@ -63,14 +63,13 @@ class TicketsCrud(BaseCrud):
 
     def delete_ticket_by_id(self, ticket_id: str) -> Optional[Tuple[str]]:
         try:
-            if not self.select_ticket_by_id(ticket_id):
-                raise ValueError('Nenhum ticket com esse ID foi encontrado.')
+            ticket: Optional[tuple] = self.select_ticket_by_id(ticket_id)
+            if ticket:
+                self.conn.connect()
+                self.conn.cursor.execute(DELETE_TICKET_BY_ID, [ticket_id])
+                self.conn.connection.commit()
+                self.conn.close()
 
-            self.conn.connect()
-            self.conn.cursor.execute(DELETE_TICKET_BY_ID, [ticket_id])
-            self.conn.connection.commit()
-            self.conn.close()
-
-            return ticket_id
+            return ticket is not None
         except Exception as e:
             raise e

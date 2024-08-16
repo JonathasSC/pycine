@@ -130,19 +130,15 @@ class SessionsCrud(BaseCrud):
 
     def delete_session(self, session_id: str) -> Optional[str]:
         try:
-            session: Optional[tuple] = self.select_session_by_id(
-                session_id=session_id
-            )
-
-            if session:
+            if self.select_session_by_id(session_id=session_id):
                 self.conn.connect()
                 self.conn.cursor.execute(DELETE_SESSION, (session_id,))
                 self.conn.connection.commit()
                 self.conn.close()
 
                 self.logger.info('DELETANDO SESSÃO')
-
-            return session is not None
+                return True
+            return False
 
         except Exception as e:
             raise e

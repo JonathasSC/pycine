@@ -97,7 +97,7 @@ class RoomView(BaseView):
                 self.printer.error(f'Erro ao mostrar salas {e}')
                 break
 
-        self.start()
+        self.manager.room_view.start()
 
     def put_room(self) -> None:
         while True:
@@ -117,15 +117,15 @@ class RoomView(BaseView):
                     self.printer.warning(
                         text='Cancelando...',
                         clear=True)
-                    self.manager.room_view.start()
+                    break
 
                 room: Optional[tuple] = self.room_crud.select_room_by_name(
                     name)
 
                 if not room:
                     self.printer.error(
-                        text='Nenhuma sala identificada tente novamente', clear=True)
-                    self.manager.room_view.put_room()
+                        'Nenhuma sala identificada tente novamente', clear=True)
+                    continue
 
                 old_data['name'] = room[1]
                 old_data['rows'] = room[2]
@@ -135,10 +135,8 @@ class RoomView(BaseView):
                 new_data: Optional[dict] = self.inputs.input_put_room()
 
                 if not new_data:
-                    self.printer.warning(
-                        text='Cancelando...',
-                        clear=True)
-                    self.manager.room_view.start()
+                    self.printer.warning(text='Cancelando...', clear=True)
+                    break
 
                 data: dict = {
                     'name': new_data.get('name') if new_data.get('name') != '' else old_data['name'],
@@ -150,9 +148,7 @@ class RoomView(BaseView):
                 self.room_crud.update_room_by_name(name, data)
 
             except ValueError as e:
-                self.terminal.clear()
-                self.printer.error(f'{e}')
-                self.terminal.clear()
+                self.printer.error(f'{e}', clear=True)
 
             except Exception as e:
                 self.printer.error(f'Erro ao atualizar sala: {e}')
@@ -163,28 +159,27 @@ class RoomView(BaseView):
         while True:
             try:
                 self.terminal.clear()
-                self.printer.generic(
-                    text='Preencha os campos ou digite "q" para cancelar',
-                    line=True)
+                self.printer.generic(text='Preencha os campos ou digite "q" para cancelar',
+                                     line=True)
 
                 room_name: str = input('Nome da sala: ').strip()
 
                 if room_name.lower() == 'q':
+                    self.printer.warning('Cancelando...', clear=True)
                     break
 
-                if self.room_crud.delete_room_by_name(room_name) and self.seat_crud.delete_seats_by_room_name(room_name):
-                    self.printer.success(text='Filme deletado com sucesso!',clear=True)
+                if self.room_crud.delete_room_by_name(room_name) and \
+                        self.seat_crud.delete_seats_by_room_name(room_name):
+                    self.printer.success('Sala deletada com sucesso!',
+                                         clear=True)
+                    break
 
             except ValueError as e:
-                self.printer.error(text=f'{e}',
-                                   clear=True)
-                self.manager.room_view.del_room()
+                self.printer.error(f'{e}', clear=True)
+                continue
 
             except Exception as e:
-                self.printer.error(text=f'Erro ao deletar filme: {e}',
-                                   clear=True)
+                self.printer.error(f'Erro ao deletar filme: {e}', clear=True)
+                continue
 
-                self.manager.room_view.del_room()
-
-            finally:
-                self.manager.room_view.start()
+            self.manager.room_view.start()

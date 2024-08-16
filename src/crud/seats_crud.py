@@ -35,13 +35,15 @@ class SeatsCrud(BaseCrud):
 # DELETE
     def delete_seats_by_room_name(self, room_name: str) -> Optional[str]:
         try:
-            self.conn.connect()
-            self.conn.cursor.execute(
-                DELETE_SEATS_BY_ROOM_NAME, [room_name])
-            self.conn.connection.commit()
-            self.conn.close()
+            if self.select_seats_by_room_name(room_name):
+                self.conn.connect()
+                self.conn.cursor.execute(
+                    DELETE_SEATS_BY_ROOM_NAME, [room_name])
+                self.conn.connection.commit()
+                self.conn.close()
+                return True
+            return False
 
-            return
         except Exception as e:
             raise e
 
