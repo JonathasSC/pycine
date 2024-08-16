@@ -162,7 +162,7 @@ class SessionView(BaseView):
                     break
 
                 if not self.session_crud.delete_session(session_id):
-                    self.printer.warning(
+                    self.printer.error(
                         text='Nenhuma sessão encontrada, tente novamente',
                         clear=True
                     )
@@ -201,8 +201,9 @@ class SessionView(BaseView):
 
                 if not session:
                     self.printer.error(
-                        text='Nenhuma sala identificada, tente novamente',
-                        clear=True)
+                        text='Nenhuma sessão encontrada, tente novamente',
+                        clear=True
+                    )
                     self.put_session()
 
                 old_data['price'] = session[3]

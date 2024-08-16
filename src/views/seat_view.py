@@ -10,6 +10,7 @@ class SeatView(BaseView):
 
         self.list_options: list = [
             'Adicionar nova cadeira',
+            'Deletar cadeiras de uma sala',
             'Voltar'
         ]
 
@@ -23,6 +24,8 @@ class SeatView(BaseView):
                     case 1:
                         self.crt_seat()
                     case 2:
+                        self.del_seats_by_room_name()
+                    case 3:
                         self.manager.admin_view.admin_flow()
                     case _:
                         self.invalid_option()
@@ -115,3 +118,35 @@ class SeatView(BaseView):
                 self.printer.error(
                     text=f'Erro ao iniciar tela de cadeiras: {e}',
                     clear=True)
+
+    def del_seats_by_room_name(self) -> None:
+        while True:
+            try:
+                self.terminal.clear()
+
+                self.printer.generic(
+                    text='Preencha os campos ou digite "q" para cancelar',
+                    line=True)
+                room_name: str = input('Nome da sala: ')
+
+                if room_name.lower() == 'q':
+                    self.printer.warning(text='Cancelando...', clear=True)
+                    self.manager.seat_view.start()
+
+                if not self.room_crud.select_room_by_name(room_name):
+                    self.printer.error(
+                        text='Nenhuma sala encontrada, tente novamente',
+                        clear=True
+                    )
+                    self.manager.seat_view.del_seats_by_room_name()
+
+                self.printer.success(
+                    text=f'Cadeiras da {room_name} deletadas com sucesso!',
+                    clear=True
+                )
+
+            except Exception as e:
+                self.printer.error(f'Erro ao deletar cadeiras: {e}')
+
+            finally:
+                self.manager.seat_view.del_seats_by_room_name()
