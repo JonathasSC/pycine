@@ -1,3 +1,4 @@
+from typing import Optional
 from src.views.base_view import BaseView
 from src.utils.counters import maximum_room_capacity
 
@@ -12,6 +13,7 @@ class SeatView(BaseView):
             'Adicionar nova cadeira',
             'Deletar cadeiras de uma sala',
             'Ver lista de assentos de sala',
+            'Ver assento',
             'Voltar'
         ]
 
@@ -29,6 +31,8 @@ class SeatView(BaseView):
                     case 3:
                         self.get_seats_by_room_name()
                     case 4:
+                        self.get_seat_by_room_name_and_seat_code()
+                    case 5:
                         self.manager.admin_view.admin_flow()
                     case _:
                         self.invalid_option()
@@ -103,7 +107,7 @@ class SeatView(BaseView):
 
                     if not state_option:
                         break
-                    
+
                     seat_data['state'] = seat_data[state_option - 1]
                     self.seat_crud.insert_seat(seat_data)
                     break
@@ -188,6 +192,46 @@ class SeatView(BaseView):
                 break
 
             except Exception as e:
-                self.printer.error(f'Erro ao deletar cadeiras: {e}')
+                self.printer.error(f'Erro ao requisitar cadeiras: {e}')
+
+            self.manager.seat_view.start()
+
+    def get_seat_by_room_name_and_seat_code(self) -> None:
+        while True:
+            try:
+                self.terminal.clear()
+                self.printer.generic(text='Preencha os campos ou digite "q" para cancelar',
+                                     line=True)
+
+                room_name: str = input('Nome da sala: ')
+                if room_name.lower() == 'q':
+                    self.printer.warning(text='Cancelando...', clear=True)
+                    break
+
+                seat_code: str = input('Código o assento: ')
+                if seat_code.lower() == 'q':
+                    self.printer.warning(text='Cancelando...', clear=True)
+                    break
+
+                seat: Optional[tuple] = self.seat_crud.select_seat_by_room_name_and_seat_code(
+                    room_name, seat_code)
+
+                if not seat:
+                    self.printer.warning(text='Nenhuma sala encontrada, tente novamente',
+                                         clear=True)
+                    continue
+
+                header = [
+                    'ID DO ASSENTO',
+                    'ID DA SALA',
+                    'CODIGO DO ASSENTO',
+                    'LINHA',
+                    'COLUNA',
+                    'ESTADO'
+                ]
+                self.printer.display_table(header, [seat])
+
+            except Exception as e:
+                self.printer.error(f'Erro ao requisitar cadeira: {e}')
 
             self.manager.seat_view.start()

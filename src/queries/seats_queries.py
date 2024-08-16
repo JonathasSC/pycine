@@ -34,6 +34,13 @@ SELECT_COUNT_SEATS_BY_ROOM_ID = """
 SELECT COUNT(*) FROM seats WHERE room_id = ?;
 """
 
+SELECT_SEATS_BY_ROOM_NAME_SEAT_CODE = """
+SELECT seats.*
+FROM seats
+JOIN rooms ON seats.room_id = rooms.room_id
+WHERE rooms.name = ? AND seats.seat_code = ?;
+"""
+
 SELECT_SEATS_BY_ROOM_ID_SEAT_CODE = """
 SELECT * FROM seats WHERE room_id = ? AND seat_code = ?;
 """

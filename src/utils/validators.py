@@ -37,21 +37,10 @@ def validate_exists_movie_by_id(movie_id: str):
     exists: tuple = conn.cursor.fetchone()
     conn.close()
 
-    return exists is None
+    return exists is not None
 
 
-def validate_exists_movie_by_name(name: str):
-    conn: Connection = Connection(auto_connect=False)
-
-    conn.connect()
-    conn.cursor.execute(SELECT_MOVIE_BY_NAME, [name])
-    exists: tuple = conn.cursor.fetchone()
-    conn.close()
-
-    return exists is None
-
-
-def validate_exists_room_by_id(room_id: str):
+def validate_exists_room_by_id(room_id: str) -> bool:
     conn: Connection = Connection(auto_connect=False)
 
     conn.connect()
@@ -59,7 +48,7 @@ def validate_exists_room_by_id(room_id: str):
     exists: tuple = conn.cursor.fetchone()
     conn.close()
 
-    return exists is None
+    return exists is not None
 
 
 def validate_exists_room_by_name(name: str):
@@ -70,7 +59,7 @@ def validate_exists_room_by_name(name: str):
     exists: tuple = conn.cursor.fetchone()
     conn.close()
 
-    return exists is None
+    return exists is not None
 
 
 def validate_price_format(price: str):

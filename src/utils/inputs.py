@@ -106,7 +106,7 @@ class Inputs:
         if room_data['name'] == 'q':
             return None
 
-        while room_data['name'] and not validate_exists_room_by_name(room_data['name']):
+        while room_data['name'] and validate_exists_room_by_name(room_data['name']):
             self.printer.error('Nome invalido ou já em uso.', clear=True)
             room_data['name'] = input(
                 'Nome da sala (deixe em branco para manter o atual): ').strip().lower()
@@ -282,7 +282,7 @@ class Inputs:
             if room_id.lower() == 'q':
                 return None
 
-            if not validate_exists_room_by_id(room_id):
+            if validate_exists_room_by_id(room_id):
                 return room_id
 
             self.printer.error(
@@ -335,7 +335,7 @@ class Inputs:
         if room_data['name'] == 'q':
             return None
 
-        while room_data['name'] and not validate_exists_room_by_name(room_data['name']):
+        while room_data['name'] and validate_exists_room_by_name(room_data['name']):
             self.printer.error('Nome invalido ou já em uso.', clear=True)
             room_data['name'] = input(
                 'Nome da sala (deixe em branco para manter o atual): ').strip().lower()
@@ -410,7 +410,7 @@ class Inputs:
         if session_data['room_id'].lower() == 'q':
             return None
 
-        while session_data['room_id'] and not validate_exists_room_by_id(session_data['room_id']):
+        while session_data['room_id'] and validate_exists_room_by_id(session_data['room_id']):
             self.printer.password_params(clear=True)
 
             session_data['room_id'] = input(
@@ -423,7 +423,7 @@ class Inputs:
         if session_data['movie_id'].lower() == 'q':
             return None
 
-        while session_data['movie_id'] and not validate_exists_movie_by_id(session_data['movie_id']):
+        while session_data['movie_id'] and validate_exists_movie_by_id(session_data['movie_id']):
             self.printer.password_params(clear=True)
 
             session_data['movie_id'] = input(

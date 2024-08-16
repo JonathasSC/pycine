@@ -8,7 +8,8 @@ from src.queries.seats_queries import (
     DELETE_SEATS_BY_ROOM_NAME,
     SELECT_SEATS_BY_ROOM_NAME,
     SELECT_COUNT_SEATS_BY_ROOM_ID,
-    SELECT_SEATS_BY_ROOM_ID_SEAT_CODE
+    SELECT_SEATS_BY_ROOM_ID_SEAT_CODE,
+    SELECT_SEATS_BY_ROOM_NAME_SEAT_CODE,
 )
 
 from typing import Optional, Dict, List, Any
@@ -147,6 +148,18 @@ class SeatsCrud(BaseCrud):
             self.conn.connect()
             self.conn.cursor.execute(
                 SELECT_SEATS_BY_ROOM_ID_SEAT_CODE, [room_id, seat_code])
+            seat: tuple = self.conn.cursor.fetchone()
+            self.conn.close()
+
+            return seat
+        except Exception as e:
+            raise e
+
+    def select_seat_by_room_name_and_seat_code(self, room_name: str, seat_code: str) -> Optional[tuple]:
+        try:
+            self.conn.connect()
+            self.conn.cursor.execute(
+                SELECT_SEATS_BY_ROOM_NAME_SEAT_CODE, [room_name, seat_code])
             seat: tuple = self.conn.cursor.fetchone()
             self.conn.close()
 
