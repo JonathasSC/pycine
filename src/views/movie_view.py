@@ -103,7 +103,7 @@ class MovieView(BaseView):
                 movie_name: str = input('Nome do filme: ').strip().lower()
 
                 if movie_name.lower() == 'q':
-                    self.printer.success('Exclusão cancelada', clear=True)
+                    self.printer.warning(text='Cancelando...', clear=True)
                     break
 
                 if not self.movie_crud.delete_movie_by_name(movie_name):

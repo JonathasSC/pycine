@@ -9,8 +9,8 @@ class PersonView(BaseView):
         self.manager = manager
 
         self.list_options: list = [
-            'Gerenciar Admins',
-            'Gerenciar Clients',
+            'Gerenciar admins',
+            'Gerenciar clients',
             'Voltar',
         ]
 
@@ -105,8 +105,7 @@ class PersonView(BaseView):
                             self.manager.home_view.start()
 
                         else:
-                            self.printer.warning(
-                                text='Cancelando...', clear=True)
+                            self.printer.warning('Cancelando...', clear=True)
                     else:
                         option = self.choose_an_option(
                             confirm_options,
@@ -119,9 +118,7 @@ class PersonView(BaseView):
                                 text='Admin deletado com sucesso!',
                                 clear=True)
                         else:
-                            self.printer.warning(
-                                text='Cancelando...',
-                                clear=True)
+                            self.printer.warning('Cancelando...', clear=True)
                 except Exception as e:
                     self.printer.error(f'Erro ao criar sala: {e}')
 
@@ -139,9 +136,7 @@ class PersonView(BaseView):
                     person_data: dict = self.inputs.input_person()
 
                     if not person_data:
-                        self.printer.warning(
-                            text='...',
-                            clear=True)
+                        self.printer.warning('Cancelando...', clear=True)
                         self.manage_admin()
 
                     person_id: str = self.person_crud.insert_person(
@@ -171,9 +166,7 @@ class PersonView(BaseView):
                     email: str = input('Email: ').strip().lower()
 
                     if email == 'q':
-                        self.printer.warning(
-                            text='Cancelando...',
-                            clear=True)
+                        self.printer.warning(text='Cancelando...', clear=True)
                         self.manager.person_view.manage_admin()
 
                     admin: Optional[tuple] = self.admin_crud.select_by_email(
@@ -192,9 +185,7 @@ class PersonView(BaseView):
                     new_data: Optional[dict] = self.inputs.input_put_person()
 
                     if not new_data:
-                        self.printer.warning(
-                            text='...',
-                            clear=True)
+                        self.printer.warning(text='Cancelando...', clear=True)
                         self.manager.person_view.manage_admin()
 
                     data: dict = {
@@ -290,9 +281,7 @@ class PersonView(BaseView):
                     client_email: str = input('Email: ').strip()
 
                     if client_email.lower() == 'q':
-                        self.printer.error(
-                            text='Exclusão cancelada',
-                            clear=True)
+                        self.printer.warning(text='Cancelando...', clear=True)
                         break
 
                     if not self.client_crud.select_by_email(client_email):
@@ -325,9 +314,7 @@ class PersonView(BaseView):
                     client_id: str = input('Client ID: ')
 
                     if client_id.lower() == 'q':
-                        self.printer.error(
-                            text='Exclusão cancelada',
-                            clear=True)
+                        self.printer.warning(text='Cancelando...', clear=True)
                         break
 
                     if not self.client_crud.select_by_id(client_id):
@@ -361,7 +348,7 @@ class PersonView(BaseView):
 
                     person_data = self.inputs.input_person()
                     if person_data == None:
-                        self.printer.success('Inserção cancelada!', clear=True)
+                        self.printer.warning(text='Cancelando...', clear=True)
                         break
 
                     person_id: str = self.person_crud.insert_person(
@@ -391,9 +378,7 @@ class PersonView(BaseView):
                     email: str = input('Email: ').strip().lower()
 
                     if email == 'q':
-                        self.printer.warning(
-                            text='Cancelando...',
-                            clear=True)
+                        self.printer.warning(text='Cancelando...', clear=True)
                         self.manager.person_view.manage_client()
 
                     client: Optional[tuple] = self.client_crud.select_by_email(

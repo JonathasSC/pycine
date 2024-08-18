@@ -31,9 +31,7 @@ class AuthView(BaseView):
                 person_data: Optional[dict] = self.inputs.input_login()
 
                 if person_data == None:
-                    self.printer.warning(
-                        text='Login cancelado',
-                        clear=True)
+                    self.printer.warning(text='Cancelando...', clear=True)
 
                     break
 
@@ -81,7 +79,7 @@ class AuthView(BaseView):
                 person_data: Optional[dict] = self.inputs.input_register()
 
                 if person_data == None:
-                    self.printer.warning(text='Registro cancelado', clear=True)
+                    self.printer.warning(text='Cancelando...', clear=True)
                     break
 
                 person_id: Optional[str] = self.person_crud.insert_person(

@@ -90,8 +90,7 @@ class BaseView:
             try:
                 person_data = self.inputs.input_person()
                 if person_data == None:
-                    self.printer.warning(
-                        'Registro de primeiro admin cancelado', clear=True)
+                    self.printer.warning(text='Cancelando...', clear=True)
                     return False
 
                 self.person_crud.insert_person(person_data)

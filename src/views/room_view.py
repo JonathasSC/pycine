@@ -114,9 +114,7 @@ class RoomView(BaseView):
                 name: str = input('Nome da sala: ').strip()
 
                 if name.lower() == 'q':
-                    self.printer.warning(
-                        text='Cancelando...',
-                        clear=True)
+                    self.printer.warning(text='Cancelando...', clear=True)
                     break
 
                 room: Optional[tuple] = self.room_crud.select_room_by_name(
