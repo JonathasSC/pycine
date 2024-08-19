@@ -15,11 +15,25 @@ from src.utils.validators import (
     validate_exists_room_by_name,
 )
 
+from src.crud.movies_crud import MoviesCrud
+from src.crud.sessions_crud import SessionsCrud
+
+from src.crud.rooms_crud import RoomsCrud
+from src.crud.seats_crud import SeatsCrud
+from src.crud.tickets_crud import TicketsCrud
+from src.crud.persons_crud import PersonsCrud
+
 
 class Inputs:
     def __init__(self) -> None:
         self.printer: Printer = Printer()
         self.terminal: Terminal = Terminal()
+        self.room_crud: RoomsCrud = RoomsCrud()
+        self.seats_crud: SeatsCrud = SeatsCrud()
+        self.movies_crud: MoviesCrud = MoviesCrud()
+        self.person_crud: PersonsCrud = PersonsCrud()
+        self.tickets_crud: TicketsCrud = TicketsCrud()
+        self.session_crud: SessionsCrud = SessionsCrud()
 
     def input_login(self) -> Optional[dict]:
         person_data: dict = {}
@@ -405,7 +419,6 @@ class Inputs:
             return None
 
         while session_data['room_id'] and validate_exists_room_by_id(session_data['room_id']):
-            self.printer.password_params(clear=True)
 
             session_data['room_id'] = input(
                 'Room ID (deixe em branco para manter o atual): ').strip()
@@ -418,7 +431,6 @@ class Inputs:
             return None
 
         while session_data['movie_id'] and validate_exists_movie_by_id(session_data['movie_id']):
-            self.printer.password_params(clear=True)
 
             session_data['movie_id'] = input(
                 'Movie ID (deixe em branco para manter o atual): ').strip()
@@ -431,7 +443,6 @@ class Inputs:
             return None
 
         while session_data['price'] and not validate_price_format(session_data['price']):
-            self.printer.password_params(clear=True)
 
             session_data['price'] = input(
                 'Movie ID (deixe em branco para manter o atual): ').strip()
@@ -449,3 +460,60 @@ class Inputs:
             return None
 
         return session_data
+
+    def input_ticket(self) -> Optional[dict]:
+        ticket_data: dict = {}
+
+        session: Optional[dict] = {}
+        person: Optional[dict] = {}
+        seat: Optional[dict] = {}
+
+        while True:
+            ticket_data['session_id'] = input('ID da sessão: ').strip()
+
+            session = self.session_crud.select_session_by_id(
+                ticket_data['session_id'])
+
+            if ticket_data['session_id'].lower() == 'q':
+                return None
+            if session:
+                break
+
+            self.printer.error(
+                text='Nenhuma sessão encontrada, tente novamente.',
+                clear=True
+            )
+
+        while True:
+            ticket_data['person_id'] = input('ID do comprador: ').strip()
+
+            person = self.person_crud.select_by_id(
+                ticket_data['person_id'])
+
+            if ticket_data['person_id'].lower() == 'q':
+                return None
+            if person:
+                break
+
+            self.printer.error(
+                text='Nenhuma pessoa encontrada, tente novamente.',
+                clear=True
+            )
+
+        while True:
+            ticket_data['seat_id'] = input('ID do assento: ').strip()
+
+            seat = self.seats_crud.select_seat_by_id(
+                ticket_data['seat_id'])
+
+            if ticket_data['seat_id'].lower() == 'q':
+                return None
+            if seat and seat[5] != 'sold':
+                break
+
+            self.printer.error(
+                text='Assento não encontrado ou indisponivel, tente novamente',
+                clear=True
+            )
+
+        return ticket_data

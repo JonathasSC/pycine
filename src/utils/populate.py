@@ -69,8 +69,8 @@ class Populate:
         for _ in range(self.populate_range):
             data = {
                 'name': self.generate_pattern(),
-                'rows': 10,
-                'columns': 10,
+                'rows': 5,
+                'columns': 5,
                 'type': 'vip'
             }
 
@@ -92,8 +92,8 @@ class Populate:
         for _ in range(self.populate_range):
             data = {
                 'name': self.generate_pattern(),
-                'rows': 10,
-                'columns': 10,
+                'rows': 5,
+                'columns': 5,
                 'type': 'vip'
             }
             rooms_id_list.append(self.rooms_crud.insert_room(data))
@@ -128,7 +128,8 @@ class Populate:
     def generate_pattern(self):
         letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H']
         number = random.randint(1, 99)
-        return random.choice(letters) + str(number)
+        pattern = random.choice(letters) + str(number)
+        return pattern
 
     def populate_all(self):
         self.populate_persons()

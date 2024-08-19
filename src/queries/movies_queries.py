@@ -2,9 +2,9 @@ CREATE_MOVIES_TABLE = """
 CREATE TABLE IF NOT EXISTS movies (
     movie_id TEXT PRIMARY KEY,
     name TEXT UNIQUE NOT NULL,
-    genre TEXT UNIQUE NOT NULL,
-    duration TEXT UNIQUE NOT NULL,
-    synopsis TEXT UNIQUE NOT NULL
+    genre TEXT NOT NULL,
+    duration TEXT NOT NULL,
+    synopsis TEXT NOT NULL
 );
 """
 

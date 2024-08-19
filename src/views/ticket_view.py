@@ -1,4 +1,5 @@
 from src.views.base_view import BaseView
+from typing import Optional
 
 
 class TicketView(BaseView):
@@ -45,44 +46,16 @@ class TicketView(BaseView):
                     text='Preencha os campos ou digite "q" para cancelar',
                     line=True)
 
-                ticket_data['session_id'] = input('Session ID: ').strip()
-                if ticket_data['session_id'] in 'Qq':
+                ticket_data: Optional[dict] = self.inputs.input_ticket()
+
+                if not ticket_data:
                     self.printer.warning(text='Cancelando...', clear=True)
-                    break
+                    self.manager.ticket_view.start()
 
-                if not self.session_crud.select_session_by_id(ticket_data['session_id']):
-                    raise ValueError(
-                        'Nenhuma sessão com esse ID foi encontrad.')
-
-                ticket_data['person_id'] = input('Person ID: ').strip()
-                if ticket_data['person_id'] in 'Qq':
-                    self.printer.warning(text='Cancelando...', clear=True)
-                    break
-
-                if not self.person_crud.select_by_id(ticket_data['person_id']):
-                    raise ValueError(
-                        'Nenhuma pessoa com esse ID foi encontrada.')
-
-                ticket_data['seat_id'] = input('Seat ID: ').strip()
-                if ticket_data['seat_id'] in 'Qq':
-                    self.printer.warning(text='Cancelando...', clear=True)
-                    break
-
-                seat: tuple = self.seat_crud.select_seat_by_id(
-                    ticket_data['seat_id'])
-
-                if not seat:
-                    raise ValueError(
-                        'Nenhum assento com esse ID foi encontrada.')
-
-                if seat[5] == 'sold':
-                    raise ValueError('Essa cadeira já foi vendida')
-
-                if self.ticket_crud.insert_ticket(ticket_data):
-                    self.seat_crud.update_seat_state(ticket_data['seat_id'],
-                                                     'sold')
-                    self.printer.success(text='Ticket criado com sucesso!',
-                                         clear=True)
+                self.ticket_crud.insert_ticket(ticket_data)
+                self.seat_crud.update_seat_state(
+                    ticket_data['seat_id'], 'sold')
+                self.printer.success('Ticket criado com sucesso!', clear=True)
 
             except ValueError as e:
                 self.printer.error(text=f'{e}', clear=True)
@@ -92,7 +65,8 @@ class TicketView(BaseView):
                     text=f'Erro ao tentar criar ticket: {e}',
                     clear=True)
 
-            continue
+            finally:
+                self.manager.ticket_view.start()
 
     def del_ticket(self) -> None:
         while True:
@@ -148,7 +122,6 @@ class TicketView(BaseView):
                     'PERSON ID',
                     'SESSION ID'
                 ]
-
                 self.printer.display_table(header, ticket)
                 self.start()
 

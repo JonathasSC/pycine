@@ -1,6 +1,6 @@
 import re
 from src.queries.persons_queries import SELECT_BY_EMAIL
-from src.queries.sessions_queries import SELECT_BY_ROOM_START_DATE_AND_TIME
+from src.queries.sessions_queries import SELECT_BY_ROOM_START_DATE_AND_TIME, SELECT_SESSIONS_BY_ID
 from src.queries.rooms_queries import SELECT_ROOM_BY_ID, SELECT_ROOM_BY_NAME
 from src.queries.movies_queries import SELECT_MOVIE_BY_NAME, SELECT_MOVIE_BY_ID
 from src.database.conn import Connection
@@ -17,7 +17,7 @@ def validate_exists_email(email: str) -> bool:
     return person_exists is None
 
 
-def validate_exists_session(room_id: str, start_date: str, start_time: str) -> bool:
+def validate_exists_session_by_room_id_and_times(room_id: str, start_date: str, start_time: str) -> bool:
     conn: Connection = Connection(auto_connect=False)
 
     conn.connect()
@@ -27,6 +27,19 @@ def validate_exists_session(room_id: str, start_date: str, start_time: str) -> b
     conn.close()
 
     return session_exists is None
+
+
+def validate_exists_session_by_id(session_id: str):
+    conn: Connection = Connection(auto_connect=False)
+
+    conn.connect()
+    conn.cursor.execute(SELECT_SESSIONS_BY_ID, [session_id])
+    session_exists: tuple = conn.cursor.fetchone()
+    conn.close()
+
+    if session_exists:
+        return True
+    return False
 
 
 def validate_exists_movie_by_id(movie_id: str):
