@@ -14,6 +14,7 @@ class SeatView(BaseView):
             'Deletar cadeiras de uma sala',
             'Ver lista de assentos de sala',
             'Ver assento',
+            'Deletar assento',
             'Voltar'
         ]
 
@@ -33,6 +34,8 @@ class SeatView(BaseView):
                     case 4:
                         self.get_seat_by_room_name_and_seat_code()
                     case 5:
+                        self.del_seat_by_room_name_and_seat_code()
+                    case 6:
                         self.manager.admin_view.admin_flow()
                     case _:
                         self.invalid_option()
@@ -234,4 +237,40 @@ class SeatView(BaseView):
             except Exception as e:
                 self.printer.error(f'Erro ao requisitar cadeira: {e}')
 
+            self.manager.seat_view.start()
+
+    def del_seat_by_room_name_and_seat_code(self) -> None:
+        while True:
+            try:
+                self.terminal.clear()
+                self.printer.generic(text='Preencha os campos ou digite "q" para cancelar',
+                                     line=True)
+
+                room_name: str = input('Nome da sala: ')
+                if room_name.lower() == 'q':
+                    self.printer.warning(text='Cancelando...', clear=True)
+                    break
+
+                seat_code: str = input('Código o assento: ')
+                if seat_code.lower() == 'q':
+                    self.printer.warning(text='Cancelando...', clear=True)
+                    break
+
+                if not self.seat_crud.delete_seat_by_room_name_and_seat_code(
+                        room_name,
+                        seat_code
+                ):
+                    self.printer.error(
+                        text='Nenhuma cadeira encontrada, tente novamente',
+                        clear=True
+                    )
+                    self.manager.seat_view.del_seat_by_room_name_and_seat_code()
+
+                self.printer.success(
+                    text='Cadeira deletada com sucesso!',
+                    clear=True
+                )
+
+            except Exception as e:
+                self.printer.error(f'Erro ao requisitar cadeira: {e}')
             self.manager.seat_view.start()

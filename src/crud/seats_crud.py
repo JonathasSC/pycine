@@ -3,6 +3,7 @@ from src.database.conn import Connection
 from src.queries.seats_queries import (
     INSERT_SEAT,
     SELECT_SEAT_BY_ID,
+    DELETE_SEAT_BY_ID,
     UPDATE_SEAT_STATE,
     SELECT_SEATS_BY_ROOM_ID,
     DELETE_SEATS_BY_ROOM_NAME,
@@ -104,7 +105,24 @@ class SeatsCrud(BaseCrud):
         except Exception as e:
             raise e
 
+    def delete_seat_by_room_name_and_seat_code(self, room_name: str, seat_code: str):
+        try:
+            seat: Optional[tuple] = self.select_seat_by_room_name_and_seat_code(
+                room_name,
+                seat_code
+            )
+            if seat:
+                self.conn.connect()
+                self.conn.cursor.execute(DELETE_SEAT_BY_ID, [seat[0]])
+                self.conn.connection.commit()
+                self.conn.close()
+                return True
+            return False
+
+        except Exception as e:
+            raise e
 # SELECTS
+
     def select_seats_by_room_name(self, room_name: str) -> Optional[str]:
         try:
             self.conn.connect()

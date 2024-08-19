@@ -63,8 +63,8 @@ SET state = ?
 WHERE seat_id = ?;
 """
 
-DELETE_SEAT = """
-DELETE FROM seats WHERE id = ?;
+DELETE_SEAT_BY_ID = """
+DELETE FROM seats WHERE seat_id = ?;
 """
 
 DELETE_ALL_SEATS = """
