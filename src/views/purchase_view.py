@@ -53,7 +53,7 @@ class PurchaseView(BaseView):
         movies_names = [movie[7] for movie in movies]
         header: list = ['Nome do filme']
 
-        option: str = self.input_an_option(
+        option: str = self.inputs.input_an_option(
             options=movies_names,
             text='Escolha um filme',
             header=header,
@@ -80,7 +80,7 @@ class PurchaseView(BaseView):
 
         header: list = ['Preço(R$)', 'Hora', 'Tipo', 'Nome']
 
-        option = self.input_an_option(
+        option = self.inputs.input_an_option(
             options=options_formated,
             text='Escolha uma sessão'.center(32),
             header=header,
@@ -146,7 +146,7 @@ class PurchaseView(BaseView):
         self.printer.generic(f"Data: {session_time}")
 
         confirm_options = ['Sim, confirmar']
-        option: str = self.input_an_option(
+        option: str = self.inputs.input_an_option(
             text='Finalize sua compra!',
             options=confirm_options,
             cancel=True

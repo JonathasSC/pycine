@@ -1,10 +1,12 @@
 from src.views.base_view import BaseView
+from src.utils.inputs import Inputs
 
 
 class AdminView(BaseView):
     def __init__(self, manager):
         super().__init__()
         self.manager = manager
+        self.inputs = Inputs()
 
         self.list_options: list = [
             'Fluxo publico',
@@ -19,7 +21,7 @@ class AdminView(BaseView):
         while True:
             try:
                 self.terminal.clear()
-                option: int = self.input_an_option(
+                option: int = self.inputs.input_an_option(
                     self.list_options,
                     text='Escolha o que gerenciar')
 
@@ -70,7 +72,7 @@ class AdminView(BaseView):
 
         try:
             self.terminal.clear()
-            option: int = self.input_an_option(admin_options)
+            option: int = self.inputs.input_an_option(admin_options)
             match option:
                 case 1:
                     self.manager.person_view.start()

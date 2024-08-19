@@ -20,7 +20,7 @@ class MovieView(BaseView):
         while True:
             try:
                 self.terminal.clear()
-                option: int = self.input_an_option(self.list_options)
+                option: int = self.inputs.input_an_option(self.list_options)
 
                 match option:
                     case 1:

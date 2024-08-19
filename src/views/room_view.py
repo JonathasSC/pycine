@@ -20,7 +20,7 @@ class RoomView(BaseView):
         while True:
             try:
                 self.terminal.clear()
-                option: int = self.input_an_option(self.list_options)
+                option: int = self.inputs.input_an_option(self.list_options)
 
                 match option:
                     case 1:
@@ -55,7 +55,7 @@ class RoomView(BaseView):
                     break
 
                 auto_seat = ['Sim', 'Não']
-                option: int = self.input_an_option(
+                option: int = self.inputs.input_an_option(
                     options=auto_seat,
                     text='Deseja criar cadeiras automaticamente? ',
                 )

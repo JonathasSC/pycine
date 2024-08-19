@@ -18,8 +18,6 @@ from src.crud.persons_crud import PersonsCrud
 from src.crud.tickets_crud import TicketsCrud
 from src.crud.sessions_crud import SessionsCrud
 
-from typing import Optional
-
 
 class BaseView:
     def __init__(self):
@@ -48,36 +46,6 @@ class BaseView:
     def start(self) -> None:
         raise NotImplementedError(
             "Subclasses should implement start() method.")
-
-    def input_an_option(self,
-                        options: list,
-                        header: list = [],
-                        text: str = 'Escolha uma opção',
-                        cancel: bool = False) -> Optional[str]:
-        while True:
-            try:
-                self.printer.generic(text, line=True)
-                self.printer.option_list(options, header)
-
-                if cancel:
-                    self.printer.generic(f'[0] - Cancelar')
-                option: int = int(input('Digite uma opção: '))
-
-                if cancel and option == 0:
-                    return None
-
-                if 0 < option <= len(options):
-                    return option
-
-                else:
-                    self.printer.error(
-                        text="Opção inválida, Tente novamente.",
-                        clear=True)
-
-            except ValueError:
-                self.printer.error(
-                    text="Entrada inválida. Por favor, digite um número.",
-                    clear=True)
 
     def invalid_option(self) -> None:
         self.printer.error('Opção inválida, tente novamente', clear=True)
@@ -113,7 +81,7 @@ class BaseView:
 
         confirm_options = ['Sim', 'Não']
 
-        option = self.input_an_option(
+        option = self.inputs.input_an_option(
             confirm_options,
             text=text)
 

@@ -21,7 +21,7 @@ class SeatView(BaseView):
         while True:
             try:
                 self.terminal.clear()
-                option: int = self.input_an_option(self.list_options)
+                option: int = self.inputs.input_an_option(self.list_options)
 
                 match option:
                     case 1:
@@ -69,7 +69,7 @@ class SeatView(BaseView):
 
                 options: list = ['Sim', 'Não']
 
-                auto_create_seats: str = self.input_an_option(
+                auto_create_seats: str = self.inputs.input_an_option(
                     options=options,
                     text='Deseja criar cadeiras para essa sala automaticamente?'
                 )
@@ -99,7 +99,7 @@ class SeatView(BaseView):
                     if seat_data['col'] in 'Qq':
                         break
 
-                    state_option: int = self.input_an_option(
+                    state_option: int = self.inputs.input_an_option(
                         valid_states,
                         text='Escolha o estado da cadeira',
                         cancel=True

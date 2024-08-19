@@ -18,7 +18,7 @@ class PersonView(BaseView):
         while True:
             try:
                 self.terminal.clear()
-                option: int = self.input_an_option(self.list_options)
+                option: int = self.inputs.input_an_option(self.list_options)
 
                 match option:
                     case 1:
@@ -91,7 +91,7 @@ class PersonView(BaseView):
                             'Por favor, confirme se realmente deseja proceder com esta ação.'
                         )
 
-                        option = self.input_an_option(
+                        option = self.inputs.input_an_option(
                             confirm_options,
                             text='Realmente deseja deletar sua própria conta?',
                             cancel=True)
@@ -107,7 +107,7 @@ class PersonView(BaseView):
                         else:
                             self.printer.warning('Cancelando...', clear=True)
                     else:
-                        option = self.input_an_option(
+                        option = self.inputs.input_an_option(
                             confirm_options,
                             text='Realmente deseja deletar um admin?',
                             cancel=True)
@@ -219,7 +219,7 @@ class PersonView(BaseView):
 
             try:
                 self.terminal.clear()
-                option: int = self.input_an_option(manage_options)
+                option: int = self.inputs.input_an_option(manage_options)
 
                 match option:
                     case 1:
@@ -433,7 +433,7 @@ class PersonView(BaseView):
 
             try:
                 self.terminal.clear()
-                option: int = self.input_an_option(manage_options)
+                option: int = self.inputs.input_an_option(manage_options)
 
                 match option:
                     case 1:
