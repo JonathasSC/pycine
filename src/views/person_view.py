@@ -143,7 +143,8 @@ class PersonView(BaseView):
                         person_data)
 
                     self.admin_crud.insert_admin(person_id)
-                    self.printer.success('Admin criado com sucesso!')
+                    self.printer.success(
+                        'Admin criado com sucesso!', clear=True)
                     self.manage_admin()
 
                 except ValidationError as e:

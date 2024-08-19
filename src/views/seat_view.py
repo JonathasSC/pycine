@@ -257,8 +257,8 @@ class SeatView(BaseView):
                     break
 
                 if not self.seat_crud.delete_seat_by_room_name_and_seat_code(
-                        room_name,
-                        seat_code
+                    room_name,
+                    seat_code
                 ):
                     self.printer.error(
                         text='Nenhuma cadeira encontrada, tente novamente',
