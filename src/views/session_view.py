@@ -24,7 +24,7 @@ class SessionView(BaseView):
         while True:
             try:
                 self.terminal.clear()
-                option: int = self.choose_an_option(
+                option: int = self.input_an_option(
                     self.list_options, text='Escolha o que gerenciar')
 
                 match option:

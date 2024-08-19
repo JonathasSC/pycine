@@ -19,7 +19,7 @@ class AdminView(BaseView):
         while True:
             try:
                 self.terminal.clear()
-                option: int = self.choose_an_option(
+                option: int = self.input_an_option(
                     self.list_options,
                     text='Escolha o que gerenciar')
 
@@ -70,7 +70,7 @@ class AdminView(BaseView):
 
         try:
             self.terminal.clear()
-            option: int = self.choose_an_option(admin_options)
+            option: int = self.input_an_option(admin_options)
             match option:
                 case 1:
                     self.manager.person_view.start()

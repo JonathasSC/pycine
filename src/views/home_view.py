@@ -36,7 +36,7 @@ class HomeView(BaseView):
 
                 self.terminal.clear()
 
-                option: int = self.choose_an_option(
+                option: int = self.input_an_option(
                     options=self.list_options,
                     text='Pycine - Your cinema in terminal'
                 )

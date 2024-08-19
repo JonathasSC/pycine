@@ -90,7 +90,7 @@ class Inputs:
 
         return movie_data
 
-    def get_integer_input(self, prompt):
+    def input_type_integer(self, prompt):
         while True:
             user_input = input(prompt)
             if user_input == 'q':
@@ -113,11 +113,11 @@ class Inputs:
             if room_data['name'] == 'q':
                 return None
 
-        room_data['rows'] = self.get_integer_input('Linhas: ')
+        room_data['rows'] = self.input_type_integer('Linhas: ')
         if room_data['rows'] is None:
             return None
 
-        room_data['columns'] = self.get_integer_input('Colunas: ')
+        room_data['columns'] = self.input_type_integer('Colunas: ')
         if room_data['columns'] is None:
             return None
 
@@ -125,7 +125,7 @@ class Inputs:
         valid_types = ['normal', 'dubbed', 'subtitled', 'vip']
         self.terminal.clear()
 
-        option: int = self.choose_an_option(
+        option: int = self.input_an_option(
             options,
             'Escolha o tipo da sala:',
             cancel=True
@@ -164,11 +164,11 @@ class Inputs:
 
         return session_data
 
-    def choose_an_option(self,
-                         options: list,
-                         text: str = 'Escolha uma opção',
-                         cancel: bool = False,
-                         clear: bool = True):
+    def input_an_option(self,
+                        options: list,
+                        text: str = 'Escolha uma opção',
+                        cancel: bool = False,
+                        clear: bool = True):
 
         while True:
             if clear:
@@ -192,12 +192,6 @@ class Inputs:
             except ValueError:
                 self.terminal.clear()
                 self.printer.error('Por favor, digite um número válido.')
-
-    def invalid_option(self):
-        self.printer.error('Opção inválida, tente novamente', clear=True)
-
-    def invalid_value(self):
-        self.printer.error('Valor inválido, tente novamente', clear=True)
 
     def input_date(self, prompt: str) -> Optional[str]:
         while True:
@@ -342,12 +336,12 @@ class Inputs:
             if room_data['name'] == 'q':
                 return None
 
-        room_data['rows'] = self.get_integer_input(
+        room_data['rows'] = self.input_type_integer(
             'Linhas (deixe em branco para manter o atual): ')
         if room_data['rows'] is None:
             return None
 
-        room_data['columns'] = self.get_integer_input(
+        room_data['columns'] = self.input_type_integer(
             'Colunas (deixe em branco para manter o atual): ')
         if room_data['columns'] is None:
             return None
@@ -356,7 +350,7 @@ class Inputs:
         valid_types = ['normal', 'dubbed', 'subtitled', 'vip']
         self.terminal.clear()
 
-        option: int = self.choose_an_option(
+        option: int = self.input_an_option(
             options,
             'Escolha o tipo da sala:',
             cancel=True

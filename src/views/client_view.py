@@ -35,7 +35,7 @@ class ClientView(BaseView):
                         'Voltar',
                     ]
 
-                    option = self.choose_an_option(list_options)
+                    option = self.input_an_option(list_options)
                     self.handle_admin_options(option)
                     break
 
@@ -48,7 +48,7 @@ class ClientView(BaseView):
                         'Fechar'
                     ]
 
-                    option = self.choose_an_option(list_options)
+                    option = self.input_an_option(list_options)
                     if not self.handle_client_options(option):
                         break
 

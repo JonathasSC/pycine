@@ -21,7 +21,6 @@ class SeatsCrud(BaseCrud):
         super().__init__(conn)
         self.logger.info('INSTANCIA SEATS CRUD CRIADA')
 
-# COUNT SEATS
     def count_seats_by_room_id(self, room_id: str):
         try:
             self.conn.connect()
@@ -33,7 +32,6 @@ class SeatsCrud(BaseCrud):
         except Exception as e:
             raise e
 
-# DELETE
     def delete_seats_by_room_name(self, room_name: str) -> Optional[str]:
         try:
             if self.select_seats_by_room_name(room_name):
@@ -48,7 +46,6 @@ class SeatsCrud(BaseCrud):
         except Exception as e:
             raise e
 
-# UPDATE
     def update_seat_state(self, seat_id: str, state: str) -> Optional[str]:
         try:
             self.conn.connect()
@@ -59,7 +56,6 @@ class SeatsCrud(BaseCrud):
         except Exception as e:
             raise e
 
-# INSERTS
     def insert_seat(self, data: dict) -> Optional[str]:
         try:
             seat_id: str = self.uuid.smaller_uuid()
