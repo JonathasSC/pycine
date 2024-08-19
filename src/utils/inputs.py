@@ -180,6 +180,7 @@ class Inputs:
 
     def input_an_option(self,
                         options: list,
+                        header: list = [],
                         text: str = 'Escolha uma opção',
                         cancel: bool = False,
                         clear: bool = True):
@@ -189,7 +190,8 @@ class Inputs:
                 self.terminal.clear()
 
             self.printer.generic(text, line=True)
-            self.printer.option_list(options)
+            self.printer.option_list(options, header)
+
             valid_range = range(0, len(options) + 1)
 
             if cancel:
