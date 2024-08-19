@@ -150,6 +150,7 @@ class ClientView(BaseView):
                 movies_list = self.session_crud.select_all_session_with_movies()
                 if not movies_list:
                     self.handlers.handle_no_sessions_available()
+                    break
                 else:
                     self.printer.display_movies(movies_list)
                     break
